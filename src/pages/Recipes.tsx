@@ -416,13 +416,12 @@ export default function Recipes() {
     };
   }, [pendingCode, accessStatus?.hasAccess, redeem, setSearchParams]);
 
-  // One-time seed on first authenticated visit
+  // Catalog self-heal: run the idempotent sync once per load. The server-side
+  // marker guard makes repeat calls cheap no-ops.
   useEffect(() => {
     if (recipes == null || seededRef.current) return;
-    if (recipes.length === 0) {
-      seededRef.current = true;
-      void ensureSeed();
-    }
+    seededRef.current = true;
+    void ensureSeed();
   }, [recipes, ensureSeed]);
 
   const filtered = useMemo(() => {

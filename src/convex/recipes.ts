@@ -491,9 +491,8 @@ export const finalizeCatalog = mutation({
 export const ensureSeed = mutation({
   args: {},
   handler: async (ctx) => {
-    const userId = await getAuthUserId(ctx);
-    if (userId === null) return { ok: false };
-
+    // No auth required: idempotent and guarded by the marker below — it only
+    // dedupes/inserts the canonical catalog, so it is safe to trigger anytime.
     const marker = await ctx.db
       .query("meta")
       .withIndex("by_key", (q) => q.eq("key", "catalog_synced_v1"))
