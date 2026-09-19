@@ -368,7 +368,13 @@ function AccessGate({ onUnlocked }: { onUnlocked: () => void }) {
             {busy ? <Loader2 className="size-4 animate-spin" /> : "تفعيل الكود"}
           </Button>
         </form>
-        <p className="mt-4 text-xs text-muted-foreground">
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          المدد المتاحة: <span className="font-semibold">شهر</span> (ينتهي
+          تلقائياً بعد 30 يوماً) · <span className="font-semibold">سنة</span>
+          (ينتهي بعد 365 يوماً) ·{" "}
+          <span className="font-semibold">مدى الحياة</span> (لا ينتهي أبداً).
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
           لا تملك رمزاً؟ تواصل معنا للحصول على اشتراك.
         </p>
       </div>

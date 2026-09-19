@@ -5,10 +5,12 @@ import logo from "@/assets/logo.svg";
 import {
   ArrowLeft,
   Beaker,
+  CalendarClock,
   Car,
   CheckCircle2,
   FlaskConical,
   Home,
+  Infinity as InfinityIcon,
   Lock,
   Scale,
   ShieldCheck,
@@ -82,6 +84,9 @@ export default function Landing() {
             </a>
             <a href="#features" className="transition-colors hover:text-foreground">
               لماذا نحن
+            </a>
+            <a href="#pricing" className="transition-colors hover:text-foreground">
+              الاشتراكات
             </a>
           </nav>
           <Button asChild className="shadow-soft">
@@ -191,6 +196,124 @@ export default function Landing() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Subscriptions: packages & durations */}
+      <section id="pricing" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <Badge variant="secondary" className="mb-4 bg-primary/10 text-primary">
+            <CalendarClock className="size-3.5" />
+            الباقات والمدد
+          </Badge>
+          <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
+            اختر الباقة المناسبة لك
+          </h2>
+          <p className="mt-3 leading-relaxed text-muted-foreground">
+            كل باقة تُفعَّل بكود اشتراك من الإدارة، وبمدة تناسبك: شهر، سنة، أو
+            مدى الحياة.
+          </p>
+        </div>
+
+        {/* Packages */}
+        <div className="grid gap-5 md:grid-cols-3">
+          {[
+            {
+              pkg: "home" as const,
+              icon: Home,
+              title: "باقة وصفات منزلية",
+              desc: "القسم الأول كاملاً: المنظفات المنزلية — 22 وصفة عملية.",
+              chip: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+            },
+            {
+              pkg: "cars" as const,
+              icon: Car,
+              title: "باقة عناية بالسيارات",
+              desc: "القسم الثاني كاملاً: العناية بالسيارات — 10 وصفات احترافية.",
+              chip: "bg-cyan-500/10 text-cyan-600 border-cyan-500/20",
+            },
+            {
+              pkg: "all" as const,
+              icon: Sparkles,
+              title: "كل الباقات",
+              desc: "القسمان معاً: 32 وصفة بكل المكتبة — الخيار الأوفر.",
+              chip: "bg-primary/10 text-primary border-primary/20",
+              featured: true,
+            },
+          ].map((p) => (
+            <div
+              key={p.pkg}
+              className={`relative rounded-2xl border bg-card p-6 shadow-soft transition-transform duration-300 hover:-translate-y-1 ${
+                p.featured ? "border-primary/40 shadow-soft-lg" : "border-border/70"
+              }`}
+            >
+              {p.featured && (
+                <Badge className="absolute -top-2.5 right-6 border-none bg-primary text-[10px] text-primary-foreground">
+                  الأوفر
+                </Badge>
+              )}
+              <span
+                className={`mb-4 flex size-11 items-center justify-center rounded-xl border ${p.chip}`}
+              >
+                <p.icon className="size-5" />
+              </span>
+              <h3 className="mb-1.5 text-lg font-bold">{p.title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {p.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Durations */}
+        <div className="mt-10 rounded-2xl border border-border/70 bg-card p-6 shadow-soft sm:p-8">
+          <h3 className="mb-5 text-center font-bold">مدد الاشتراك</h3>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              {
+                icon: CalendarClock,
+                title: "شهر",
+                text: "ينتهي تلقائياً بعد 30 يوماً — مثالي للتجربة.",
+              },
+              {
+                icon: CalendarClock,
+                title: "سنة",
+                text: "ينتهي بعد 365 يوماً — أفضل للاستمرار.",
+              },
+              {
+                icon: InfinityIcon,
+                title: "مدى الحياة",
+                text: "لا ينتهي أبداً — وصول دائم بلا تجديد.",
+              },
+            ].map((d) => (
+              <div
+                key={d.title}
+                className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-4"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <d.icon className="size-4" />
+                </span>
+                <div>
+                  <p className="font-bold">{d.title}</p>
+                  <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                    {d.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-center text-xs text-muted-foreground">
+            انتهت مدتك؟ تواصل مع الإدارة لتجديد اشتراكك بنفس الباقة أو ترقيتها.
+          </p>
+        </div>
+
+        <div className="mt-8 text-center">
+          <Button asChild size="lg" className="h-12 px-8 text-base shadow-soft-lg">
+            <Link to={ctaHref}>
+              <Beaker className="size-5" />
+              فعّل اشتراكك الآن
+            </Link>
+          </Button>
         </div>
       </section>
 
