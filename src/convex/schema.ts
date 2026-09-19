@@ -62,7 +62,10 @@ const schema = defineSchema(
       code: v.string(),
       note: v.optional(v.string()),
       usedAt: v.optional(v.number()),
-    }).index("by_code", ["code"]),
+      usedByEmail: v.optional(v.string()),
+    })
+      .index("by_code", ["code"])
+      .index("by_used_email", ["usedByEmail"]),
   },
   {
     schemaValidation: false,

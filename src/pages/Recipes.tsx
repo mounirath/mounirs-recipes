@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Doc } from "@/convex/_generated/dataModel";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +31,9 @@ import {
   Car,
   FlaskConical,
   Home,
+  KeyRound,
   ListOrdered,
+  Loader2,
   LogOut,
   Scale,
   Search,
@@ -302,16 +305,110 @@ function ArrowIcon() {
   );
 }
 
+function AccessGate({ onUnlocked }: { onUnlocked: () => void }) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const redeem = useMutation(api.access.redeem);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (code.trim().length !== 8) {
+      setError("أدخل كوداً مكوناً من 8 خانات");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await redeem({ code: code.trim() });
+      if (res.ok) {
+        onUnlocked();
+      } else {
+        setError(res.message);
+      }
+    } catch {
+      setError("حدث خطأ، حاول مرة أخرى");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex min-h-[70vh] items-center justify-center px-4">
+      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-card p-8 text-center shadow-soft-lg">
+        <span className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+          <KeyRound className="size-7" />
+        </span>
+        <h2 className="mb-1 text-xl font-bold">تنشيط الاشتراك</h2>
+        <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+          أدخل رمز الاشتراك المكوّن من 8 خانات للوصول إلى مكتبة الوصفات
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <Input
+            value={code}
+            onChange={(e) => {
+              setCode(e.target.value.toUpperCase());
+              setError(null);
+            }}
+            placeholder="XXXXXXXX"
+            dir="ltr"
+            maxLength={8}
+            className="h-12 rounded-xl text-center font-mono text-xl font-bold tracking-widest"
+            autoComplete="off"
+            autoFocus
+          />
+          {error && (
+            <p className="text-sm font-medium text-destructive">{error}</p>
+          )}
+          <Button
+            type="submit"
+            className="h-11 w-full rounded-xl shadow-soft"
+            disabled={busy}
+          >
+            {busy ? <Loader2 className="size-4 animate-spin" /> : "تفعيل الكود"}
+          </Button>
+        </form>
+        <p className="mt-4 text-xs text-muted-foreground">
+          لا تملك رمزاً؟ تواصل معنا للحصول على اشتراك.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function Recipes() {
   const { user, signOut } = useAuth();
   const recipes = useQuery(api.recipes.list, {});
   const ensureSeed = useMutation(api.recipes.ensureSeed);
+  const accessStatus = useQuery(api.access.status, {});
+  const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<"all" | "cleaners" | "cars">("all");
   const [selected, setSelected] = useState<Recipe | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [signOutDialog, setSignOutDialog] = useState(false);
   const seededRef = useRef(false);
+  const pendingCode = searchParams.get("code");
+
+  // Auto-redeem a code passed from the auth page (?code=...)
+  const redeem = useMutation(api.access.redeem);
+  useEffect(() => {
+    if (!pendingCode || accessStatus?.hasAccess) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await redeem({ code: pendingCode });
+        if (!cancelled && res.ok) {
+          setSearchParams({}, { replace: true });
+        }
+      } catch {
+        // leave the code in the URL; the gate lets the user retry manually
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [pendingCode, accessStatus?.hasAccess, redeem, setSearchParams]);
 
   // One-time seed on first authenticated visit
   useEffect(() => {
@@ -344,6 +441,41 @@ export default function Recipes() {
     await signOut();
     window.location.href = "/";
   };
+
+  // Signed in but has not redeemed an access code yet
+  if (accessStatus != null && !accessStatus.hasAccess) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+            <a href="/" className="flex items-center gap-2.5">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
+                <FlaskConical className="size-5" />
+              </span>
+              <span className="text-lg font-bold tracking-tight">
+                Mounir Formule
+              </span>
+            </a>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="gap-1.5"
+            >
+              <LogOut className="size-4" />
+              خروج
+            </Button>
+          </div>
+        </header>
+        <AccessGate
+          onUnlocked={() => {
+            setSearchParams({}, { replace: true });
+            window.location.reload();
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">

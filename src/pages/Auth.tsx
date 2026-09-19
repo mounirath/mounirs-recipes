@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/input-otp";
 
 import { useAuth } from "@/hooks/use-auth";
-import logo from "@/assets/logo.svg";
 import {
   ArrowLeft,
   ArrowRight,
   FlaskConical,
+  KeyRound,
   Loader2,
   Mail,
 } from "lucide-react";
@@ -40,6 +40,8 @@ function resolveRedirectAfterAuth(
   return fallback;
 }
 
+type Step = "signIn" | { email: string; pendingCode?: string };
+
 function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
   const navigate = useNavigate();
@@ -48,10 +50,14 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     searchParams.get("returnTo"),
     redirectAfterAuth,
   );
-  const [step, setStep] = useState<"signIn" | { email: string }>("signIn");
+  const [step, setStep] = useState<Step>("signIn");
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Access code captured before signing in
+  const [accessCode, setAccessCode] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -86,7 +92,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
-      navigate(redirect);
+      // Signed in — if a code was captured, redeem it on the recipes gate;
+      // otherwise proceed (gate will ask for the code).
+      if (accessCode.trim()) {
+        navigate(`${redirect}?code=${encodeURIComponent(accessCode.trim())}`);
+      } else {
+        navigate(redirect);
+      }
     } catch (error) {
       console.error("OTP verification error:", error);
       setError("رمز التحقق غير صحيح، حاول مرة أخرى.");
@@ -134,46 +146,78 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                 </div>
                 <CardTitle className="text-xl">دخول المشتركين</CardTitle>
                 <CardDescription className="leading-relaxed">
-                  أدخل بريدك الإلكتروني المسجّل لإرسال رمز الدخول إلى مكتبة
-                  الوصفات
+                  أدخل بريدك الإلكتروني ورمز الاشتراك للوصول إلى مكتبة الوصفات
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleEmailSubmit}>
-                <CardContent>
-                  <div className="relative flex items-center gap-2">
-                    <div className="relative flex-1">
-                      <Mail className="absolute right-3 top-3 size-4 text-muted-foreground" />
-                      <Input
-                        name="email"
-                        placeholder="name@example.com"
-                        type="email"
-                        dir="ltr"
-                        className="h-11 rounded-xl pl-4 pr-9 text-left"
-                        disabled={isLoading}
-                        required
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      size="icon"
-                      className="size-11 shrink-0 rounded-xl shadow-soft"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <ArrowLeft className="size-4" />
-                      )}
-                    </Button>
+                <CardContent className="space-y-3">
+                  {/* Access code (step 1) */}
+                  <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                      <KeyRound className="size-3.5" />
+                      رمز الاشتراك (8 خانات)
+                    </label>
+                    <Input
+                      value={accessCode}
+                      onChange={(e) => {
+                        setAccessCode(e.target.value.toUpperCase());
+                        setCodeError(null);
+                      }}
+                      placeholder="XXXXXXXX"
+                      dir="ltr"
+                      maxLength={8}
+                      className="h-11 rounded-xl text-center font-mono text-lg font-bold tracking-widest"
+                      autoComplete="off"
+                    />
+                    {codeError && (
+                      <p className="text-sm font-medium text-destructive">
+                        {codeError}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Email (step 2) */}
+                  <div className="space-y-1.5">
+                    <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                      <Mail className="size-3.5" />
+                      البريد الإلكتروني
+                    </label>
+                    <div className="relative flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <Mail className="absolute right-3 top-3 size-4 text-muted-foreground" />
+                        <Input
+                          name="email"
+                          placeholder="name@example.com"
+                          type="email"
+                          dir="ltr"
+                          className="h-11 rounded-xl pl-4 pr-9 text-left"
+                          disabled={isLoading}
+                          required
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        size="icon"
+                        className="size-11 shrink-0 rounded-xl shadow-soft"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <ArrowLeft className="size-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
                   {error && (
-                    <p className="mt-2 text-sm font-medium text-destructive">
+                    <p className="text-sm font-medium text-destructive">
                       {error}
                     </p>
                   )}
-                  <p className="mt-4 text-center text-xs leading-relaxed text-muted-foreground">
-                    الدخول متاح للمشتركين المسجّلين فقط. ستصلك رسالة تحتوي على
-                    رمز التحقق بعد إدخال بريدك.
+                  <p className="pt-1 text-center text-xs leading-relaxed text-muted-foreground">
+                    الدخول للمشتركين فقط: أدخل رمز الاشتراك الذي حصلت عليه ثم
+                    بريدك — ستصلك رسالة برمز التحقق لتأكيد الدخول.
                   </p>
                 </CardContent>
               </form>

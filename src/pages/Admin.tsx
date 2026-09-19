@@ -489,7 +489,9 @@ export default function Admin() {
                       >
                         <div className="flex min-w-0 items-center gap-2.5">
                           <span
-                            className="font-mono text-sm font-bold tracking-widest text-primary"
+                            className={`font-mono text-sm font-bold tracking-widest ${
+                              c.usedByEmail ? "text-muted-foreground line-through" : "text-primary"
+                            }`}
                             dir="ltr"
                           >
                             {c.code}
@@ -498,6 +500,21 @@ export default function Admin() {
                             <span className="truncate text-xs text-muted-foreground">
                               {c.note}
                             </span>
+                          )}
+                          {c.usedByEmail ? (
+                            <Badge
+                              variant="outline"
+                              className="shrink-0 border-amber-500/30 bg-amber-500/10 text-[10px] text-amber-600"
+                            >
+                              مستخدم
+                            </Badge>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className="shrink-0 border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-600"
+                            >
+                              متاح
+                            </Badge>
                           )}
                         </div>
                         <div className="flex shrink-0 items-center gap-1">

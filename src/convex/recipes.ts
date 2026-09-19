@@ -1,13 +1,30 @@
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
+import { ADMIN_EMAIL } from "./admin";
 
-/** All recipes, ordered. Only available to registered subscribers. */
+/**
+ * All recipes, ordered. Only for registered subscribers who redeemed a
+ * valid access code (the admin account bypasses the code check).
+ */
 export const list = query({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (userId === null) return null; // signed-out users see nothing
+
+    const user = await ctx.db.get(userId);
+    const email = user?.email?.trim().toLowerCase();
+
+    // Admin sees everything without a code
+    if (!email || email !== ADMIN_EMAIL) {
+      const redeemed = await ctx.db
+        .query("accessCodes")
+        .withIndex("by_used_email", (q) => q.eq("usedByEmail", email ?? ""))
+        .first();
+      if (!redeemed) return []; // signed in but no valid access code
+    }
+
     return await ctx.db.query("recipes").withIndex("by_category").collect();
   },
 });
