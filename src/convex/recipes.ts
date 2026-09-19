@@ -470,15 +470,13 @@ export const finalizeCatalog = mutation({
         await ctx.db.insert("recipes", r);
         inserted++;
       }
-      if (!titles.has(r.title)) inserted--; // safety, never used
-      titles.add(r.title);
     }
 
-    const total = (await ctx.db.query("recipes").collect()).length;
+    const fresh = await ctx.db.query("recipes").collect();
     return {
-      total,
-      home: total && all.filter((r) => r.category === "cleaners").length,
-      cars: all.filter((r) => r.category === "cars").length,
+      total: fresh.length,
+      home: fresh.filter((r) => r.category === "cleaners").length,
+      cars: fresh.filter((r) => r.category === "cars").length,
       inserted,
     }; // prototype recipes already carry orders 33/34
   },

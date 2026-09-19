@@ -26,7 +26,7 @@ export const validate = mutation({
     const userId = await getAuthUserId(ctx);
     if (userId === null) throw new Error("سجّل الدخول أولاً");
     const user = await ctx.db.get(userId);
-    const email = user?.email;
+    const email = user?.email?.trim().toLowerCase();
     if (!email) throw new Error("تعذّر التحقق من حسابك");
 
     // Already redeemed by this account?
@@ -57,7 +57,7 @@ export const redeem = mutation({
     const userId = await getAuthUserId(ctx);
     if (userId === null) throw new Error("سجّل الدخول أولاً");
     const user = await ctx.db.get(userId);
-    const email = user?.email;
+    const email = user?.email?.trim().toLowerCase();
     if (!email) throw new Error("تعذّر التحقق من حسابك");
 
     // Already has access?
