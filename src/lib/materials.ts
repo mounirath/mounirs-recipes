@@ -32,28 +32,28 @@ export interface RawMaterialInfo {
 
 const T = {
   blue: {
-    chip: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    iconBg: "bg-blue-500/10 text-blue-600",
+    chip: "bg-blue-400/10 text-blue-300 border-blue-400/20",
+    iconBg: "bg-blue-400/10 text-blue-300",
   },
   amber: {
-    chip: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-    iconBg: "bg-amber-500/10 text-amber-600",
+    chip: "bg-amber-400/10 text-amber-300 border-amber-400/20",
+    iconBg: "bg-amber-400/10 text-amber-300",
   },
   emerald: {
-    chip: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    iconBg: "bg-emerald-500/10 text-emerald-600",
+    chip: "bg-emerald-400/10 text-emerald-300 border-emerald-400/20",
+    iconBg: "bg-emerald-400/10 text-emerald-300",
   },
   rose: {
-    chip: "bg-rose-500/10 text-rose-600 border-rose-500/20",
-    iconBg: "bg-rose-500/10 text-rose-600",
+    chip: "bg-rose-400/10 text-rose-300 border-rose-400/20",
+    iconBg: "bg-rose-400/10 text-rose-300",
   },
   violet: {
-    chip: "bg-violet-500/10 text-violet-600 border-violet-500/20",
-    iconBg: "bg-violet-500/10 text-violet-600",
+    chip: "bg-violet-400/10 text-violet-300 border-violet-400/20",
+    iconBg: "bg-violet-400/10 text-violet-300",
   },
   slate: {
-    chip: "bg-slate-500/10 text-slate-600 border-slate-500/20",
-    iconBg: "bg-slate-500/10 text-slate-600",
+    chip: "bg-slate-400/10 text-slate-300 border-slate-400/20",
+    iconBg: "bg-slate-400/10 text-slate-300",
   },
 } as const;
 

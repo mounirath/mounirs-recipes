@@ -70,7 +70,7 @@ export function StepsList({ steps }: { steps: string }) {
           key={i}
           className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
         >
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-xs font-bold text-emerald-600">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-xs font-bold text-emerald-400">
             {i + 1}
           </span>
           <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>
@@ -266,7 +266,7 @@ export function BatchCalculator({
       </div>
 
       {Math.abs(totalPct - 100) > 0.5 && (
-        <p className="text-xs leading-relaxed text-amber-600">
+        <p className="text-xs leading-relaxed text-amber-300">
           <AlertTriangle className="mb-0.5 inline size-3.5" /> مجموع النسب في
           هذه الوصفة {totalPct.toFixed(1)}% — المتبقي يُكمَّل ماءً حسب خطوات
           التحضير.

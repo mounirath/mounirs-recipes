@@ -47,7 +47,7 @@ const categoryMeta = {
     label: "منظفات منزلية",
     short: "منزلي",
     icon: Home,
-    chip: "bg-primary/10 text-primary border-primary/20",
+    chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
     heading: "القسم الأول",
     sub: "وصفات المنظفات المنزلية",
     accent: "from-primary/10",
@@ -56,10 +56,10 @@ const categoryMeta = {
     label: "العناية بالسيارات",
     short: "سيارات",
     icon: Car,
-    chip: "bg-cyan-600/10 text-cyan-600 border-cyan-600/20",
+    chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
     heading: "القسم الثاني",
     sub: "وصفات العناية بالسيارات",
-    accent: "from-cyan-600/10",
+    accent: "from-cyan-400/10",
   },
 } as const;
 
@@ -280,7 +280,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 
               {/* Steps */}
               <section>
-                <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-emerald-600">
+                <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-emerald-400">
                   <Beaker className="size-4" />
                   طريقة التحضير
                 </h4>
@@ -290,7 +290,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
                       key={i}
                       className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
                     >
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-xs font-bold text-emerald-600">
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-xs font-bold text-emerald-400">
                         {i + 1}
                       </span>
                       <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>

@@ -60,7 +60,7 @@ function MaterialDialog({
           </section>
 
           <section>
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-blue-600">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-blue-300">
               <CheckCircle2 className="size-4" />
               المواصفات الفنية
             </h4>
@@ -70,7 +70,7 @@ function MaterialDialog({
                   key={s}
                   className="flex items-start gap-2 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
                 >
-                  <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-blue-600" />
+                  <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-blue-300" />
                   {s}
                 </li>
               ))}
@@ -93,7 +93,7 @@ function MaterialDialog({
           </section>
 
           <section>
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-600">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-300">
               <ArrowLeftRight className="size-4" />
               البدائل المتاحة
             </h4>
@@ -102,7 +102,7 @@ function MaterialDialog({
                 <Badge
                   key={a}
                   variant="outline"
-                  className="border-emerald-500/20 bg-emerald-500/5 text-xs text-emerald-700"
+                  className="border-emerald-400/20 bg-emerald-400/5 text-xs text-emerald-300"
                 >
                   {a}
                 </Badge>
@@ -222,8 +222,8 @@ export function MaterialsSection({
       )}
 
       {/* Safety note */}
-      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 sm:p-5">
-        <p className="flex items-start gap-2 text-sm leading-relaxed text-amber-700">
+      <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
+        <p className="flex items-start gap-2 text-sm leading-relaxed text-amber-300">
           <ShieldCheck className="mt-0.5 size-4 shrink-0" />
           نصيحة عامة: قبل استخدام أي مادة جديدة، اطلب ورقة بيانات السلامة (FDS)
           من المورد، وارتدِ دائماً قفازات ونظارات عند التعامل مع المواد
