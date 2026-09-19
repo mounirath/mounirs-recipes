@@ -482,20 +482,62 @@ export const finalizeCatalog = mutation({
   },
 });
 
-/** One-time seed: inserts starter recipes exactly once, guarded by meta flag. */
+/**
+ * Idempotent catalog sync (runs once, guarded by meta flag):
+ * 1. Removes duplicate recipes (same title) keeping the oldest copy.
+ * 2. Inserts any missing canonical recipes (home 1–22, cars 23–32, prototypes 33–34).
+ * 3. Renumbers canonical recipes to their canonical order.
+ */
 export const ensureSeed = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
-    if (userId === null) return;
+    if (userId === null) return { ok: false };
+
     const marker = await ctx.db
       .query("meta")
-      .withIndex("by_key", (q) => q.eq("key", "recipes_seeded"))
+      .withIndex("by_key", (q) => q.eq("key", "catalog_synced_v1"))
       .first();
-    if (marker) return; // already seeded
-    await ctx.db.insert("meta", { key: "recipes_seeded", value: "1" });
-    for (const r of seedRecipes) {
-      await ctx.db.insert("recipes", r);
+    if (marker) return { ok: true, skipped: true };
+    await ctx.db.insert("meta", { key: "catalog_synced_v1", value: "1" });
+
+    const all = await ctx.db.query("recipes").collect();
+
+    // 1) Dedupe by title — keep the first-created copy
+    const seen = new Set<string>();
+    const toDelete: string[] = [];
+    for (const r of all.slice().sort((a, b) => a._creationTime - b._creationTime)) {
+      if (seen.has(r.title)) toDelete.push(r._id);
+      else seen.add(r.title);
     }
+    for (const id of toDelete) await ctx.db.delete(id as never);
+
+    // 2) Insert missing canonical recipes
+    const canonical = [...homeCareBatch, ...carCareBatch, ...seedRecipes];
+    let inserted = 0;
+    for (const r of canonical) {
+      if (!seen.has(r.title)) {
+        await ctx.db.insert("recipes", r);
+        inserted++;
+      }
+    }
+
+    // 3) Renumber canonical recipes (home 1–22, cars 23–32; prototypes carry 33/34)
+    const homeTitles = new Set(homeCareBatch.map((r) => r.title));
+    const carTitles = new Set(carCareBatch.map((r) => r.title));
+    const fresh = await ctx.db.query("recipes").collect();
+    let h = 0;
+    let c = 22;
+    for (const r of fresh) {
+      if (homeTitles.has(r.title)) {
+        h++;
+        if (r.order !== h) await ctx.db.patch(r._id, { order: h });
+      } else if (carTitles.has(r.title)) {
+        c++;
+        if (r.order !== c) await ctx.db.patch(r._id, { order: c });
+      }
+    }
+
+    return { ok: true, inserted, removed: toDelete.length, total: fresh.length };
   },
 });
