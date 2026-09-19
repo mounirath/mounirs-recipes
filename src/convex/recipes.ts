@@ -57,6 +57,140 @@ const seedRecipes: {
   },
 ];
 
+/** One-time import: car-care recipes 23–32 (guarded by meta flag, no-op after first run). */
+export const importCarCareBatch = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const marker = await ctx.db
+      .query("meta")
+      .withIndex("by_key", (q) => q.eq("key", "car_care_batch_imported"))
+      .first();
+    if (marker) return { skipped: true };
+    await ctx.db.insert("meta", { key: "car_care_batch_imported", value: "1" });
+    for (const r of carCareBatch) {
+      await ctx.db.insert("recipes", r);
+    }
+    return { skipped: false };
+  },
+});
+
+const carCareBatch: {
+  title: string;
+  category: "cars";
+  percentages: string;
+  steps: string;
+  warnings?: string;
+  order: number;
+}[] = [
+  {
+    title: "شامبو السيارات",
+    category: "cars",
+    percentages:
+      "Texapon N70: 8.0%\nCDE: 2.0%\nPropylene Glycol: 2.0%\nحمض الستريك: 0.5%\nFormol: 0.2%\nعطر: 0.5%\nماء: 86.8%",
+    steps:
+      "1. ضع الماء في وعاء.\n2. أضف Texapon N70 مع التحريك حتى الذوبان.\n3. أضف CDE وحرك.\n4. أضف Propylene Glycol.\n5. أذب حمض الستريك في قليل من الماء وأضفه لضبط pH.\n6. أضف Formol ثم العطر.\n7. أكمل الماء إلى 100%.\n8. عبّئ في عبوات.",
+    warnings:
+      "ارتدِ قفازات ونظارات عند التعامل مع المواد الكيميائية.\nتجنب ملامسة العين والابتلاع.",
+    order: 23,
+  },
+  {
+    title: "منتج تنظيف زجاج السيارات",
+    category: "cars",
+    percentages:
+      "Isopropanol: 10.0%\nPropylene Glycol: 5.0%\nTexapon N70: 2.0%\nحمض الستريك: 0.3%\nFormol: 0.2%\nماء: 82.5%",
+    steps:
+      "1. اخلط الماء مع Isopropanol.\n2. أضف Texapon N70 وحرك.\n3. أضف Propylene Glycol.\n4. أذب حمض الستريك في قليل من الماء وأضفه.\n5. أضف Formol.\n6. أكمل الماء إلى 100%.\n7. عبّئ في بخاخ.",
+    warnings:
+      "قابل للاشتعال (Isopropanol) — ابتعد عن اللهب.\nاستخدم في مكان جيد التهوية.",
+    order: 24,
+  },
+  {
+    title: "منتج تلميع لوحة القيادة (تابلوه)",
+    category: "cars",
+    percentages:
+      "Propylene Glycol: 5.0%\nCétiol C5: 10.0%\nIsopropanol: 7.0%\nGlycerine: 3.0%\nFormol: 0.5%\nماء: 74.5%",
+    steps:
+      "1. اخلط الماء مع Isopropanol.\n2. أضف Cétiol C5 وحرك.\n3. أضف Propylene Glycol ثم Glycerine.\n4. أضف Formol.\n5. أكمل الماء إلى 100%.\n6. عبّئ في بخاخ.",
+    warnings: "استخدم في مكان جيد التهوية. تجنب ملامسة العين.",
+    order: 25,
+  },
+  {
+    title: "منتج تنظيف المحرك من الزيوت والشحوم",
+    category: "cars",
+    percentages:
+      "Butyl Glycol: 10.0%\nTexapon N70: 8.0%\nPropylene Glycol: 5.0%\nCétiol C5: 3.0%\nFormol: 0.2%\nماء: 73.8%",
+    steps:
+      "1. ضع الماء في وعاء.\n2. أضف Texapon N70 مع التحريك.\n3. أضف Butyl Glycol ثم Propylene Glycol.\n4. أضف Cétiol C5.\n5. أضف Formol.\n6. أكمل الماء إلى 100%.\n7. عبّئ في عبوات.",
+    warnings:
+      "ارتدِ قفازات ونظارات واقية.\nبعّد عن مصادر الشرر واللهب أثناء الاستخدام.",
+    order: 26,
+  },
+  {
+    title: "منتج La Mousse لتنظيف السيارات",
+    category: "cars",
+    percentages:
+      "Texapon N70: 10.0%\nCDE: 3.0%\nPropylene Glycol: 2.0%\nحمض الستريك: 0.5%\nFormol: 0.3%\nعطر: 0.1%\nماء: 83.9%",
+    steps:
+      "1. ضع الماء في وعاء.\n2. أضف Texapon N70 مع التحريك.\n3. أضف CDE ثم Propylene Glycol.\n4. أذب حمض الستريك في قليل من الماء وأضفه.\n5. أضف Formol ثم العطر.\n6. أكمل الماء إلى 100%.\n7. عبّئ في عبوات رغوية.",
+    warnings: "تجنب ملامسة العين.\nخزن بعيداً عن الشمس والحرارة.",
+    order: 27,
+  },
+  {
+    title: "منتج مبرد محرك السيارة",
+    category: "cars",
+    percentages:
+      "Mono Ethylene Glycol (MEG): 50.0%\nماء مقطر: 48.0%\nInhibiteur de Corrosion: 1.5%\nAnti-Foaming Agent: 0.3%\nملون: 0.2%",
+    steps:
+      "1. اخلط MEG مع الماء المقطر.\n2. أضف Inhibiteur de Corrosion مع التحريك.\n3. أضف Anti-Foaming Agent.\n4. أضف الملون.\n5. حرك جيداً حتى التجانس.\n6. عبّئ في عبوات مناسبة.",
+    warnings:
+      "سام إذا ابتُلع — حافظ بعيداً عن متناول الأطفال والحيوانات.\nتجنب ملامسة الجلد والعين.",
+    order: 28,
+  },
+  {
+    title: "منتج مزيل الضباب من الزجاج الداخلي",
+    category: "cars",
+    percentages:
+      "Isopropanol: 20.0%\nPropylene Glycol: 5.0%\nماء مقطر: 73.0%\nFormol: 0.5%\nملون: 0.2%",
+    steps:
+      "1. اخلط الماء مع Isopropanol.\n2. أضف Propylene Glycol.\n3. أضف Formol.\n4. أضف الملون.\n5. أكمل الماء إلى 100%.\n6. عبّئ في بخاخ.",
+    warnings:
+      "قابل للاشتعال — ابتعد عن اللهب والشرر.\nرشّ في مكان جيد التهوية.",
+    order: 29,
+  },
+  {
+    title: "منتج عطر السيارات",
+    category: "cars",
+    percentages:
+      "Propylene Glycol: 10.0%\nزيت عطري: 5.0%\nماء مقطر: 85.0%\nFormol: 0.5%",
+    steps:
+      "1. اخلط Propylene Glycol مع الزيت العطري.\n2. أضف الماء المقطر تدريجياً مع التحريك.\n3. أضف Formol.\n4. حرك جيداً.\n5. عبّئ في بخاخ.",
+    warnings: "تجنب ملامسة العين والجلد الحساس.\nخزن بعيداً عن الحرارة.",
+    order: 30,
+  },
+  {
+    title: "منتج تنظيف وتجديد عجلات السيارة",
+    category: "cars",
+    percentages:
+      "Texapon N70: 7.0%\nPropylene Glycol: 3.0%\nC.O.D: 5.0%\nحمض الستريك: 1.0%\nFormol: 0.3%\nماء: 83.7%",
+    steps:
+      "1. ضع الماء في وعاء.\n2. أضف Texapon N70 مع التحريك.\n3. أضف Propylene Glycol ثم C.O.D.\n4. أذب حمض الستريك في قليل من الماء وأضفه.\n5. أضف Formol.\n6. أكمل الماء إلى 100%.\n7. عبّئ في بخاخ.",
+    warnings:
+      "ارتدِ قفازات عند الاستخدام.\nتجنب الرش على الفرامل أو الأجزاء الكهربائية.",
+    order: 31,
+  },
+  {
+    title: "سائل مساحات الزجاج",
+    category: "cars",
+    percentages:
+      "ماء مقطر: 70.0%\nIsopropanol: 20.0%\nمادة فعالة سطحياً: 1.0%\nPropylene Glycol: 5.0%\nFormol: 0.2%\nعطر: 0.2%",
+    steps:
+      "1. اخلط الماء مع Isopropanol.\n2. أضف المادة الفعالة سطحياً وحرك.\n3. أضف Propylene Glycol.\n4. أضف Formol ثم العطر.\n5. أكمل الماء إلى 100%.\n6. عبّئ في عبوات.",
+    warnings:
+      "قابل للاشتعال — ابتعد عن اللهب.\nلا تستخدمه في درجات التجمد الشديد دون تعديل النسب.",
+    order: 32,
+  },
+];
+
 /** One-time seed: inserts starter recipes exactly once, guarded by meta flag. */
 export const ensureSeed = mutation({
   args: {},
