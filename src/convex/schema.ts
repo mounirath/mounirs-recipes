@@ -56,6 +56,13 @@ const schema = defineSchema(
       key: v.string(),
       value: v.string(),
     }).index("by_key", ["key"]),
+
+    // access codes for subscribing (8 chars: digits + latin letters)
+    accessCodes: defineTable({
+      code: v.string(),
+      note: v.optional(v.string()),
+      usedAt: v.optional(v.number()),
+    }).index("by_code", ["code"]),
   },
   {
     schemaValidation: false,

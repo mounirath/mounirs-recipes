@@ -26,16 +26,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 import {
   Car,
+  Copy,
   FlaskConical,
   Home,
+  KeyRound,
   Loader2,
   Lock,
   LogOut,
   Pencil,
   Plus,
   Search,
+  Sparkles,
   Trash2,
   Users,
   X,
@@ -71,10 +75,56 @@ export default function Admin() {
     api.admin.listSubscribers,
     isAdmin === true ? {} : "skip",
   );
+  const accessCodes = useQuery(
+    api.admin.listAccessCodes,
+    isAdmin === true ? {} : "skip",
+  );
 
   const createRecipe = useMutation(api.admin.createRecipe);
   const updateRecipe = useMutation(api.admin.updateRecipe);
   const deleteRecipe = useMutation(api.admin.deleteRecipe);
+  const generateAccessCode = useMutation(api.admin.generateAccessCode);
+  const deleteAccessCode = useMutation(api.admin.deleteAccessCode);
+
+  const [generating, setGenerating] = useState(false);
+  const [codeNote, setCodeNote] = useState("");
+  const [deleteCodeId, setDeleteCodeId] = useState<Id<"accessCodes"> | null>(
+    null,
+  );
+
+  const handleGenerateCode = async () => {
+    setGenerating(true);
+    try {
+      const code = await generateAccessCode({
+        note: codeNote.trim() || undefined,
+      });
+      setCodeNote("");
+      toast.success(`تم توليد الكود: ${code}`, {
+        description: "انقر على زر النسخ لنسخه",
+        duration: 6000,
+      });
+    } catch {
+      toast.error("تعذّر توليد الكود، حاول مرة أخرى");
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleCopyCode = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success(`تم نسخ ${code}`);
+    } catch {
+      toast.error("تعذّر النسخ — انسخ الكود يدوياً");
+    }
+  };
+
+  const handleDeleteCode = async () => {
+    if (!deleteCodeId) return;
+    await deleteAccessCode({ id: deleteCodeId });
+    setDeleteCodeId(null);
+    toast.success("تم حذف الكود");
+  };
 
   // Redirect non-admins away
   useEffect(() => {
@@ -387,6 +437,95 @@ export default function Admin() {
           {/* Recipes list + subscribers */}
           <div className="space-y-6 lg:col-span-3">
             <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="flex items-center gap-2 font-bold">
+                  <KeyRound className="size-4 text-primary" />
+                  أكواد الوصول
+                </h2>
+                <Badge variant="outline" className="shrink-0 text-xs">
+                  8 خانات
+                </Badge>
+              </div>
+              <div className="mb-4 flex gap-2">
+                <Input
+                  value={codeNote}
+                  onChange={(e) => setCodeNote(e.target.value)}
+                  placeholder="ملاحظة (اختياري) — مثال: باقة أكتوبر"
+                  className="h-10 rounded-xl text-sm"
+                />
+                <Button
+                  type="button"
+                  onClick={handleGenerateCode}
+                  disabled={generating}
+                  className="h-10 shrink-0 gap-1.5 rounded-xl shadow-soft"
+                >
+                  {generating ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="size-4" />
+                  )}
+                  توليد كود
+                </Button>
+              </div>
+              {accessCodes == null ? (
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10 rounded-xl" />
+                  ))}
+                </div>
+              ) : accessCodes.length === 0 ? (
+                <p className="py-6 text-center text-sm text-muted-foreground">
+                  لا توجد أكواد بعد — ولّد أول كود وشاركه مع مشتركينك.
+                </p>
+              ) : (
+                <div className="max-h-64 space-y-2 overflow-y-auto pl-1">
+                  {accessCodes
+                    .slice()
+                    .sort((a, b) => b._creationTime - a._creationTime)
+                    .map((c) => (
+                      <div
+                        key={c._id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/50 px-3 py-2.5"
+                      >
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <span
+                            className="font-mono text-sm font-bold tracking-widest text-primary"
+                            dir="ltr"
+                          >
+                            {c.code}
+                          </span>
+                          {c.note && (
+                            <span className="truncate text-xs text-muted-foreground">
+                              {c.note}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => handleCopyCode(c.code)}
+                            title="نسخ"
+                          >
+                            <Copy className="size-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 text-destructive hover:text-destructive"
+                            onClick={() => setDeleteCodeId(c._id)}
+                            title="حذف"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </section>
+            <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
               <h2 className="mb-4 font-bold">الوصفات الحالية</h2>
               {recipes == null ? (
                 <div className="space-y-2">
@@ -522,6 +661,27 @@ export default function Admin() {
             <AlertDialogCancel>إلغاء</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Code delete confirmation */}
+      <AlertDialog open={deleteCodeId !== null} onOpenChange={(o) => !o && setDeleteCodeId(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader className="text-right">
+            <AlertDialogTitle>حذف كود الوصول؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              لن يتمكن من يستخدم هذا الكود من الاشتراك بعد الحذف.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCode}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
               حذف نهائي

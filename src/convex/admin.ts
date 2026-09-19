@@ -82,6 +82,62 @@ export const deleteRecipe = mutation({
   },
 });
 
+/* ----------------------------- Access codes ----------------------------- */
+
+const CODE_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+function generateRandomCode(): string {
+  const bytes = new Uint8Array(8);
+  crypto.getRandomValues(bytes);
+  let code = "";
+  for (const b of bytes) {
+    code += CODE_ALPHABET[b % CODE_ALPHABET.length];
+  }
+  return code;
+}
+
+/** Generate a unique 8-character access code (digits + latin letters). */
+export const generateAccessCode = mutation({
+  args: { note: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    if (!(await isAdmin(ctx))) throw new Error("غير مصرح");
+    let code = generateRandomCode();
+    // Ensure uniqueness against existing codes
+    for (let i = 0; i < 5; i++) {
+      const existing = await ctx.db
+        .query("accessCodes")
+        .withIndex("by_code", (q) => q.eq("code", code))
+        .first();
+      if (!existing) break;
+      code = generateRandomCode();
+    }
+    const id = await ctx.db.insert("accessCodes", {
+      code,
+      note: args.note?.trim() || undefined,
+    });
+
+    return code;
+  },
+});
+
+/** List all access codes, newest first. */
+export const listAccessCodes = query({
+  args: {},
+  handler: async (ctx) => {
+    if (!(await isAdmin(ctx))) return null;
+    return await ctx.db.query("accessCodes").collect();
+  },
+});
+
+/** Delete an access code. */
+export const deleteAccessCode = mutation({
+  args: { id: v.id("accessCodes") },
+  handler: async (ctx, args) => {
+    if (!(await isAdmin(ctx))) throw new Error("غير مصرح");
+    await ctx.db.delete(args.id);
+  },
+});
+
 /* ----------------------------- Subscribers ----------------------------- */
 
 /** All registered users (subscribers), newest first. */
