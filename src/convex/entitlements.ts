@@ -1,4 +1,5 @@
 import type { QueryCtx } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 import { ADMIN_EMAIL } from "./admin";
 
 export type Pkg = "home" | "cars" | "all";
@@ -13,12 +14,12 @@ export function categoriesForPkg(pkg: Pkg): string[] {
 /**
  * Returns the effective package for a signed-in user:
  * - admin: always "all"
- * - redeemed access code (legacy/simple access): "all"
  * - active subscription: its package
+ * - redeemed access code (legacy/simple access): "all"
  * - otherwise: null (no access)
  */
 export async function effectivePkg(ctx: QueryCtx): Promise<Pkg | null> {
-  const userId = await getAuthUserIdSafe(ctx);
+  const userId = await getAuthUserId(ctx);
   if (userId === null) return null;
   const user = await ctx.db.get(userId);
   const email = user?.email?.trim().toLowerCase();
@@ -44,9 +45,4 @@ export async function effectivePkg(ctx: QueryCtx): Promise<Pkg | null> {
   if (redeemed) return "all";
 
   return null;
-}
-
-async function getAuthUserIdSafe(ctx: QueryCtx) {
-  const { getAuthUserId } = await import("@convex-dev/auth/server");
-  return await getAuthUserId(ctx);
 }
