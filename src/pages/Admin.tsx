@@ -46,6 +46,31 @@ import {
 } from "lucide-react";
 
 type Recipe = Doc<"recipes">;
+type Subscriber = {
+  _id: string;
+  email: string | null;
+  name: string | null;
+  _creationTime: number;
+  subscription: {
+    pkg: "home" | "cars" | "all";
+    duration: "month" | "year" | "lifetime";
+    expiresAt: number | undefined;
+    active: boolean;
+  } | null;
+};
+
+const PKG_LABELS: Record<string, string> = {
+  home: "باقة منزلية",
+  cars: "باقة سيارات",
+  all: "كل الباقات",
+  none: "بدون باقة",
+};
+
+const DURATION_LABELS: Record<string, string> = {
+  month: "شهر",
+  year: "سنة",
+  lifetime: "مدى الحياة",
+};
 
 const emptyForm = {
   title: "",
@@ -85,6 +110,46 @@ export default function Admin() {
   const deleteRecipe = useMutation(api.admin.deleteRecipe);
   const generateAccessCode = useMutation(api.admin.generateAccessCode);
   const deleteAccessCode = useMutation(api.admin.deleteAccessCode);
+  const setSubscription = useMutation(api.admin.setSubscription);
+  const revokeSubscription = useMutation(api.admin.revokeSubscription);
+
+  const [subEditor, setSubEditor] = useState<{
+    email: string;
+    pkg: "home" | "cars" | "all";
+    duration: "month" | "year" | "lifetime";
+  } | null>(null);
+  const [subBusy, setSubBusy] = useState(false);
+
+  const openSubEditor = (s: Subscriber) => {
+    setSubEditor({
+      email: s.email ?? "",
+      pkg: s.subscription?.pkg ?? "all",
+      duration: s.subscription?.duration ?? "month",
+    });
+  };
+
+  const saveSubscription = async () => {
+    if (!subEditor) return;
+    setSubBusy(true);
+    try {
+      await setSubscription({
+        email: subEditor.email,
+        pkg: subEditor.pkg,
+        duration: subEditor.duration,
+      });
+      toast.success(`تم تحديث اشتراك ${subEditor.email}`);
+      setSubEditor(null);
+    } catch {
+      toast.error("تعذّر حفظ الاشتراك");
+    } finally {
+      setSubBusy(false);
+    }
+  };
+
+  const handleRevoke = async (email: string) => {
+    await revokeSubscription({ email });
+    toast.success(`تم إلغاء اشتراك ${email}`);
+  };
 
   const [generating, setGenerating] = useState(false);
   const [codeNote, setCodeNote] = useState("");
@@ -614,14 +679,14 @@ export default function Admin() {
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 font-bold">
                   <Users className="size-4 text-primary" />
-                  المشتركون المسجّلون
+                  إدارة الأعضاء والاشتراكات
                 </h2>
                 <div className="relative w-44">
                   <Search className="absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     value={subSearch}
                     onChange={(e) => setSubSearch(e.target.value)}
-                    placeholder="بحث..."
+                    placeholder="بحث بالبريد..."
                     className="h-9 rounded-xl pr-9 text-sm"
                   />
                 </div>
@@ -629,35 +694,89 @@ export default function Admin() {
               {subscribers == null ? (
                 <div className="space-y-2">
                   {Array.from({ length: 3 }).map((_, i) => (
-                    <Skeleton key={i} className="h-10 rounded-xl" />
+                    <Skeleton key={i} className="h-14 rounded-xl" />
                   ))}
                 </div>
               ) : filteredSubs.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  لا يوجد مشتركون بعد.
+                  لا يوجد أعضاء بعد.
                 </p>
               ) : (
-                <div className="max-h-72 space-y-2 overflow-y-auto pl-1">
-                  {filteredSubs.map((s) => (
-                    <div
-                      key={s._id}
-                      className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/50 px-3 py-2.5"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium" dir="ltr">
-                          {s.email ?? "—"}
-                        </p>
-                        {s.name && (
-                          <p className="truncate text-xs text-muted-foreground">
-                            {s.name}
+                <div className="max-h-96 space-y-2 overflow-y-auto pl-1">
+                  {(filteredSubs as Subscriber[]).map((s) => {
+                    const sub = s.subscription;
+                    return (
+                      <div
+                        key={s._id}
+                        className="rounded-xl border border-border/60 bg-background/50 px-3 py-2.5"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium" dir="ltr">
+                              {s.email}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              مسجّل {new Date(s._creationTime).toLocaleDateString("ar")}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-1.5">
+                            {sub && sub.active ? (
+                              <Badge
+                                variant="outline"
+                                className={`text-[10px] ${
+                                  sub.pkg === "all"
+                                    ? "border-primary/30 bg-primary/10 text-primary"
+                                    : sub.pkg === "home"
+                                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
+                                      : "border-cyan-600/30 bg-cyan-600/10 text-cyan-600"
+                                }`}
+                              >
+                                {PKG_LABELS[sub.pkg]}
+                                {" · "}
+                                {DURATION_LABELS[sub.duration]}
+                              </Badge>
+                            ) : sub && !sub.active ? (
+                              <Badge
+                                variant="outline"
+                                className="border-amber-500/30 bg-amber-500/10 text-[10px] text-amber-600"
+                              >
+                                منتهي
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                                بدون باقة
+                              </Badge>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8"
+                              onClick={() => openSubEditor(s)}
+                              title="تعديل الاشتراك"
+                            >
+                              <Pencil className="size-3.5" />
+                            </Button>
+                            {sub && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="size-8 text-destructive hover:text-destructive"
+                                onClick={() => handleRevoke(s.email ?? "")}
+                                title="إلغاء الاشتراك"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                        {sub && sub.active && sub.expiresAt && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            ينتهي: {new Date(sub.expiresAt).toLocaleDateString("ar")}
                           </p>
                         )}
                       </div>
-                      <span className="shrink-0 text-xs text-muted-foreground">
-                        {new Date(s._creationTime).toLocaleDateString("ar")}
-                      </span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </section>
@@ -681,6 +800,85 @@ export default function Admin() {
               className="bg-destructive text-white hover:bg-destructive/90"
             >
               حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Subscription editor */}
+      <AlertDialog
+        open={subEditor !== null}
+        onOpenChange={(o) => !o && setSubEditor(null)}
+      >
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader className="text-right">
+            <AlertDialogTitle>تعديل الاشتراك</AlertDialogTitle>
+            <AlertDialogDescription dir="ltr" className="text-left">
+              {subEditor?.email}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {subEditor && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  الباقة
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["home", "cars", "all"] as const).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setSubEditor({ ...subEditor, pkg: p })}
+                      className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
+                        subEditor.pkg === p
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-card hover:border-primary/40"
+                      }`
+                    }
+                    >
+                      {PKG_LABELS[p]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  المدة
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {(["month", "year", "lifetime"] as const).map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() =>
+                        setSubEditor({ ...subEditor, duration: d })
+                      }
+                      className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition-colors ${
+                        subEditor.duration === d
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-card hover:border-primary/40"
+                      }`
+                    }
+                    >
+                      {DURATION_LABELS[d]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={saveSubscription}
+              disabled={subBusy}
+              className="shadow-soft"
+            >
+              {subBusy ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                "حفظ الاشتراك"
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

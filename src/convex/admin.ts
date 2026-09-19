@@ -1,7 +1,11 @@
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { QueryCtx, mutation, query } from "./_generated/server";
-import { categoryValidator } from "./schema";
+import {
+  categoryValidator,
+  durationValidator,
+  pkgValidator,
+} from "./schema";
 
 /** The single admin account, identified by email. */
 export const ADMIN_EMAIL = "mounirathdz@gmail.com";
@@ -138,22 +142,119 @@ export const deleteAccessCode = mutation({
   },
 });
 
+/* ----------------------------- Subscriptions ----------------------------- */
+
+const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+const YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+function expiryFor(duration: "month" | "year" | "lifetime"): number | undefined {
+  const now = Date.now();
+  if (duration === "month") return now + MONTH_MS;
+  if (duration === "year") return now + YEAR_MS;
+  return undefined; // lifetime
+}
+
+/** Set or update a member's subscription (admin only). */
+export const setSubscription = mutation({
+  args: {
+    email: v.string(),
+    pkg: pkgValidator,
+    duration: durationValidator,
+  },
+  handler: async (ctx, args) => {
+    if (!(await isAdmin(ctx))) throw new Error("غير مصرح");
+    const email = args.email.trim().toLowerCase();
+    if (!email) throw new Error("البريد مطلوب");
+
+    const existing = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    const expiresAt = expiryFor(args.duration);
+    const adminEmail = await getCurrentUserEmail(ctx);
+
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        pkg: args.pkg,
+        duration: args.duration,
+        expiresAt,
+        updatedAt: Date.now(),
+        updatedBy: adminEmail ?? undefined,
+      });
+      return existing._id;
+    }
+    return await ctx.db.insert("subscriptions", {
+      email,
+      pkg: args.pkg,
+      duration: args.duration,
+      expiresAt,
+      updatedAt: Date.now(),
+      updatedBy: adminEmail ?? undefined,
+    });
+  },
+});
+
+/** Revoke a member's subscription (admin only). */
+export const revokeSubscription = mutation({
+  args: { email: v.string() },
+  handler: async (ctx, args) => {
+    if (!(await isAdmin(ctx))) throw new Error("غير مصرح");
+    const email = args.email.trim().toLowerCase();
+    const existing = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    if (existing) await ctx.db.delete(existing._id);
+  },
+});
+
 /* ----------------------------- Subscribers ----------------------------- */
 
-/** All registered users (subscribers), newest first. */
+export interface SubscriberRow {
+  _id: string;
+  email: string | null;
+  name: string | null;
+  _creationTime: number;
+  subscription: {
+    pkg: "home" | "cars" | "all";
+    duration: "month" | "year" | "lifetime";
+    expiresAt: number | undefined;
+    active: boolean;
+  } | null;
+}
+
+/** All registered users with their subscription status, newest first. */
 export const listSubscribers = query({
   args: {},
   handler: async (ctx) => {
     if (!(await isAdmin(ctx))) return null;
     const users = await ctx.db.query("users").collect();
+    const subs = await ctx.db.query("subscriptions").collect();
+    const byEmail = new Map(subs.map((s) => [s.email, s]));
+    const now = Date.now();
+
     return users
-      .filter((u) => !u.isAnonymous)
-      .map((u) => ({
-        _id: u._id,
-        email: u.email ?? null,
-        name: u.name ?? null,
-        _creationTime: u._creationTime,
-      }))
+      .filter((u) => !u.isAnonymous && u.email)
+      .map((u) => {
+        const email = u.email as string;
+        const s = byEmail.get(email);
+        return {
+          _id: u._id,
+          email,
+          name: u.name ?? null,
+          _creationTime: u._creationTime,
+          subscription:
+            s !== undefined
+              ? {
+                  pkg: s.pkg,
+                  duration: s.duration,
+                  expiresAt: s.expiresAt,
+                  active: s.expiresAt === undefined || s.expiresAt > now,
+                }
+              : null,
+        };
+      })
       .sort((a, b) => b._creationTime - a._creationTime);
   },
 });

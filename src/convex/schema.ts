@@ -22,6 +22,20 @@ export const categoryValidator = v.union(
 );
 export type RecipeCategory = Infer<typeof categoryValidator>;
 
+export const pkgValidator = v.union(
+  v.literal("home"),
+  v.literal("cars"),
+  v.literal("all"),
+);
+export type SubscriptionPkg = Infer<typeof pkgValidator>;
+
+export const durationValidator = v.union(
+  v.literal("month"),
+  v.literal("year"),
+  v.literal("lifetime"),
+);
+export type SubscriptionDuration = Infer<typeof durationValidator>;
+
 const schema = defineSchema(
   {
     // default auth tables using convex auth.
@@ -66,6 +80,16 @@ const schema = defineSchema(
     })
       .index("by_code", ["code"])
       .index("by_used_email", ["usedByEmail"]),
+
+    // admin-managed subscriptions per member email
+    subscriptions: defineTable({
+      email: v.string(),
+      pkg: pkgValidator, // "home" | "cars" | "all"
+      duration: durationValidator, // "month" | "year" | "lifetime"
+      expiresAt: v.optional(v.number()), // ms epoch; undefined = lifetime/no expiry
+      updatedAt: v.number(),
+      updatedBy: v.optional(v.string()),
+    }).index("by_email", ["email"]),
   },
   {
     schemaValidation: false,

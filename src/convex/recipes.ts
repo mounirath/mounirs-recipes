@@ -1,11 +1,11 @@
-import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query } from "./_generated/server";
-import { ADMIN_EMAIL } from "./admin";
+import { categoriesForPkg, effectivePkg } from "./entitlements";
 
 /**
- * All recipes, ordered. Only for registered subscribers who redeemed a
- * valid access code (the admin account bypasses the code check).
+ * Recipes scoped to the caller's subscription package. Returns null when
+ * signed out, [] when signed in without any entitlement, and the filtered
+ * (ordered) list otherwise.
  */
 export const list = query({
   args: {},
@@ -13,19 +13,12 @@ export const list = query({
     const userId = await getAuthUserId(ctx);
     if (userId === null) return null; // signed-out users see nothing
 
-    const user = await ctx.db.get(userId);
-    const email = user?.email?.trim().toLowerCase();
+    const pkg = await effectivePkg(ctx);
+    if (pkg === null) return []; // signed in but no entitlement
 
-    // Admin sees everything without a code
-    if (!email || email !== ADMIN_EMAIL) {
-      const redeemed = await ctx.db
-        .query("accessCodes")
-        .withIndex("by_used_email", (q) => q.eq("usedByEmail", email ?? ""))
-        .first();
-      if (!redeemed) return []; // signed in but no valid access code
-    }
-
-    return await ctx.db.query("recipes").withIndex("by_category").collect();
+    const allowed = new Set(categoriesForPkg(pkg));
+    const all = await ctx.db.query("recipes").withIndex("by_category").collect();
+    return all.filter((r) => allowed.has(r.category));
   },
 });
 

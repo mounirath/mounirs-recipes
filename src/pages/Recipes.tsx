@@ -494,6 +494,18 @@ export default function Recipes() {
             <span className="truncate font-medium text-foreground">
               {user?.email ?? user?.name ?? "مشترك"}
             </span>
+            {accessStatus?.pkg && (
+              <Badge
+                variant="outline"
+                className="shrink-0 border-primary/30 bg-primary/10 text-[10px] text-primary"
+              >
+                {accessStatus.pkg === "all"
+                  ? "كل الباقات"
+                  : accessStatus.pkg === "home"
+                    ? "باقة منزلية"
+                    : "باقة سيارات"}
+              </Badge>
+            )}
           </span>
           <Button
             variant="outline"
