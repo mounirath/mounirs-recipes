@@ -38,7 +38,7 @@ const seedRecipes: {
     steps: "1. أضف الماء المقطر إلى وعاء زجاجي نظيف.\n2. أضف الكحول الإيثيلي وقلّب جيداً.\n3. أضف زيت شجرة الشاي واخلط حتى يتجانس.\n4. انقل الخليط إلى زجاجة بخاخ معقمة.",
     warnings:
       "قابل للاشتعال، ابتعد عن مصادر اللهب والحرارة.\nتجنب ملامسة العين المباشرة.",
-    order: 1,
+    order: 33,
   },
   {
     title: "ملمع طلاء السيارة (Wax)",
@@ -46,7 +46,7 @@ const seedRecipes: {
     percentages: "شمع كارنوبا: 30%\nسيليكون سائل: 40%\nمذيب بيترولي: 30%",
     steps: "1. اخلط الشمع مع المذيب على حمام مائي دافئ (60 درجة).\n2. أضف السيليكون السائل تدريجياً مع التحريك المستمر.\n3. اترك الخليط يبرد تماماً قبل الاستخدام.",
     warnings: "استخدم في مكان جيد التهوية. تجنب استنشاق الأبخرة.",
-    order: 2,
+    order: 34,
   },
 ];
 
@@ -435,6 +435,54 @@ const homeCareBatch: {
     order: 22,
   },
 ];
+
+/**
+ * Idempotent catalog finalizer: renumbers imported batches to their canonical
+ * order (home 1–22, cars 23–32), inserts prototype recipes if missing, and
+ * returns totals. Safe to run multiple times.
+ */
+export const finalizeCatalog = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("recipes").collect();
+
+    // Renumber by title match (canonical numbering from the source lists)
+    const homeTitles = new Map(homeCareBatch.map((r) => [r.title, r]));
+    const carTitles = new Map(carCareBatch.map((r) => [r.title, r]));
+
+    let homeN = 0;
+    let carN = 22;
+    for (const r of all) {
+      if (homeTitles.has(r.title)) {
+        homeN++;
+        if (r.order !== homeN) await ctx.db.patch(r._id, { order: homeN });
+      } else if (carTitles.has(r.title)) {
+        carN++;
+        if (r.order !== carN) await ctx.db.patch(r._id, { order: carN });
+      }
+    }
+
+    // Insert prototype extras (مطهر أسطح + ملمع Wax) if absent
+    const titles = new Set(all.map((r) => r.title));
+    let inserted = 0;
+    for (const r of seedRecipes) {
+      if (!titles.has(r.title)) {
+        await ctx.db.insert("recipes", r);
+        inserted++;
+      }
+      if (!titles.has(r.title)) inserted--; // safety, never used
+      titles.add(r.title);
+    }
+
+    const total = (await ctx.db.query("recipes").collect()).length;
+    return {
+      total,
+      home: total && all.filter((r) => r.category === "cleaners").length,
+      cars: all.filter((r) => r.category === "cars").length,
+      inserted,
+    }; // prototype recipes already carry orders 33/34
+  },
+});
 
 /** One-time seed: inserts starter recipes exactly once, guarded by meta flag. */
 export const ensureSeed = mutation({
