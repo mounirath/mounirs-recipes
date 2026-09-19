@@ -40,14 +40,18 @@ const seedRecipes: {
   },
 ];
 
-/** One-time seed: inserts starter recipes if the table is empty. */
+/** One-time seed: inserts starter recipes exactly once, guarded by meta flag. */
 export const ensureSeed = mutation({
   args: {},
   handler: async (ctx) => {
     const userId = await getAuthUserId(ctx);
     if (userId === null) return;
-    const existing = await ctx.db.query("recipes").first();
-    if (existing !== null) return;
+    const marker = await ctx.db
+      .query("meta")
+      .withIndex("by_key", (q) => q.eq("key", "recipes_seeded"))
+      .first();
+    if (marker) return; // already seeded
+    await ctx.db.insert("meta", { key: "recipes_seeded", value: "1" });
     for (const r of seedRecipes) {
       await ctx.db.insert("recipes", r);
     }

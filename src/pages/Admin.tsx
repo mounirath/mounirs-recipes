@@ -1,0 +1,556 @@
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  Car,
+  FlaskConical,
+  Home,
+  Loader2,
+  Lock,
+  LogOut,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  Users,
+  X,
+} from "lucide-react";
+
+type Recipe = Doc<"recipes">;
+
+const emptyForm = {
+  title: "",
+  category: "cleaners" as "cleaners" | "cars",
+  percentages: "",
+  steps: "",
+  warnings: "",
+  videoUrl: "",
+};
+
+export default function Admin() {
+  const { isLoading: authLoading, isAuthenticated, user, signOut } = useAuth();
+  const isAdmin = useQuery(api.admin.checkIsAdmin, {});
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<Id<"recipes"> | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<Id<"recipes"> | null>(null);
+  const [subSearch, setSubSearch] = useState("");
+
+  const recipes = useQuery(
+    api.admin.listAllRecipes,
+    isAdmin === true ? {} : "skip",
+  );
+  const subscribers = useQuery(
+    api.admin.listSubscribers,
+    isAdmin === true ? {} : "skip",
+  );
+
+  const createRecipe = useMutation(api.admin.createRecipe);
+  const updateRecipe = useMutation(api.admin.updateRecipe);
+  const deleteRecipe = useMutation(api.admin.deleteRecipe);
+
+  // Redirect non-admins away
+  useEffect(() => {
+    if (authLoading) return;
+    if (!isAuthenticated) {
+      navigate("/auth?returnTo=%2Fadmin", { replace: true });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
+
+  if (authLoading || isAdmin === undefined) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated && isAdmin === false) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-4 text-center">
+        <span className="flex size-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+          <Lock className="size-7" />
+        </span>
+        <h1 className="text-xl font-bold">غير مصرح بالدخول</h1>
+        <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+          هذه المنطقة مخصصة للإدارة فقط. إذا كنت تملك حساب الأدمن، سجّل الدخول
+          بالبريد الإلكتروني المخصص للإدارة.
+        </p>
+        <div className="flex gap-2">
+          <Button asChild variant="outline">
+            <Link to="/recipes">مكتبة الوصفات</Link>
+          </Button>
+          <Button asChild>
+            <Link to="/">الصفحة الرئيسية</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.href = "/";
+  };
+
+  const resetForm = () => {
+    setForm(emptyForm);
+    setEditingId(null);
+  };
+
+  const startEdit = (r: Recipe) => {
+    setEditingId(r._id);
+    setForm({
+      title: r.title,
+      category: r.category,
+      percentages: r.percentages ?? "",
+      steps: r.steps ?? "",
+      warnings: r.warnings ?? "",
+      videoUrl: r.videoUrl ?? "",
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.title.trim() || !form.steps.trim()) return;
+    setSaving(true);
+    try {
+      const nextOrder = Math.max(0, ...(recipes ?? []).map((r) => r.order)) + 1;
+      const payload = {
+        title: form.title.trim(),
+        category: form.category,
+        percentages: form.percentages,
+        steps: form.steps,
+        warnings: form.warnings.trim() || undefined,
+        videoUrl: form.videoUrl.trim() || undefined,
+        order: editingId
+          ? (recipes?.find((r) => r._id === editingId)?.order ?? nextOrder)
+          : nextOrder,
+      };
+      if (editingId) {
+        await updateRecipe({ id: editingId, ...payload });
+      } else {
+        await createRecipe(payload);
+      }
+      resetForm();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    await deleteRecipe({ id: deleteId });
+    setDeleteId(null);
+    if (editingId === deleteId) resetForm();
+  };
+
+  const filteredSubs = (subscribers ?? []).filter((s) => {
+    const q = subSearch.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      (s.email ?? "").toLowerCase().includes(q) ||
+      (s.name ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
+              <FlaskConical className="size-5" />
+            </span>
+            <div className="leading-tight">
+              <span className="block text-sm font-bold tracking-tight">
+                Mounir Formule
+              </span>
+              <span className="block text-xs text-muted-foreground">
+                لوحة الإدارة
+              </span>
+            </div>
+          </div>
+          <span className="truncate text-sm text-muted-foreground">
+            {user?.email}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/recipes">الوصفات</Link>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSignOut}
+              className="gap-1.5"
+            >
+              <LogOut className="size-4" />
+              خروج
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+        {/* Stats */}
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <StatCard
+            icon={FlaskConical}
+            label="إجمالي الوصفات"
+            value={recipes?.length ?? 0}
+          />
+          <StatCard
+            icon={Home}
+            label="منظفات منزلية"
+            value={recipes?.filter((r) => r.category === "cleaners").length ?? 0}
+          />
+          <StatCard
+            icon={Car}
+            label="العناية بالسيارات"
+            value={recipes?.filter((r) => r.category === "cars").length ?? 0}
+          />
+          <StatCard
+            icon={Users}
+            label="المشتركون"
+            value={subscribers?.length ?? 0}
+          />
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-5">
+          {/* Recipe form */}
+          <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft lg:col-span-2">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 font-bold">
+                <Plus className="size-4 text-primary" />
+                {editingId ? "تعديل وصفة" : "إضافة وصفة جديدة"}
+              </h2>
+              {editingId && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetForm}
+                  className="gap-1 text-muted-foreground"
+                >
+                  <X className="size-4" />
+                  إلغاء التعديل
+                </Button>
+              )}
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    القسم
+                  </label>
+                  <Select
+                    value={form.category}
+                    onValueChange={(v) =>
+                      setForm((f) => ({
+                        ...f,
+                        category: v as "cleaners" | "cars",
+                      }))
+                    }
+                  >
+                    <SelectTrigger className="w-full rounded-xl">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cleaners">منظفات منزلية</SelectItem>
+                      <SelectItem value="cars">العناية بالسيارات</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground">
+                    عنوان الوصفة
+                  </label>
+                  <Input
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, title: e.target.value }))
+                    }
+                    placeholder="مثال: معطر أرضيات"
+                    className="rounded-xl"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  النسب المئوية (سطر لكل مكوّن)
+                </label>
+                <Textarea
+                  value={form.percentages}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, percentages: e.target.value }))
+                  }
+                  placeholder={"ماء مقطر: 80%\nكحول إيثيلي: 19%"}
+                  className="min-h-20 rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  طريقة التحضير *
+                </label>
+                <Textarea
+                  value={form.steps}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, steps: e.target.value }))
+                  }
+                  placeholder={"1. ...\n2. ..."}
+                  className="min-h-28 rounded-xl"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  تحذيرات السلامة
+                </label>
+                <Textarea
+                  value={form.warnings}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, warnings: e.target.value }))
+                  }
+                  placeholder="قابل للاشتعال..."
+                  className="min-h-16 rounded-xl"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">
+                  رابط فيديو يوتيوب (اختياري)
+                </label>
+                <Input
+                  dir="ltr"
+                  value={form.videoUrl}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, videoUrl: e.target.value }))
+                  }
+                  placeholder="https://youtube.com/watch?v=..."
+                  className="rounded-xl text-left"
+                />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <Button
+                  type="submit"
+                  className="flex-1 rounded-xl shadow-soft"
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : editingId ? (
+                    "حفظ التعديلات"
+                  ) : (
+                    "إضافة الوصفة"
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetForm}
+                  className="rounded-xl"
+                >
+                  مسح
+                </Button>
+              </div>
+            </form>
+          </section>
+
+          {/* Recipes list + subscribers */}
+          <div className="space-y-6 lg:col-span-3">
+            <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
+              <h2 className="mb-4 font-bold">الوصفات الحالية</h2>
+              {recipes == null ? (
+                <div className="space-y-2">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <Skeleton key={i} className="h-12 rounded-xl" />
+                  ))}
+                </div>
+              ) : recipes.length === 0 ? (
+                <p className="py-6 text-center text-sm text-muted-foreground">
+                  لا توجد وصفات بعد — أضف أول وصفة من النموذج.
+                </p>
+              ) : (
+                <div className="max-h-96 space-y-2 overflow-y-auto pl-1">
+                  {recipes
+                    .slice()
+                    .sort((a, b) => a.order - b.order)
+                    .map((r) => (
+                      <div
+                        key={r._id}
+                        className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/50 p-3 transition-colors hover:border-primary/30"
+                      >
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          <Badge
+                            variant="outline"
+                            className={`shrink-0 gap-1 ${
+                              r.category === "cleaners"
+                                ? "border-primary/20 bg-primary/10 text-primary"
+                                : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
+                            }`}
+                          >
+                            {r.category === "cleaners" ? (
+                              <Home className="size-3" />
+                            ) : (
+                              <Car className="size-3" />
+                            )}
+                            {r.category === "cleaners" ? "منزلي" : "سيارات"}
+                          </Badge>
+                          <span className="truncate text-sm font-semibold">
+                            {r.title}
+                          </span>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8"
+                            onClick={() => startEdit(r)}
+                            title="تعديل"
+                          >
+                            <Pencil className="size-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-8 text-destructive hover:text-destructive"
+                            onClick={() => setDeleteId(r._id)}
+                            title="حذف"
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="flex items-center gap-2 font-bold">
+                  <Users className="size-4 text-primary" />
+                  المشتركون المسجّلون
+                </h2>
+                <div className="relative w-44">
+                  <Search className="absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={subSearch}
+                    onChange={(e) => setSubSearch(e.target.value)}
+                    placeholder="بحث..."
+                    className="h-9 rounded-xl pr-9 text-sm"
+                  />
+                </div>
+              </div>
+              {subscribers == null ? (
+                <div className="space-y-2">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <Skeleton key={i} className="h-10 rounded-xl" />
+                  ))}
+                </div>
+              ) : filteredSubs.length === 0 ? (
+                <p className="py-6 text-center text-sm text-muted-foreground">
+                  لا يوجد مشتركون بعد.
+                </p>
+              ) : (
+                <div className="max-h-72 space-y-2 overflow-y-auto pl-1">
+                  {filteredSubs.map((s) => (
+                    <div
+                      key={s._id}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/50 px-3 py-2.5"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium" dir="ltr">
+                          {s.email ?? "—"}
+                        </p>
+                        {s.name && (
+                          <p className="truncate text-xs text-muted-foreground">
+                            {s.name}
+                          </p>
+                        )}
+                      </div>
+                      <span className="shrink-0 text-xs text-muted-foreground">
+                        {new Date(s._creationTime).toLocaleDateString("ar")}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+      </main>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={deleteId !== null} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent className="rounded-2xl">
+          <AlertDialogHeader className="text-right">
+            <AlertDialogTitle>حذف الوصفة؟</AlertDialogTitle>
+            <AlertDialogDescription>
+              سيتم حذف الوصفة نهائياً ولا يمكن التراجع عن ذلك.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              حذف نهائي
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: number;
+}) {
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card p-4 shadow-soft">
+      <div className="mb-2 flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <Icon className="size-4" />
+      </div>
+      <p className="text-2xl font-extrabold tabular-nums" dir="ltr">
+        {value}
+      </p>
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+    </div>
+  );
+}

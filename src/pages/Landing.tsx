@@ -269,6 +269,12 @@ export default function Landing() {
           <p className="text-xs text-muted-foreground/70">
             &copy; {new Date().getFullYear()} جميع الحقوق محفوظة
           </p>
+          <Link
+            to="/admin"
+            className="text-xs text-muted-foreground/50 underline decoration-dotted underline-offset-4 transition-colors hover:text-muted-foreground"
+          >
+            دخول الإدارة
+          </Link>
         </div>
       </footer>
     </div>

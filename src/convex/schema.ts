@@ -43,12 +43,19 @@ const schema = defineSchema(
     recipes: defineTable({
       title: v.string(),
       category: categoryValidator,
+      email: v.optional(v.string()),
       percentages: v.string(),
       steps: v.string(),
       warnings: v.optional(v.string()),
       videoUrl: v.optional(v.string()),
       order: v.number(),
     }).index("by_category", ["category"]),
+
+    // simple key-value store for one-time flags (e.g. seed marker)
+    meta: defineTable({
+      key: v.string(),
+      value: v.string(),
+    }).index("by_key", ["key"]),
   },
   {
     schemaValidation: false,
