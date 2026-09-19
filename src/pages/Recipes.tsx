@@ -7,13 +7,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { BatchCalculator } from "@/components/RecipeBits";
+import { MaterialsSection } from "@/components/MaterialsSection";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,24 +20,27 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/hooks/use-auth";
+import { findMaterial } from "@/lib/materials";
+import { parseLines } from "@/lib/recipe-utils";
 import {
   AlertTriangle,
+  Beaker,
   Car,
+  ChevronDown,
   FlaskConical,
   Home,
   KeyRound,
-  ListOrdered,
   Loader2,
   LogOut,
   Scale,
   Search,
   X,
-  Youtube,
 } from "lucide-react";
 
 type Recipe = Doc<"recipes">;
+type Category = "all" | "cleaners" | "cars";
+type MainView = "recipes" | "materials";
 
 const categoryMeta = {
   cleaners: {
@@ -49,261 +48,24 @@ const categoryMeta = {
     short: "منزلي",
     icon: Home,
     chip: "bg-primary/10 text-primary border-primary/20",
-    dot: "bg-primary",
-    heading: "القسم الأول: وصفات المنظفات المنزلية",
-    headingAccent: "border-primary",
+    heading: "القسم الأول",
+    sub: "وصفات المنظفات المنزلية",
+    accent: "from-primary/10",
   },
   cars: {
     label: "العناية بالسيارات",
     short: "سيارات",
     icon: Car,
     chip: "bg-cyan-600/10 text-cyan-600 border-cyan-600/20",
-    dot: "bg-cyan-600",
-    heading: "القسم الثاني: وصفات العناية بالسيارات",
-    headingAccent: "border-cyan-600",
+    heading: "القسم الثاني",
+    sub: "وصفات العناية بالسيارات",
+    accent: "from-cyan-600/10",
   },
 } as const;
 
-function getYoutubeEmbed(url: string): string | null {
-  const trimmed = url.trim();
-  if (!trimmed) return null;
-  try {
-    const u = new URL(trimmed);
-    if (u.hostname.includes("youtu.be")) {
-      return `https://www.youtube.com/embed/${u.pathname.split("/")[1]}?rel=0`;
-    }
-    if (u.searchParams.has("v")) {
-      return `https://www.youtube.com/embed/${u.searchParams.get("v")}?rel=0`;
-    }
-    if (u.pathname.includes("/embed/")) return trimmed;
-  } catch {
-    return null;
-  }
-  return null;
-}
-
-function parseLines(text: string): string[] {
-  return text
-    .split("\n")
-    .map((l) => l.trim())
-    .filter(Boolean);
-}
-
-function parsePercentageLine(line: string): { name: string; pct: number | null } {
-  const m = line.match(/(.+?)\s*[:：]\s*(\d+(?:\.\d+)?)\s*%/);
-  if (m) return { name: m[1].trim(), pct: parseFloat(m[2]) };
-  const pctOnly = line.match(/(\d+(?:\.\d+)?)\s*%/);
-  return { name: line.replace(/\d+(?:\.\d+)?\s*%/, "").trim() || "مكوّن", pct: pctOnly ? parseFloat(pctOnly[1]) : null };
-}
-
-function PercentageBars({ text }: { text: string }) {
-  const lines = parseLines(text);
-  return (
-    <div className="space-y-2.5">
-      {lines.map((line, i) => {
-        const { name, pct } = parsePercentageLine(line);
-        return (
-          <div key={i}>
-            <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="font-semibold">{name}</span>
-              <span className="font-mono text-muted-foreground" dir="ltr">
-                {pct !== null ? `${pct}%` : ""}
-              </span>
-            </div>
-            {pct !== null && (
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(pct, 100)}%` }}
-                  transition={{ duration: 0.6, delay: i * 0.05 }}
-                  className="h-full rounded-full bg-primary"
-                />
-              </div>
-              ) }
-          </div>
-        );
-      })}
-      {lines.every((l) => parsePercentageLine(l).pct === null) && (
-        <p className="whitespace-pre-line text-sm leading-relaxed">{text}</p>
-        )}
-    </div>
-  );
-}
-
-function RecipeDialog({
-  recipe,
-  open,
-  onOpenChange,
-}: {
-  recipe: Recipe | null;
-  open: boolean;
-  onOpenChange: (o: boolean) => void;
-}) {
-  if (!recipe) return null;
-  const embed = recipe.videoUrl ? getYoutubeEmbed(recipe.videoUrl) : null;
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-2xl p-0 sm:max-w-2xl">
-        <DialogHeader className="border-b border-border/60 bg-muted/40 px-6 py-5 text-right">
-          <div className="mb-2 flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={`gap-1.5 ${categoryMeta[recipe.category].chip}`}
-            >
-              {(() => {
-                const Icon = categoryMeta[recipe.category].icon;
-                return <Icon className="size-3.5" />;
-              })()}
-              {categoryMeta[recipe.category].label}
-            </Badge>
-          </div>
-          <DialogTitle className="text-xl font-bold leading-snug">
-            {recipe.title}
-          </DialogTitle>
-          <DialogDescription className="sr-only">
-            تفاصيل وصفة {recipe.title}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-6 px-6 py-6">
-          {recipe.percentages.trim() !== "" && (
-            <section>
-              <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-primary">
-                <Scale className="size-4" />
-                النسب المئوية
-              </h4>
-              <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">
-                {recipe.percentages.includes("%") ? (
-                  <PercentageBars text={recipe.percentages} />
-                ) : (
-                  <p className="whitespace-pre-line text-sm leading-relaxed">
-                    {recipe.percentages}
-                  </p>
-                )}
-              </div>
-            </section>
-          )}
-
-          <section>
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-emerald-600">
-              <ListOrdered className="size-4" />
-              طريقة التحضير
-            </h4>
-            <ol className="space-y-2.5">
-              {parseLines(recipe.steps).map((step, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
-                >
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-xs font-bold text-emerald-600">
-                    {i + 1}
-                  </span>
-                  <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>
-                </li>
-              ))}
-            </ol>
-          </section>
-
-          {recipe.warnings && recipe.warnings.trim() !== "" && (
-            <section>
-              <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-destructive">
-                <AlertTriangle className="size-4" />
-                تحذيرات السلامة
-              </h4>
-              <div className="space-y-2 rounded-xl border border-destructive/20 bg-destructive/5 p-4">
-                {parseLines(recipe.warnings).map((w, i) => (
-                  <p key={i} className="flex items-start gap-2 text-sm leading-relaxed text-destructive">
-                    <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-                    {w}
-                  </p>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {embed && (
-            <section>
-              <h4 className="mb-3 flex items-center gap-2 text-sm font-bold">
-                <Youtube className="size-4 text-red-500" />
-                فيديو توضيحي
-              </h4>
-              <div className="aspect-video w-full overflow-hidden rounded-xl border border-border/60 bg-black shadow-soft">
-                <iframe
-                  src={embed}
-                  title={`فيديو: ${recipe.title}`}
-                  className="h-full w-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </section>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function RecipeCard({
-  recipe,
-  onSelect,
-}: {
-  recipe: Recipe;
-  onSelect: (r: Recipe) => void;
-}) {
-  const meta = categoryMeta[recipe.category];
-  const Icon = meta.icon;
-  return (
-    <motion.button
-      type="button"
-      layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.25 }}
-      onClick={() => onSelect(recipe)}
-      className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 text-right shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <Badge variant="outline" className={`gap-1.5 ${meta.chip}`}>
-          <Icon className="size-3.5" />
-          {meta.short}
-        </Badge>
-        {recipe.videoUrl && recipe.videoUrl.trim() !== "" && (
-          <Youtube className="size-4 text-red-500/80" />
-        )}
-      </div>
-      <h3 className="mb-2 line-clamp-2 font-bold leading-snug group-hover:text-primary transition-colors">
-        {recipe.title}
-      </h3>
-      <p className="line-clamp-3 text-sm leading-relaxed text-muted-foreground">
-        {parseLines(recipe.steps)[0] ?? ""}
-      </p>
-      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
-        عرض التفاصيل
-        <ArrowIcon />
-      </span>
-    </motion.button>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg
-      className="size-4 transition-transform duration-300 group-hover:-translate-x-1"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M19 12H5" />
-      <path d="m12 19-7-7 7-7" />
-    </svg>
-  );
-}
+/* ------------------------------------------------------------------ */
+/* Access gate (unchanged behavior)                                    */
+/* ------------------------------------------------------------------ */
 
 function AccessGate({ onUnlocked }: { onUnlocked: () => void }) {
   const [code, setCode] = useState("");
@@ -382,16 +144,202 @@ function AccessGate({ onUnlocked }: { onUnlocked: () => void }) {
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Recipe card: header row + inline expandable details                 */
+/* ------------------------------------------------------------------ */
+
+function MaterialChip({ name }: { name: string }) {
+  const info = findMaterial(name);
+  if (!info) return null;
+  return (
+    <span
+      title={`${info.name} — ${info.role}`}
+      className="inline-flex cursor-help items-center gap-1 rounded-full border border-border/70 bg-muted/60 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+    >
+      <FlaskConical className="size-2.5" />
+      {info.name}
+    </span>
+  );
+}
+
+function RecipeCard({ recipe }: { recipe: Recipe }) {
+  const [open, setOpen] = useState(false);
+  const meta = categoryMeta[recipe.category];
+  const Icon = meta.icon;
+  const firstMaterials = parseLines(recipe.percentages)
+    .slice(0, 3)
+    .map((l) => l.split(/[:：]/)[0]?.trim() ?? "")
+    .filter(Boolean);
+  const stepCount = parseLines(recipe.steps).length;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className={`overflow-hidden rounded-2xl border bg-card shadow-soft transition-shadow duration-300 ${
+        open
+          ? "border-primary/40 shadow-soft-lg"
+          : "border-border/70 hover:shadow-soft-lg"
+      }`}
+    >
+      {/* Header row — always visible */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-expanded={open}
+        className="flex w-full items-center gap-4 p-4 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-5"
+      >
+        <span
+          className={`flex size-11 shrink-0 items-center justify-center rounded-xl border ${meta.chip}`}
+        >
+          <Icon className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-bold leading-snug transition-colors group-hover:text-primary">
+            {recipe.title}
+          </span>
+          <span className="mt-1 flex flex-wrap items-center gap-1.5">
+            <Badge
+              variant="outline"
+              className={`shrink-0 text-[10px] ${meta.chip}`}
+            >
+              {meta.short}
+            </Badge>
+            <span className="text-[11px] text-muted-foreground">
+              {stepCount} خطوات
+            </span>
+            {firstMaterials[0] && (
+              <span className="hidden truncate text-[11px] text-muted-foreground sm:inline">
+                · {firstMaterials.join(" · ")}
+              </span>
+            )}
+          </span>
+        </span>
+        <ChevronDown
+          className={`size-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
+            open ? "rotate-180 text-primary" : ""
+          }`}
+        />
+      </button>
+
+      {/* Inline expandable details */}
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="details"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="overflow-hidden border-t border-border/60"
+          >
+            <div className="space-y-6 p-4 sm:p-5">
+              {/* Percentages */}
+              {recipe.percentages.trim() !== "" && (
+                <section>
+                  <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-primary">
+                    <Scale className="size-4" />
+                    النسب المئوية
+                  </h4>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {parseLines(recipe.percentages).map((line, i) => {
+                      const [name, pct] = line.split(/[:：]/);
+                      return (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-2 rounded-lg border border-border/50 bg-muted/40 px-3 py-2"
+                        >
+                          <span className="text-xs font-semibold">{name?.trim()}</span>
+                          <span
+                            className="font-mono text-xs font-bold text-primary"
+                            dir="ltr"
+                          >
+                            {pct?.trim() ?? ""}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {firstMaterials.map((m) => (
+                      <MaterialChip key={m} name={m} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Calculator */}
+              <section>
+                <BatchCalculator
+                  percentages={recipe.percentages}
+                  title={recipe.title}
+                />
+              </section>
+
+              {/* Steps */}
+              <section>
+                <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-emerald-600">
+                  <Beaker className="size-4" />
+                  طريقة التحضير
+                </h4>
+                <ol className="space-y-2">
+                  {parseLines(recipe.steps).map((step, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
+                    >
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-600/10 text-xs font-bold text-emerald-600">
+                        {i + 1}
+                      </span>
+                      <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+
+              {/* Warnings */}
+              {recipe.warnings && recipe.warnings.trim() !== "" && (
+                <section>
+                  <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-destructive">
+                    <AlertTriangle className="size-4" />
+                    تحذيرات السلامة
+                  </h4>
+                  <div className="space-y-2 rounded-xl border border-destructive/20 bg-destructive/5 p-4">
+                    {parseLines(recipe.warnings).map((w, i) => (
+                      <p
+                        key={i}
+                        className="flex items-start gap-2 text-sm leading-relaxed text-destructive"
+                      >
+                        <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+                        {w}
+                      </p>
+                    ))}
+                  </div>
+                </section>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Main page                                                           */
+/* ------------------------------------------------------------------ */
+
 export default function Recipes() {
   const { user, signOut } = useAuth();
   const recipes = useQuery(api.recipes.list, {});
   const ensureSeed = useMutation(api.recipes.ensureSeed);
   const accessStatus = useQuery(api.access.status, {});
   const [searchParams, setSearchParams] = useSearchParams();
+  const [view, setView] = useState<MainView>("recipes");
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState<"all" | "cleaners" | "cars">("all");
-  const [selected, setSelected] = useState<Recipe | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [category, setCategory] = useState<Category>("all");
   const [signOutDialog, setSignOutDialog] = useState(false);
   const seededRef = useRef(false);
   const pendingCode = searchParams.get("code");
@@ -438,6 +386,14 @@ export default function Recipes() {
       )
       .sort((a, b) => a.order - b.order);
   }, [recipes, query, category]);
+
+  const grouped = useMemo(
+    () => ({
+      cleaners: filtered.filter((r) => r.category === "cleaners"),
+      cars: filtered.filter((r) => r.category === "cars"),
+    }),
+    [filtered],
+  );
 
   const cleanersCount = recipes?.filter((r) => r.category === "cleaners").length ?? 0;
   const carsCount = recipes?.filter((r) => r.category === "cars").length ?? 0;
@@ -525,14 +481,16 @@ export default function Recipes() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        {/* Welcome + search */}
-        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        {/* Title + search */}
+        <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-              مكتبة الوصفات
+              {view === "recipes" ? "مكتبة الوصفات" : "قسم المواد الأولية"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              ابحث وتصفّح الوصفات المتاحة لاشتراكك
+              {view === "recipes"
+                ? "اضغط على أي وصفة لعرض النسب وحاسبة الدفعة وخطوات التحضير"
+                : "مواصفات كل مادة أولية، إرشادات السلامة، والبدائل المتاحة"}
             </p>
           </div>
           <div className="relative w-full lg:max-w-sm">
@@ -540,7 +498,9 @@ export default function Recipes() {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="ابحث في الوصفات..."
+              placeholder={
+                view === "recipes" ? "ابحث في الوصفات..." : "ابحث في المواد..."
+              }
               className="h-11 rounded-xl bg-card pr-10 shadow-soft"
             />
             {query && (
@@ -556,100 +516,149 @@ export default function Recipes() {
           </div>
         </div>
 
-        {/* Category filters */}
-        <div className="mb-10 flex flex-wrap items-center gap-2">
-          <CategoryPill
-            active={category === "all"}
-            onClick={() => setCategory("all")}
-            label="الكل"
-            count={(recipes?.length ?? 0)}
-          />
-          <CategoryPill
-            active={category === "cleaners"}
-            onClick={() => setCategory("cleaners")}
-            label="منظفات منزلية"
-            count={cleanersCount}
-          />
-          <CategoryPill
-            active={category === "cars"}
-            onClick={() => setCategory("cars")}
-            label="العناية بالسيارات"
-            count={carsCount}
-          />
+        {/* View tabs: recipes | materials */}
+        <div className="mb-6 inline-flex w-full rounded-xl border border-border/70 bg-card p-1 shadow-soft sm:w-auto">
+          {(
+            [
+              { id: "recipes" as const, label: "الوصفات", icon: Beaker },
+              { id: "materials" as const, label: "المواد الأولية", icon: FlaskConical },
+            ]
+          ).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setView(t.id)}
+              className={`relative flex flex-1 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-bold transition-colors sm:flex-none ${
+                view === t.id
+                  ? "bg-primary text-primary-foreground shadow-soft"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <t.icon className="size-4" />
+              {t.label}
+            </button>
+          ))}
         </div>
 
-        {/* Loading skeleton */}
-        {recipes === undefined && (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft"
-              >
-                <Skeleton className="mb-4 h-5 w-20 rounded-full" />
-                <Skeleton className="mb-2 h-5 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="mt-1.5 h-4 w-5/6" />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {recipes != null && recipes.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-12 text-center">
-            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <FlaskConical className="size-6" />
-            </div>
-            <h3 className="mb-1 font-bold">لا توجد وصفات بعد</h3>
-            <p className="text-sm text-muted-foreground">
-              سيتم إضافة الوصفات قريباً — تابعنا لمزيد من التركيبات.
-            </p>
-          </div>
-        )}
-
-        {/* No search results */}
-        {recipes != null && recipes.length > 0 && filtered.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border bg-card/50 p-12 text-center">
-            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-              <Search className="size-6" />
-            </div>
-            <h3 className="mb-1 font-bold">لا نتائج مطابقة</h3>
-            <p className="text-sm text-muted-foreground">
-              جرّب كلمات بحث مختلفة أو غيّر التصنيف.
-            </p>
-          </div>
-        )}
-
-        {/* Results */}
-        {filtered.length > 0 && (
+        {view === "materials" ? (
+          <MaterialsSection searchQuery={query} onSearchChange={setQuery} />
+        ) : (
           <>
-            <AnimatePresence mode="popLayout">
-              <motion.div layout className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {filtered.map((r) => (
-                  <RecipeCard
-                    key={r._id}
-                    recipe={r}
-                    onSelect={(rec) => {
-                      setSelected(rec);
-                      setDialogOpen(true);
-                    }}
-                  />
+            {/* Category filters */}
+            <div className="mb-8 flex flex-wrap items-center gap-2">
+              <CategoryPill
+                active={category === "all"}
+                onClick={() => setCategory("all")}
+                label="الكل"
+                count={recipes?.length ?? 0}
+              />
+              <CategoryPill
+                active={category === "cleaners"}
+                onClick={() => setCategory("cleaners")}
+                label="منظفات منزلية"
+                count={cleanersCount}
+              />
+              <CategoryPill
+                active={category === "cars"}
+                onClick={() => setCategory("cars")}
+                label="العناية بالسيارات"
+                count={carsCount}
+              />
+            </div>
+
+            {/* Loading skeleton */}
+            {recipes === undefined && (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-soft"
+                  >
+                    <Skeleton className="size-11 rounded-xl" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-5 w-1/2" />
+                      <Skeleton className="h-3.5 w-1/4" />
+                    </div>
+                  </div>
                 ))}
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            )}
+
+            {/* Empty state */}
+            {recipes != null && recipes.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-12 text-center">
+                <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <FlaskConical className="size-6" />
+                </div>
+                <h3 className="mb-1 font-bold">لا توجد وصفات بعد</h3>
+                <p className="text-sm text-muted-foreground">
+                  سيتم إضافة الوصفات قريباً — تابعنا لمزيد من التركيبات.
+                </p>
+              </div>
+            )}
+
+            {/* No search results */}
+            {recipes != null && recipes.length > 0 && filtered.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-border bg-card/50 p-12 text-center">
+                <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                  <Search className="size-6" />
+                </div>
+                <h3 className="mb-1 font-bold">لا نتائج مطابقة</h3>
+                <p className="text-sm text-muted-foreground">
+                  جرّب كلمات بحث مختلفة أو غيّر التصنيف.
+                </p>
+              </div>
+            )}
+
+            {/* Grouped sections */}
+            {filtered.length > 0 && (
+              <div className="space-y-10">
+                {(["cleaners", "cars"] as const).map((cat) => {
+                  const list = grouped[cat];
+                  if (list.length === 0) return null;
+                  const meta = categoryMeta[cat];
+                  const Icon = meta.icon;
+                  return (
+                    <section key={cat}>
+                      {/* Section heading */}
+                      <div className="mb-4 flex items-center gap-3">
+                        <span
+                          className={`flex size-10 items-center justify-center rounded-xl border ${meta.chip}`}
+                        >
+                          <Icon className="size-5" />
+                        </span>
+                        <div>
+                          <h2 className="text-lg font-extrabold tracking-tight">
+                            {meta.heading}
+                            <span className="text-muted-foreground">: </span>
+                            {meta.sub}
+                          </h2>
+                          <p className="text-xs text-muted-foreground">
+                            {list.length} وصفة
+                          </p>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        {list.map((r, i) => (
+                          <div key={r._id} className="relative">
+                            <span
+                              className="absolute -right-1 top-5 z-10 hidden select-none font-mono text-xs font-bold text-muted-foreground/50 sm:block"
+                              aria-hidden
+                            >
+                              {String(r.order || i + 1).padStart(2, "0")}
+                            </span>
+                            <RecipeCard recipe={r} />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
           </>
         )}
       </main>
-
-      <RecipeDialog
-        recipe={selected}
-        open={dialogOpen}
-        onOpenChange={(o) => {
-          setDialogOpen(o);
-          if (!o) setSelected(null);
-        }}
-      />
 
       <AlertDialog open={signOutDialog} onOpenChange={setSignOutDialog}>
         <AlertDialogContent className="rounded-2xl">
@@ -661,7 +670,10 @@ export default function Recipes() {
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
             <AlertDialogCancel>إلغاء</AlertDialogCancel>
-            <AlertDialogAction onClick={handleSignOut} className="bg-destructive text-white hover:bg-destructive/90">
+            <AlertDialogAction
+              onClick={handleSignOut}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
               خروج
             </AlertDialogAction>
           </AlertDialogFooter>

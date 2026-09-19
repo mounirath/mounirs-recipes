@@ -22,18 +22,18 @@ import { Link } from "react-router";
 const featureItems = [
   {
     icon: Scale,
-    title: "دقة في النسب",
-    text: "نسب مئوية مضبوطة بدقة لكل وصفة، قابلة للقياس والتكرار.",
+    title: "حاسبة دفعات ذكية",
+    text: "احسب كميات كل مادة من 1 كغ إلى 1000 كغ بضغطة زر — بدون حساب يدوي.",
   },
   {
     icon: ShieldCheck,
     title: "أمان في الاستخدام",
-    text: "تحذيرات سلامة واضحة مع كل تركيبة لاستخدام مسؤول.",
+    text: "تحذيرات سلامة واضحة مع كل تركيبة وكل مادة أولية لاستخدام مسؤول.",
   },
   {
-    icon: Sparkles,
-    title: "جودة تدوم",
-    text: "وصفات تضاهي المنتجات العالمية بنتائج احترافية.",
+    icon: FlaskConical,
+    title: "قسم المواد الأولية",
+    text: "مواصفات كل مادة، وظيفتها، وبدائلها المتاحة عند عدم توفرها.",
   },
 ];
 
@@ -119,12 +119,12 @@ export default function Landing() {
               منصة وصفات حصرية للمشتركين
             </Badge>
             <h1 className="text-balance text-4xl font-extrabold leading-[1.2] tracking-tight sm:text-6xl sm:leading-[1.15]">
-              وصفات احترافية للتنظيف
-              <span className="text-primary"> والعناية</span>
+              وصفات احترافية مع حاسبة
+              <span className="text-primary"> ومواد أولية موثوقة</span>
             </h1>
             <p className="text-balance mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              دقة في النسب، أمان في الاستخدام، وجودة تدوم — منتجات تضاهي
-              العالمية بمكونات متوفرة وخطوات واضحة.
+              مكتبة وصفات المنظفات والعناية بالسيارات، مع حاسبة دفعات من 1 إلى
+              1000 كغ، ومواصفات كاملة لكل مادة أولية.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild size="lg" className="h-12 px-8 text-base shadow-soft-lg">
@@ -334,9 +334,10 @@ export default function Landing() {
             </p>
             <ul className="mt-6 space-y-3">
               {[
-                "بحث فوري في كل الوصفات",
+                "بحث فوري في كل الوصفات والمواد الأولية",
+                "حاسبة دفعات مدمجة: من 1 كغ إلى 1000 كغ لكل وصفة",
+                "قسم المواد الأولية: المواصفات والسلامة والبدائل",
                 "تصنيف واضح بين المنظفات المنزلية والعناية بالسيارات",
-                "عرض تفصيلي لكل وصفة بنقرة واحدة",
               ].map((t) => (
                 <li key={t} className="flex items-center gap-2.5 text-sm font-medium">
                   <CheckCircle2 className="size-4 shrink-0 text-primary" />
