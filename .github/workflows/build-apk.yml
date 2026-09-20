@@ -1,4 +1,4 @@
-name: Build Android APK
+Name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -44,14 +44,24 @@ jobs:
             npx cap add android
           fi
 
-      - name: Create Convex Stub
-        shell: bash
+      - name: Create Convex Stub Proxy
         run: |
           mkdir -p src/convex/_generated
-          echo 'export const api = {};' > src/convex/_generated/api.js
-          echo 'export declare const api: any;' > src/convex/_generated/api.d.ts
+          cat << 'EOF' > src/convex/_generated/api.js
+          const makeProxy = () => new Proxy(() => {}, {
+            get: () => makeProxy(),
+            apply: () => {}
+          });
+          export const api = makeProxy();
+          EOF
+          
+          cat << 'EOF' > src/convex/_generated/api.d.ts
+          export declare const api: any;
+          EOF
 
       - name: Build web app
+        env:
+          VITE_CONVEX_URL: "https://placeholder.convex.cloud"
         run: npx vite build
 
       - name: Sync Capacitor
@@ -63,6 +73,9 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Accept Android SDK Licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
