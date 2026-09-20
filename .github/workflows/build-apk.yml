@@ -44,6 +44,10 @@ jobs:
             npx cap add android
           fi
 
+      - name: Generate Convex API
+        run: npx convex codegen
+
+
       - name: Build web app
         run: npx vite build
 
