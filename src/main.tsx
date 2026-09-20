@@ -1,3 +1,20 @@
+// Ajouter au tout début de src/main.tsx
+window.addEventListener('error', (event) => {
+  const errDiv = document.createElement('div');
+  errDiv.style.position = 'fixed';
+  errDiv.style.top = '0';
+  errDiv.style.left = '0';
+  errDiv.style.width = '100%';
+  errDiv.style.height = '100%';
+  errDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
+  errDiv.style.color = '#ff5555';
+  errDiv.style.padding = '20px';
+  errDiv.style.zIndex = '99999';
+  errDiv.style.overflow = 'auto';
+  errDiv.innerText = `Erreur JS:\n${event.message}\n\nFichier:\n${event.filename}:${event.lineno}`;
+  document.body.appendChild(errDiv);
+});
+
 import '@vly-ai/integrations';
 import { Toaster } from "@/components/ui/sonner";
 import { RequireAuth } from "@/components/RequireAuth";
