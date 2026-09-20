@@ -68,7 +68,7 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Accept Android SDK Licenses
-        run: yes | sdkmanager --licenses || true
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
       - name: Build debug APK
         working-directory: android
