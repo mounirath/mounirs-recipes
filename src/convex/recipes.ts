@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { categoriesForPkg, effectivePkg } from "./entitlements";
 import { FRENCH_RECIPES } from "./recipeDataFr";
+import { NATURAL_FORMULAS } from "./recipeDataNatural";
 
 /**
  * Recipes scoped to the caller's subscription package. Returns null when
@@ -211,6 +212,42 @@ const carCareBatch: {
     order: 32,
   },
 ];
+
+/**
+ * One-time import of the client's complete natural-formulation collection
+ * (49 unique formulas). Guarded by meta flag — no-op after the first run.
+ */
+export const importNaturalFormulas = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const marker = await ctx.db
+      .query("meta")
+      .withIndex("by_key", (q) => q.eq("key", "natural_formulas_v1"))
+      .first();
+    if (marker) return { skipped: true };
+    await ctx.db.insert("meta", { key: "natural_formulas_v1", value: "1" });
+    const all = await ctx.db.query("recipes").collect();
+    const titles = new Set(all.map((r) => r.title));
+    let inserted = 0;
+    for (const f of NATURAL_FORMULAS) {
+      if (titles.has(f.title)) continue;
+      await ctx.db.insert("recipes", {
+        title: f.title,
+        category: "natural",
+        percentages: f.percentages,
+        steps: f.steps,
+        warnings: f.warnings,
+        order: f.order,
+        titleFr: f.titleFr,
+        percentagesFr: f.percentagesFr,
+        stepsFr: f.stepsFr,
+        warningsFr: f.warningsFr,
+      });
+      inserted++;
+    }
+    return { skipped: false, inserted };
+  },
+});
 
 /** One-time import: natural home detergents (guarded by meta flag, no-op after first run). */
 export const importNaturalBatch = mutation({
@@ -693,7 +730,24 @@ export const repairCatalog = mutation({
     for (const id of toDelete) await ctx.db.delete(id as never);
 
     // 2) Insert missing canonical recipes
-    const canonical = [...homeCareBatch, ...carCareBatch, ...naturalBatch, ...seedRecipes];
+    const canonical = [
+      ...homeCareBatch,
+      ...carCareBatch,
+      ...naturalBatch,
+      ...NATURAL_FORMULAS.map((f) => ({
+        title: f.title,
+        category: "natural" as const,
+        percentages: f.percentages,
+        steps: f.steps,
+        warnings: f.warnings,
+        order: f.order,
+        titleFr: f.titleFr,
+        percentagesFr: f.percentagesFr,
+        stepsFr: f.stepsFr,
+        warningsFr: f.warningsFr,
+      })),
+      ...seedRecipes,
+    ];
     let inserted = 0;
     for (const r of canonical) {
       if (!seen.has(r.title)) {
@@ -707,6 +761,7 @@ export const repairCatalog = mutation({
       "home_care_batch_imported",
       "car_care_batch_imported",
       "natural_batch_imported",
+      "natural_formulas_v1",
     ]) {
       const marker = await ctx.db
         .query("meta")
@@ -772,7 +827,24 @@ export const ensureSeed = mutation({
     for (const id of toDelete) await ctx.db.delete(id as never);
 
     // 2) Insert missing canonical recipes
-    const canonical = [...homeCareBatch, ...carCareBatch, ...naturalBatch, ...seedRecipes];
+    const canonical = [
+      ...homeCareBatch,
+      ...carCareBatch,
+      ...naturalBatch,
+      ...NATURAL_FORMULAS.map((f) => ({
+        title: f.title,
+        category: "natural" as const,
+        percentages: f.percentages,
+        steps: f.steps,
+        warnings: f.warnings,
+        order: f.order,
+        titleFr: f.titleFr,
+        percentagesFr: f.percentagesFr,
+        stepsFr: f.stepsFr,
+        warningsFr: f.warningsFr,
+      })),
+      ...seedRecipes,
+    ];
     let inserted = 0;
     for (const r of canonical) {
       if (!seen.has(r.title)) {
