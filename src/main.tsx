@@ -1,4 +1,4 @@
-// Ajouter au tout début de src/main.tsx
+// Catch global des erreurs JS au démarrage
 window.addEventListener('error', (event) => {
   const errDiv = document.createElement('div');
   errDiv.style.position = 'fixed';
@@ -6,12 +6,28 @@ window.addEventListener('error', (event) => {
   errDiv.style.left = '0';
   errDiv.style.width = '100%';
   errDiv.style.height = '100%';
-  errDiv.style.backgroundColor = 'rgba(0,0,0,0.9)';
+  errDiv.style.backgroundColor = 'rgba(0,0,0,0.95)';
   errDiv.style.color = '#ff5555';
   errDiv.style.padding = '20px';
   errDiv.style.zIndex = '99999';
   errDiv.style.overflow = 'auto';
   errDiv.innerText = `Erreur JS:\n${event.message}\n\nFichier:\n${event.filename}:${event.lineno}`;
+  document.body.appendChild(errDiv);
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  const errDiv = document.createElement('div');
+  errDiv.style.position = 'fixed';
+  errDiv.style.top = '0';
+  errDiv.style.left = '0';
+  errDiv.style.width = '100%';
+  errDiv.style.height = '100%';
+  errDiv.style.backgroundColor = 'rgba(0,0,0,0.95)';
+  errDiv.style.color = '#ffaa00';
+  errDiv.style.padding = '20px';
+  errDiv.style.zIndex = '99999';
+  errDiv.style.overflow = 'auto';
+  errDiv.innerText = `Promesse rejetée (Uncaught Promise):\n${event.reason}`;
   document.body.appendChild(errDiv);
 });
 
@@ -82,7 +98,7 @@ class RootErrorBoundary extends React.Component<
       return (
         <div className="min-h-screen flex items-center justify-center bg-background text-foreground p-6">
           <div className="max-w-lg text-center">
-            <p className="text-sm font-semibold">Preview runtime error</p>
+            <p className="text-sm font-semibold">Runtime error</p>
             <p className="mt-2 text-xs text-muted-foreground break-words">
               {this.state.message}
             </p>
@@ -99,17 +115,19 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
-
-
+// Fallback pour éviter le crash en cas de variable d'environnement absente sur Android
+const convexUrl = (import.meta.env.VITE_CONVEX_URL as string) || "https://placeholder.convex.cloud";
+const convex = new ConvexReactClient(convexUrl);
 
 function RouteSyncer() {
   const location = useLocation();
   useEffect(() => {
-    window.parent.postMessage(
-      { type: "iframe-route-change", path: location.pathname },
-      "*",
-    );
+    if (window.parent) {
+      window.parent.postMessage(
+        { type: "iframe-route-change", path: location.pathname },
+        "*",
+      );
+    }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -125,7 +143,6 @@ function RouteSyncer() {
 
   return null;
 }
-
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
