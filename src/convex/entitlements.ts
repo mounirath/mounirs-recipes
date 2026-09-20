@@ -6,9 +6,9 @@ export type Pkg = "home" | "cars" | "all";
 
 /** Map subscription package → allowed recipe categories. */
 export function categoriesForPkg(pkg: Pkg): string[] {
-  if (pkg === "home") return ["cleaners"];
+  if (pkg === "home") return ["cleaners", "natural"];
   if (pkg === "cars") return ["cars"];
-  return ["cleaners", "cars"]; // "all"
+  return ["cleaners", "cars", "natural"]; // "all"
 }
 
 /**

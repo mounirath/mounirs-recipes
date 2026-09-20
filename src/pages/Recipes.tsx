@@ -33,6 +33,7 @@ import {
   FlaskConical,
   Home,
   KeyRound,
+  Leaf,
   Loader2,
   LogOut,
   Scale,
@@ -41,7 +42,19 @@ import {
 } from "lucide-react";
 
 type Recipe = Doc<"recipes">;
-type Category = "all" | "cleaners" | "cars";
+type Category = "all" | "cleaners" | "cars" | "natural";
+
+const CATEGORY_ICON = {
+  cleaners: Home,
+  cars: Car,
+  natural: Leaf,
+} as const;
+
+const CATEGORY_CHIP = {
+  cleaners: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+  cars: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+  natural: "bg-emerald-400/10 text-emerald-300 border-emerald-400/25",
+} as const;
 type MainView = "recipes" | "materials";
 
 /** Localized recipe content for the active language. */
@@ -169,15 +182,16 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const view = recipeView(recipe, lang);
-  const isCars = recipe.category === "cars";
+  const cat = recipe.category;
   const meta = {
-    icon: isCars ? Car : Home,
-    chip: isCars
-      ? "bg-cyan-400/10 text-cyan-300 border-cyan-400/25"
-      : "bg-amber-400/10 text-amber-300 border-amber-400/25",
-    short: isCars
-      ? t("recipes.cat.cars.short")
-      : t("recipes.cat.cleaners.short"),
+    icon: CATEGORY_ICON[cat],
+    chip: CATEGORY_CHIP[cat],
+    short:
+      cat === "cars"
+        ? t("recipes.cat.cars.short")
+        : cat === "natural"
+          ? t("recipes.cat.natural.short")
+          : t("recipes.cat.cleaners.short"),
   };
   const Icon = meta.icon;
   const firstMaterials = parseLines(view.percentages)
@@ -355,6 +369,7 @@ export default function Recipes() {
   const recipes = useQuery(api.recipes.list, {});
   const ensureSeed = useMutation(api.recipes.ensureSeed);
   const backfillFrench = useMutation(api.recipes.backfillFrench);
+  const importNaturalBatch = useMutation(api.recipes.importNaturalBatch);
   const accessStatus = useQuery(api.access.status, {});
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<MainView>("recipes");
@@ -392,7 +407,8 @@ export default function Recipes() {
     seededRef.current = true;
     void ensureSeed();
     void backfillFrench();
-  }, [recipes, ensureSeed, backfillFrench]);
+    void importNaturalBatch();
+  }, [recipes, ensureSeed, backfillFrench, importNaturalBatch]);
 
   const filtered = useMemo(() => {
     if (!recipes) return [];
@@ -414,12 +430,14 @@ export default function Recipes() {
     () => ({
       cleaners: filtered.filter((r) => r.category === "cleaners"),
       cars: filtered.filter((r) => r.category === "cars"),
+      natural: filtered.filter((r) => r.category === "natural"),
     }),
     [filtered],
   );
 
   const cleanersCount = recipes?.filter((r) => r.category === "cleaners").length ?? 0;
   const carsCount = recipes?.filter((r) => r.category === "cars").length ?? 0;
+  const naturalCount = recipes?.filter((r) => r.category === "natural").length ?? 0;
 
   const handleSignOut = async () => {
     await signOut();
@@ -432,14 +450,21 @@ export default function Recipes() {
       sub: t("recipes.cat.cleaners.sub"),
       label: t("recipes.cat.cleaners"),
       icon: Home,
-      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+      chip: CATEGORY_CHIP.cleaners,
     },
     cars: {
       heading: t("recipes.cat.cars.heading"),
       sub: t("recipes.cat.cars.sub"),
       label: t("recipes.cat.cars"),
       icon: Car,
-      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+      chip: CATEGORY_CHIP.cars,
+    },
+    natural: {
+      heading: t("recipes.cat.natural.heading"),
+      sub: t("recipes.cat.natural.sub"),
+      label: t("recipes.cat.natural"),
+      icon: Leaf,
+      chip: CATEGORY_CHIP.natural,
     },
   } as const;
 
@@ -614,6 +639,12 @@ export default function Recipes() {
                 label={t("recipes.cat.cars")}
                 count={carsCount}
               />
+              <CategoryPill
+                active={category === "natural"}
+                onClick={() => setCategory("natural")}
+                label={t("recipes.cat.natural")}
+                count={naturalCount}
+              />
             </div>
 
             {/* Loading skeleton */}
@@ -663,7 +694,7 @@ export default function Recipes() {
             {/* Grouped sections */}
             {filtered.length > 0 && (
               <div className="space-y-10">
-                {(["cleaners", "cars"] as const).map((cat) => {
+                {(["cleaners", "cars", "natural"] as const).map((cat) => {
                   const list = grouped[cat];
                   if (list.length === 0) return null;
                   const meta = catMeta[cat];

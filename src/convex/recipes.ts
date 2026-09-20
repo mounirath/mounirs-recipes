@@ -212,6 +212,168 @@ const carCareBatch: {
   },
 ];
 
+/** One-time import: natural home detergents (guarded by meta flag, no-op after first run). */
+export const importNaturalBatch = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const marker = await ctx.db
+      .query("meta")
+      .withIndex("by_key", (q) => q.eq("key", "natural_batch_imported"))
+      .first();
+    if (marker) return { skipped: true };
+    await ctx.db.insert("meta", { key: "natural_batch_imported", value: "1" });
+    for (const r of naturalBatch) {
+      await ctx.db.insert("recipes", r);
+    }
+    return { skipped: false };
+  },
+});
+
+const naturalBatch: {
+  title: string;
+  category: "natural";
+  percentages: string;
+  steps: string;
+  warnings?: string;
+  order: number;
+  titleFr?: string;
+  percentagesFr?: string;
+  stepsFr?: string;
+  warningsFr?: string;
+}[] = [
+  {
+    title: "سائل غسيل طبيعي (صابون مرسيليا)",
+    category: "natural",
+    percentages: "صابون مرسيليا مبشور: 10%\nبيكربونات الصوديوم: 2%\nماء: 88%",
+    steps:
+      "1. سخّن نصف كمية الماء في وعاء كبير (دون الغليان).\n2. أضف الصابون المبشور وحرّك حتى الذوبان الكامل.\n3. أذب البيكربونات في قليل من الماء الدافئ وأضفها للخليط.\n4. أكمل الماء المتبقي وحرّك جيداً.\n5. اترك الخليط يبرد ويتماسك ثم عبّئ في عبوات.\n6. حرّك قبل كل استعمال.",
+    warnings:
+      "طبيعي ولطيف على الجلد.\nلا تستخدمه على الصوف والحرير (الصابون قلوي).",
+    order: 35,
+    titleFr: "Lessive liquide naturelle (savon de Marseille)",
+    percentagesFr: "Savon de Marseille râpé : 10%\nBicarbonate de soude : 2%\nEau : 88%",
+    stepsFr:
+      "1. Faites chauffer la moitié de l'eau dans un grand récipient (sans bouillir).\n2. Ajoutez le savon râpé et remuez jusqu'à dissolution complète.\n3. Dissolvez le bicarbonate dans un peu d'eau tiède et ajoutez-le.\n4. Complétez avec le reste d'eau et mélangez bien.\n5. Laissez refroidir et gélifier puis conditionnez en flacons.\n6. Agitez avant chaque utilisation.",
+    warningsFr:
+      "Naturel et doux pour la peau.\nNe pas utiliser sur la laine ni la soie (savon alcalin).",
+  },
+  {
+    title: "سائل جلي طبيعي (صابون أسود)",
+    category: "natural",
+    percentages: "صابون أسود سائل: 12%\nبيكربونات الصوديوم: 1.5%\nخل أبيض: 2%\nماء: 84.5%",
+    steps:
+      "1. ضع الماء الدافئ في وعاء.\n2. أضف الصابون الأسود وحرّك حتى التجانس.\n3. أضف البيكربونات المذابة في قليل من الماء.\n4. أضف الخل تدريجياً في النهاية (قد تتكوّن رغوة خفيفة).\n5. حرّك واتركه يبرد ثم عبّئ في زجاجة مضخة.",
+    warnings: "أضف الخل في النهاية وببطء.\nتجنّب ملامسة العين.",
+    order: 36,
+    titleFr: "Liquide vaisselle naturel (savon noir)",
+    percentagesFr:
+      "Savon noir liquide : 12%\nBicarbonate de soude : 1.5%\nVinaigre blanc : 2%\nEau : 84.5%",
+    stepsFr:
+      "1. Versez l'eau tiède dans un récipient.\n2. Ajoutez le savon noir et remuez jusqu'à homogénéité.\n3. Ajoutez le bicarbonate dissous dans un peu d'eau.\n4. Ajoutez le vinaigre progressivement à la fin (une légère mousse peut se former).\n5. Mélangez, laissez refroidir puis conditionnez en flacon pompe.",
+    warningsFr:
+      "Ajoutez le vinaigre lentement à la fin.\nÉviter le contact avec les yeux.",
+  },
+  {
+    title: "منظف متعدد الأسطح بالخل والليمون",
+    category: "natural",
+    percentages: "خل أبيض: 25%\nماء: 74%\nزيت ليمون عطري: 1%",
+    steps:
+      "1. اخلط الماء مع الخل في وعاء.\n2. أضف الزيت العطري وحرّك.\n3. انقل الخليط إلى زجاجة بخاخ.\n4. رجّ قبل الاستخدام وامسح الأسطح بقطعة قماش.",
+    warnings:
+      "لا تستخدمه على الرخام أو الحجر الطبيعي أو الخشب غير المعالج.\nلا تخلط أبداً مع الجافيل (غاز كلور سام).",
+    order: 37,
+    titleFr: "Nettoyant multi-surfaces vinaigre-citron",
+    percentagesFr: "Vinaigre blanc : 25%\nEau : 74%\nHuile essentielle de citron : 1%",
+    stepsFr:
+      "1. Mélangez l'eau avec le vinaigre.\n2. Ajoutez l'huile essentielle et remuez.\n3. Transvasez dans un flacon spray.\n4. Secouez avant usage et essuyez les surfaces avec un chiffon.",
+    warningsFr:
+      "Ne pas utiliser sur le marbre, la pierre naturelle ou le bois non traité.\nNe jamais mélanger avec l'eau de Javel (gaz chlore toxique).",
+  },
+  {
+    title: "مسحوق غسيل طبيعي (صابون + بيكربونات)",
+    category: "natural",
+    percentages: "صابون مرسيليا مبشور: 50%\nبيكربونات الصوديوم: 30%\nكريستالات الصودا: 20%",
+    steps:
+      "1. ابشر الصابون على مبشرة ناعمة.\n2. اخلط الصابون مع البيكربونات وكريستالات الصودا جيداً.\n3. خزن المسحوق في وعاء محكم الإغلاق.\n4. استخدم ملعقتين كبيرتين لكل غسلة (توضع مباشرة في الأسطوانة).",
+    warnings: "خزن بعيداً عن الرطوبة (يتكتّل).\nمناسب خاصة للملابس القطنية.",
+    order: 38,
+    titleFr: "Lessive en poudre naturelle (savon + bicarbonate)",
+    percentagesFr:
+      "Savon de Marseille râpé : 50%\nBicarbonate de soude : 30%\nCristaux de soude : 20%",
+    stepsFr:
+      "1. Râpez le savon finement.\n2. Mélangez le savon avec le bicarbonate et les cristaux de soude.\n3. Conservez la poudre dans un récipient hermétique.\n4. Utilisez 2 cuillères à soupe par lavage (directement dans le tambour).",
+    warningsFr:
+      "Conserver au sec (risque de grumelage).\nParticulièrement adapté au coton.",
+  },
+  {
+    title: "معطر أرضيات طبيعي (صابون أسود)",
+    category: "natural",
+    percentages: "صابون أسود سائل: 5%\nخل أبيض: 5%\nزيت لافندر عطري: 0.5%\nماء: 89.5%",
+    steps:
+      "1. ضع الماء في دلو.\n2. أضف الصابون الأسود وحرّك.\n3. أضف الخل ثم الزيت العطري.\n4. امسح الأرضية كالمعتاد — لا حاجة للشطف.",
+    warnings:
+      "مناسب للبلاط والسيراميك.\nتجنّبه على الرخام والأخشاب غير المعالجة.",
+    order: 39,
+    titleFr: "Nettoyant sols naturel (savon noir)",
+    percentagesFr:
+      "Savon noir liquide : 5%\nVinaigre blanc : 5%\nHuile essentielle de lavande : 0.5%\nEau : 89.5%",
+    stepsFr:
+      "1. Versez l'eau dans un seau.\n2. Ajoutez le savon noir et remuez.\n3. Ajoutez le vinaigre puis l'huile essentielle.\n4. Lavez le sol normalement — sans rinçage nécessaire.",
+    warningsFr:
+      "Adapté au carrelage et à la céramique.\nÉviter le marbre et le bois non traité.",
+  },
+  {
+    title: "جل حمام طبيعي (حمض الستريك)",
+    category: "natural",
+    percentages: "حمض الستريك: 4%\nصمغ الزانثان: 0.6%\nزيت أوكالبتوس عطري: 0.4%\nماء: 95%",
+    steps:
+      "1. أذب حمض الستريك في نصف الماء.\n2. وزّع صمغ الزانثان في قليل من الماء البارد (أو اخلطه أولاً مع الزيت العطري) لتجنّب التكتّل.\n3. أضف المزيج للماء مع التحريك المستمر حتى يتماسك كالجل.\n4. أضف الزيت العطري في النهاية.\n5. عبّئ في زجاجة مضخة ضيقة الفوهة.",
+    warnings: "ارتدِ قفازات عند التحضير.\nلا تخلط مع منتجات الكلور.",
+    order: 40,
+    titleFr: "Gel WC naturel (acide citrique)",
+    percentagesFr:
+      "Acide citrique : 4%\nGomme xanthane : 0.6%\nHuile essentielle d'eucalyptus : 0.4%\nEau : 95%",
+    stepsFr:
+      "1. Dissolvez l'acide citrique dans la moitié de l'eau.\n2. Dispersez la gomme xanthane dans un peu d'eau froide (ou prémélangez-la avec l'huile essentielle) pour éviter les grumeaux.\n3. Ajoutez le mélange en remuant constamment jusqu'à obtenir un gel.\n4. Ajoutez l'huile essentielle à la fin.\n5. Conditionnez dans un flacon à bec étroit.",
+    warningsFr:
+      "Portez des gants lors de la préparation.\nNe jamais mélanger avec les produits chlorés.",
+  },
+  {
+    title: "منظف زجاج طبيعي (خل وليمون)",
+    category: "natural",
+    percentages: "خل أبيض: 20%\nماء: 79.5%\nزيت ليمون عطري: 0.5%",
+    steps:
+      "1. اخلط الماء مع الخل في زجاجة بخاخ.\n2. أضف الزيت العطري.\n3. رجّ بخفة قبل الاستخدام.\n4. رشّ على الزجاج وامسح بقطعة قماش ميكروفايبر.",
+    warnings:
+      "تجنّب الأسطح المطلية بالكروم أو الحساسة للأحماض.\nلا تخلط مع الكلور.",
+    order: 41,
+    titleFr: "Nettoyant vitres naturel (vinaigre-citron)",
+    percentagesFr:
+      "Vinaigre blanc : 20%\nEau : 79.5%\nHuile essentielle de citron : 0.5%",
+    stepsFr:
+      "1. Mélangez l'eau avec le vinaigre dans un flacon spray.\n2. Ajoutez l'huile essentielle.\n3. Secouez légèrement avant usage.\n4. Vaporisez sur le vitrage et essuyez avec un chiffon microfibre.",
+    warningsFr:
+      "Éviter les surfaces chromées ou sensibles aux acides.\nNe jamais mélanger avec le chlore.",
+  },
+  {
+    title: "صابون يدين طبيعي (كاستيل)",
+    category: "natural",
+    percentages: "صابون كاستيل سائل: 25%\nجليسرين نباتي: 2%\nزيت عطري (لافندر أو ليمون): 0.5%\nماء مقطّر: 72.5%",
+    steps:
+      "1. ضع الماء المقطّر في وعاء.\n2. أضف صابون الكاستيل بحركة هادئة لتجنّب الرغوة الزائدة.\n3. أضف الجليسرين النباتي.\n4. أضف الزيت العطري وحرّك بلطف.\n5. اتركه يهدأ بضع ساعات ثم عبّئ في مضخة.",
+    warnings:
+      "لطيف على الجلد ومناسب للاستخدام اليومي.\nتجنّب ملامسة العين.",
+    order: 42,
+    titleFr: "Savon liquide mains naturel (Castille)",
+    percentagesFr:
+      "Savon de Castille liquide : 25%\nGlycérine végétale : 2%\nHuile essentielle (lavande ou citron) : 0.5%\nEau distillée : 72.5%",
+    stepsFr:
+      "1. Versez l'eau distillée dans un récipient.\n2. Ajoutez le savon de Castille doucement pour éviter la mousse.\n3. Ajoutez la glycérine végétale.\n4. Ajoutez l'huile essentielle et remuez délicatement.\n5. Laissez reposer quelques heures puis conditionnez en pompe.",
+    warningsFr:
+      "Doux pour la peau, adapté à un usage quotidien.\nÉviter le contact avec les yeux.",
+  },
+];
+
 /** One-time import: household recipes 1–22 (guarded by meta flag, no-op after first run). */
 export const importHomeCareBatch = mutation({
   args: {},
@@ -531,7 +693,7 @@ export const repairCatalog = mutation({
     for (const id of toDelete) await ctx.db.delete(id as never);
 
     // 2) Insert missing canonical recipes
-    const canonical = [...homeCareBatch, ...carCareBatch, ...seedRecipes];
+    const canonical = [...homeCareBatch, ...carCareBatch, ...naturalBatch, ...seedRecipes];
     let inserted = 0;
     for (const r of canonical) {
       if (!seen.has(r.title)) {
@@ -541,7 +703,11 @@ export const repairCatalog = mutation({
     }
 
     // 3) Guard the one-shot import mutations permanently
-    for (const key of ["home_care_batch_imported", "car_care_batch_imported"]) {
+    for (const key of [
+      "home_care_batch_imported",
+      "car_care_batch_imported",
+      "natural_batch_imported",
+    ]) {
       const marker = await ctx.db
         .query("meta")
         .withIndex("by_key", (q) => q.eq("key", key))
@@ -606,7 +772,7 @@ export const ensureSeed = mutation({
     for (const id of toDelete) await ctx.db.delete(id as never);
 
     // 2) Insert missing canonical recipes
-    const canonical = [...homeCareBatch, ...carCareBatch, ...seedRecipes];
+    const canonical = [...homeCareBatch, ...carCareBatch, ...naturalBatch, ...seedRecipes];
     let inserted = 0;
     for (const r of canonical) {
       if (!seen.has(r.title)) {

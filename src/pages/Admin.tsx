@@ -35,6 +35,7 @@ import {
   FlaskConical,
   Home,
   KeyRound,
+  Leaf,
   Loader2,
   Lock,
   LogOut,
@@ -63,7 +64,7 @@ type Subscriber = {
 
 const emptyForm = {
   title: "",
-  category: "cleaners" as "cleaners" | "cars",
+  category: "cleaners" as "cleaners" | "cars" | "natural",
   percentages: "",
   steps: "",
   warnings: "",
@@ -341,7 +342,7 @@ export default function Admin() {
 
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
         {/* Stats */}
-        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-5">
           <StatCard
             icon={FlaskConical}
             label={t("admin.stat.total")}
@@ -356,6 +357,11 @@ export default function Admin() {
             icon={Car}
             label={t("admin.stat.cars")}
             value={recipes?.filter((r) => r.category === "cars").length ?? 0}
+          />
+          <StatCard
+            icon={Leaf}
+            label={t("admin.stat.natural")}
+            value={recipes?.filter((r) => r.category === "natural").length ?? 0}
           />
           <StatCard
             icon={Users}
@@ -395,7 +401,7 @@ export default function Admin() {
                     onValueChange={(v) =>
                       setForm((f) => ({
                         ...f,
-                        category: v as "cleaners" | "cars",
+                        category: v as "cleaners" | "cars" | "natural",
                       }))
                     }
                   >
@@ -408,6 +414,9 @@ export default function Admin() {
                       </SelectItem>
                       <SelectItem value="cars">
                         {t("recipes.cat.cars")}
+                      </SelectItem>
+                      <SelectItem value="natural">
+                        {t("recipes.cat.natural")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -643,17 +652,23 @@ export default function Admin() {
                             className={`shrink-0 gap-1 ${
                               r.category === "cleaners"
                                 ? "border-primary/20 bg-primary/10 text-primary"
-                                : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
+                                : r.category === "natural"
+                                  ? "border-emerald-600/20 bg-emerald-600/10 text-emerald-600"
+                                  : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
                             }`}
                           >
                             {r.category === "cleaners" ? (
                               <Home className="size-3" />
+                            ) : r.category === "natural" ? (
+                              <Leaf className="size-3" />
                             ) : (
                               <Car className="size-3" />
                             )}
                             {r.category === "cleaners"
                               ? t("recipes.cat.cleaners.short")
-                              : t("recipes.cat.cars.short")}
+                              : r.category === "natural"
+                                ? t("recipes.cat.natural.short")
+                                : t("recipes.cat.cars.short")}
                           </Badge>
                           <span className="truncate text-sm font-semibold">
                             {r.title}

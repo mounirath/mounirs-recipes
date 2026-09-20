@@ -427,4 +427,132 @@ export const MATERIALS_FR: Record<string, MaterialFrContent> = {
     safety: ["Inflammable", "Utiliser avec une bonne ventilation"],
     alternatives: ["White spirit (synthétique)"],
   },
+  "marseille-soap": {
+    name: "Savon de Marseille",
+    role: "Base de nettoyage naturelle (savon traditionnel)",
+    description:
+      "Savon traditionnel à base d'huile d'olive, pilier des recettes de lessive et de nettoyage naturels. Râpé puis dissous dans l'eau tiède, il donne une solution nettoyante douce pour la peau et efficace sur les salissures courantes. Le choix idéal pour des produits sans additifs chimiques de synthèse.",
+    specs: [
+      "Aspect : cubes ou copeaux faciles à râper",
+      "Ingrédient principal : huile d'olive (72 % ou plus)",
+      "Solubilité : se dissout dans l'eau tiède en remuant",
+      "Usage : 10–50 % selon la recette (liquide ou poudre)",
+    ],
+    safety: [
+      "Sûr et doux pour la peau",
+      "Alcalin naturel — ne pas utiliser sur laine ni soie",
+    ],
+    alternatives: [
+      "Savon noir (plus dégraissant)",
+      "Savon de Castille liquide (prêt à l'emploi)",
+    ],
+  },
+  "black-soap": {
+    name: "Savon noir",
+    role: "Nettoyant naturel puissant multi-usages",
+    description:
+      "Savon traditionnel d'huile d'olive et de potasse : liquide brun huileux concentré. Très efficace sur les graisses et les taches tenaces, utilisé pour la vaisselle, la lessive et les sols. 100 % naturel et entièrement biodégradable.",
+    specs: [
+      "Aspect : liquide huileux brun foncé",
+      "Base : huile d'olive + potasse (alcalin naturel)",
+      "Dose typique : 5–12 %",
+      "Entièrement biodégradable",
+    ],
+    safety: [
+      "Concentré — toujours diluer dans l'eau",
+      "Éviter le contact avec les yeux ; rincer à l'eau en cas de contact",
+    ],
+    alternatives: [
+      "Savon de Marseille (plus doux)",
+      "SLES dilué (version synthétique)",
+    ],
+  },
+  "castile-soap": {
+    name: "Savon de Castille",
+    role: "Savon liquide végétal multi-usages",
+    description:
+      "Savon liquide végétal concentré fabriqué à partir d'huiles végétales (olive, coco...). Très doux pour la peau, c'est la base du savon pour les mains naturel et des nettoyants doux. À diluer dans l'eau distillée et à parfumer aux huiles essentielles.",
+    specs: [
+      "Aspect : liquide concentré clair à translucide",
+      "Base : huiles végétales + potasse",
+      "Dose typique : 20–30 % du produit final",
+      "Diluer dans l'eau distillée pour éviter la sur-viscosité",
+    ],
+    safety: ["Très sûr pour la peau", "Éviter le contact avec les yeux"],
+    alternatives: [
+      "Savon de Marseille dissous (moins cher)",
+      "Savon pour les mains commercial (alternative synthétique)",
+    ],
+  },
+  "baking-soda": {
+    name: "Bicarbonate de soude",
+    role: "Nettoyant doux et déodorant naturel",
+    description:
+      "Poudre blanche douce utilisée dans les recettes naturelles comme adjuvant de lavage, déodorant et adoucissant léger. Elle renforce le pouvoir lavant et adoucit l'eau. Matière très sûre, disponible partout à prix minime.",
+    specs: [
+      "Aspect : poudre cristalline blanche",
+      "Pureté : grade alimentaire largement disponible",
+      "pH : ~8,3 (légèrement alcalin)",
+      "Dose typique : 1–30 % selon la recette",
+    ],
+    safety: ["Très sûr (grade alimentaire)", "Conserver au sec"],
+    alternatives: ["Cristaux de soude (plus puissants, moins doux)"],
+  },
+  "soda-crystals": {
+    name: "Cristaux de soude",
+    role: "Détergent puissant et dégraissant naturel",
+    description:
+      "Carbonate de sodium hydraté — poudre puissante utilisée dans les lessives en poudre naturelles pour dégraisser, enlever les taches d'huile et adoucir l'eau dure. Plus fort que le bicarbonate mais plus alcalin, on le combine donc avec lui pour équilibrer douceur et efficacité.",
+    specs: [
+      "Aspect : cristaux ou poudre blanche",
+      "Composition : carbonate de sodium hydraté (Na₂CO₃)",
+      "pH : ~11,5 (fortement alcalin)",
+      "Dose typique : 10–20 % des poudres",
+    ],
+    safety: [
+      "Irrite la peau — portez des gants pour les grandes quantités",
+      "Conserver dans un contenant hermétique, à l'abri de l'humidité",
+    ],
+    alternatives: ["Bicarbonate de soude (plus doux mais plus faible)"],
+  },
+  "white-vinegar": {
+    name: "Vinaigre blanc",
+    role: "Acide naturel contre le tartre, brillance",
+    description:
+      "Acide acétique dilué (~8 %) — la base du nettoyage naturel : il dissout le calcaire, fait briller le vitrage et neutralise les odeurs. Toujours diluer dans l'eau, et ne jamais mélanger avec le chlore (gaz toxique). À éviter sur le marbre et la pierre naturelle.",
+    specs: [
+      "Aspect : liquide clair",
+      "Concentration : acide acétique ~8 %",
+      "Dose typique : 5–25 % selon l'usage",
+      "Disponible partout à prix très bas",
+    ],
+    safety: [
+      "Ne jamais mélanger avec le chlore ou l'ammoniaque (gaz chlore toxique)",
+      "Ne pas utiliser sur marbre, pierre naturelle ou bois non traité",
+    ],
+    alternatives: [
+      "Acide citrique (plus fort sur le calcaire)",
+      "Jus de citron (plus doux, plus cher)",
+    ],
+  },
+  "essential-oil": {
+    name: "Huile essentielle",
+    role: "Parfum naturel et bienfaits additionnels",
+    description:
+      "Huiles essentielles naturelles concentrées (citron, lavande, eucalyptus, arbre à thé...) utilisées dans les recettes naturelles pour parfumer et pour leurs propriétés (antibactérienne pour l'arbre à thé, fraîche pour l'eucalyptus). À ajouter en fin de fabrication à très faible dose.",
+    specs: [
+      "Aspect : liquide huileux très concentré et odorant",
+      "Dose typique : 0,5–1 %",
+      "Variétés courantes : citron, lavande, eucalyptus, arbre à thé, menthe",
+      "Prémélanger avec un solvant (PG ou alcool) pour une répartition homogène",
+    ],
+    safety: [
+      "Concentré — ne pas appliquer pur sur la peau",
+      "Certaines huiles sont déconseillées aux femmes enceintes et aux animaux (se renseigner avant usage)",
+    ],
+    alternatives: [
+      "Parfum de synthèse (moins cher, tenue plus longue)",
+      "Sans parfum (produit neutre)",
+    ],
+  },
 };

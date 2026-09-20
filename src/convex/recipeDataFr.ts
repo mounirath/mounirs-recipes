@@ -313,6 +313,79 @@ export const FRENCH_RECIPES: Record<string, RecipeFrContent> = {
       "1. Mélangez la cire avec le solvant au bain-marie tiède (60 degrés).\n2. Ajoutez le silicone liquide progressivement en remuant constamment.\n3. Laissez refroidir complètement le mélange avant utilisation.",
     warningsFr: "Utiliser dans un endroit bien ventilé. Éviter d'inhaler les vapeurs.",
   },
+  /* ------------------------------------------------ Natural 35–42 */
+  "سائل غسيل طبيعي (صابون مرسيليا)": {
+    titleFr: "Lessive liquide naturelle (savon de Marseille)",
+    percentagesFr:
+      "Savon de Marseille râpé : 10%\nBicarbonate de soude : 2%\nEau : 88%",
+    stepsFr:
+      "1. Faites chauffer la moitié de l'eau dans un grand récipient (sans bouillir).\n2. Ajoutez le savon râpé et remuez jusqu'à dissolution complète.\n3. Dissolvez le bicarbonate dans un peu d'eau tiède et ajoutez-le.\n4. Complétez avec le reste d'eau et mélangez bien.\n5. Laissez refroidir et gélifier puis conditionnez en flacons.\n6. Agitez avant chaque utilisation.",
+    warningsFr:
+      "Naturel et doux pour la peau.\nNe pas utiliser sur la laine ni la soie (savon alcalin).",
+  },
+  "سائل جلي طبيعي (صابون أسود)": {
+    titleFr: "Liquide vaisselle naturel (savon noir)",
+    percentagesFr:
+      "Savon noir liquide : 12%\nBicarbonate de soude : 1.5%\nVinaigre blanc : 2%\nEau : 84.5%",
+    stepsFr:
+      "1. Versez l'eau tiède dans un récipient.\n2. Ajoutez le savon noir et remuez jusqu'à homogénéité.\n3. Ajoutez le bicarbonate dissous dans un peu d'eau.\n4. Ajoutez le vinaigre progressivement à la fin (une légère mousse peut se former).\n5. Mélangez, laissez refroidir puis conditionnez en flacon pompe.",
+    warningsFr:
+      "Ajoutez le vinaigre lentement à la fin.\nÉviter le contact avec les yeux.",
+  },
+  "منظف متعدد الأسطح بالخل والليمون": {
+    titleFr: "Nettoyant multi-surfaces vinaigre-citron",
+    percentagesFr:
+      "Vinaigre blanc : 25%\nEau : 74%\nHuile essentielle de citron : 1%",
+    stepsFr:
+      "1. Mélangez l'eau avec le vinaigre.\n2. Ajoutez l'huile essentielle et remuez.\n3. Transvasez dans un flacon spray.\n4. Secouez avant usage et essuyez les surfaces avec un chiffon.",
+    warningsFr:
+      "Ne pas utiliser sur le marbre, la pierre naturelle ou le bois non traité.\nNe jamais mélanger avec l'eau de Javel (gaz chlore toxique).",
+  },
+  "مسحوق غسيل طبيعي (صابون + بيكربونات)": {
+    titleFr: "Lessive en poudre naturelle (savon + bicarbonate)",
+    percentagesFr:
+      "Savon de Marseille râpé : 50%\nBicarbonate de soude : 30%\nCristaux de soude : 20%",
+    stepsFr:
+      "1. Râpez le savon finement.\n2. Mélangez le savon avec le bicarbonate et les cristaux de soude.\n3. Conservez la poudre dans un récipient hermétique.\n4. Utilisez 2 cuillères à soupe par lavage (directement dans le tambour).",
+    warningsFr:
+      "Conserver au sec (risque de grumelage).\nParticulièrement adapté au coton.",
+  },
+  "معطر أرضيات طبيعي (صابون أسود)": {
+    titleFr: "Nettoyant sols naturel (savon noir)",
+    percentagesFr:
+      "Savon noir liquide : 5%\nVinaigre blanc : 5%\nHuile essentielle de lavande : 0.5%\nEau : 89.5%",
+    stepsFr:
+      "1. Versez l'eau dans un seau.\n2. Ajoutez le savon noir et remuez.\n3. Ajoutez le vinaigre puis l'huile essentielle.\n4. Lavez le sol normalement — sans rinçage nécessaire.",
+    warningsFr:
+      "Adapté au carrelage et à la céramique.\nÉviter le marbre et le bois non traité.",
+  },
+  "جل حمام طبيعي (حمض الستريك)": {
+    titleFr: "Gel WC naturel (acide citrique)",
+    percentagesFr:
+      "Acide citrique : 4%\nGomme xanthane : 0.6%\nHuile essentielle d'eucalyptus : 0.4%\nEau : 95%",
+    stepsFr:
+      "1. Dissolvez l'acide citrique dans la moitié de l'eau.\n2. Dispersez la gomme xanthane dans un peu d'eau froide (ou prémélangez-la avec l'huile essentielle) pour éviter les grumeaux.\n3. Ajoutez le mélange en remuant constamment jusqu'à obtenir un gel.\n4. Ajoutez l'huile essentielle à la fin.\n5. Conditionnez dans un flacon à bec étroit.",
+    warningsFr:
+      "Portez des gants lors de la préparation.\nNe jamais mélanger avec les produits chlorés.",
+  },
+  "منظف زجاج طبيعي (خل وليمون)": {
+    titleFr: "Nettoyant vitres naturel (vinaigre-citron)",
+    percentagesFr:
+      "Vinaigre blanc : 20%\nEau : 79.5%\nHuile essentielle de citron : 0.5%",
+    stepsFr:
+      "1. Mélangez l'eau avec le vinaigre dans un flacon spray.\n2. Ajoutez l'huile essentielle.\n3. Secouez légèrement avant usage.\n4. Vaporisez sur le vitrage et essuyez avec un chiffon microfibre.",
+    warningsFr:
+      "Éviter les surfaces chromées ou sensibles aux acides.\nNe jamais mélanger avec le chlore.",
+  },
+  "صابون يدين طبيعي (كاستيل)": {
+    titleFr: "Savon liquide mains naturel (Castille)",
+    percentagesFr:
+      "Savon de Castille liquide : 25%\nGlycérine végétale : 2%\nHuile essentielle (lavande ou citron) : 0.5%\nEau distillée : 72.5%",
+    stepsFr:
+      "1. Versez l'eau distillée dans un récipient.\n2. Ajoutez le savon de Castille doucement pour éviter la mousse.\n3. Ajoutez la glycérine végétale.\n4. Ajoutez l'huile essentielle et remuez délicatement.\n5. Laissez reposer quelques heures puis conditionnez en pompe.",
+    warningsFr:
+      "Doux pour la peau, adapté à un usage quotidien.\nÉviter le contact avec les yeux.",
+  },
 };
 
 /** Optional video-less patch content type for inserts (Arabic + French). */

@@ -19,6 +19,7 @@ export type Role = Infer<typeof roleValidator>;
 export const categoryValidator = v.union(
   v.literal("cleaners"),
   v.literal("cars"),
+  v.literal("natural"),
 );
 export type RecipeCategory = Infer<typeof categoryValidator>;
 

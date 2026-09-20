@@ -13,6 +13,7 @@ import {
   FlaskConical,
   Home,
   Infinity as InfinityIcon,
+  Leaf,
   Lock,
   Scale,
   ShieldCheck,
@@ -51,6 +52,14 @@ export default function Landing() {
       titleKey: "sections.cars.title",
       subtitleKey: "sections.cars.subtitle",
       descKey: "sections.cars.desc",
+    },
+    {
+      id: "natural" as const,
+      icon: Leaf,
+      chip: "bg-emerald-400/10 text-emerald-300",
+      titleKey: "sections.natural.title",
+      subtitleKey: "sections.natural.subtitle",
+      descKey: "sections.natural.desc",
     },
   ];
 
@@ -242,7 +251,7 @@ export default function Landing() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mx-auto mt-16 grid max-w-4xl gap-4 sm:grid-cols-2"
+            className="mx-auto mt-16 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {sections.map((s) => (
               <div
@@ -480,7 +489,13 @@ export default function Landing() {
               {t("inside.text")}
             </p>
             <ul className="mt-6 space-y-3">
-              {["inside.li1", "inside.li2", "inside.li3", "inside.li4"].map((k) => (
+              {[
+                "inside.li1",
+                "inside.li2",
+                "inside.li3",
+                "inside.li4",
+                "inside.li5",
+              ].map((k) => (
                 <li
                   key={k}
                   className="flex items-center gap-2.5 text-sm font-medium"
