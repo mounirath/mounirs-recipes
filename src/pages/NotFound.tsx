@@ -1,22 +1,38 @@
 import { motion } from "framer-motion";
+import { useI18n } from "@/i18n";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router";
+import { FlaskConical } from "lucide-react";
 
 export default function NotFound() {
+  const { t } = useI18n();
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col"
+      className="flex min-h-screen flex-col bg-background"
     >
-
-      
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="max-w-5xl mx-auto relative px-4">
-          <div className="flex items-center justify-center min-h-[200px]">
+      <div className="flex flex-1 flex-col items-center justify-center">
+        <div className="relative mx-auto max-w-5xl px-4">
+          <div className="flex min-h-[300px] items-center justify-center">
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-              <p className="text-lg text-gray-600">Page Not Found</p>
+              <span className="mx-auto mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                <FlaskConical className="size-7" />
+              </span>
+              <h1 className="mb-4 text-6xl font-extrabold text-foreground" dir="ltr">
+                404
+              </h1>
+              <p className="mb-8 text-lg text-muted-foreground">
+                {t("notfound.title")}
+              </p>
+              <Button
+                asChild
+                className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
+              >
+                <Link to="/">{t("common.home")}</Link>
+              </Button>
             </div>
           </div>
         </div>

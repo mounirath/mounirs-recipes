@@ -26,6 +26,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/i18n";
+import { LangToggle } from "@/components/LangToggle";
 import { toast } from "sonner";
 import {
   Car,
@@ -59,19 +61,6 @@ type Subscriber = {
   } | null;
 };
 
-const PKG_LABELS: Record<string, string> = {
-  home: "باقة منزلية",
-  cars: "باقة سيارات",
-  all: "كل الباقات",
-  none: "بدون باقة",
-};
-
-const DURATION_LABELS: Record<string, string> = {
-  month: "شهر",
-  year: "سنة",
-  lifetime: "مدى الحياة",
-};
-
 const emptyForm = {
   title: "",
   category: "cleaners" as "cleaners" | "cars",
@@ -83,8 +72,23 @@ const emptyForm = {
 
 export default function Admin() {
   const { isLoading: authLoading, isAuthenticated, user, signOut } = useAuth();
+  const { t, lang } = useI18n();
   const isAdmin = useQuery(api.admin.checkIsAdmin, {});
   const navigate = useNavigate();
+  const dateLocale = lang === "fr" ? "fr-FR" : "ar-DZ";
+
+  const pkgLabel = (p: "home" | "cars" | "all") =>
+    p === "home"
+      ? t("admin.pkg.home")
+      : p === "cars"
+        ? t("admin.pkg.cars")
+        : t("admin.pkg.all");
+  const durLabel = (d: "month" | "year" | "lifetime") =>
+    d === "month"
+      ? t("admin.dur.month")
+      : d === "year"
+        ? t("admin.dur.year")
+        : t("admin.dur.lifetime");
 
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<Id<"recipes"> | null>(null);
@@ -137,10 +141,10 @@ export default function Admin() {
         pkg: subEditor.pkg,
         duration: subEditor.duration,
       });
-      toast.success(`تم تحديث اشتراك ${subEditor.email}`);
+      toast.success(`${t("admin.toast.subSaved")} — ${subEditor.email}`);
       setSubEditor(null);
     } catch {
-      toast.error("تعذّر حفظ الاشتراك");
+      toast.error(t("admin.toast.subSaveFail"));
     } finally {
       setSubBusy(false);
     }
@@ -148,7 +152,7 @@ export default function Admin() {
 
   const handleRevoke = async (email: string) => {
     await revokeSubscription({ email });
-    toast.success(`تم إلغاء اشتراك ${email}`);
+    toast.success(`${t("admin.toast.revoked")} — ${email}`);
   };
 
   const [generating, setGenerating] = useState(false);
@@ -164,12 +168,12 @@ export default function Admin() {
         note: codeNote.trim() || undefined,
       });
       setCodeNote("");
-      toast.success(`تم توليد الكود: ${code}`, {
-        description: "انقر على زر النسخ لنسخه",
+      toast.success(`${t("admin.toast.codeGenerated")}: ${code}`, {
+        description: t("admin.toast.codeCopyHint"),
         duration: 6000,
       });
     } catch {
-      toast.error("تعذّر توليد الكود، حاول مرة أخرى");
+      toast.error(t("admin.toast.codeGenFail"));
     } finally {
       setGenerating(false);
     }
@@ -178,9 +182,9 @@ export default function Admin() {
   const handleCopyCode = async (code: string) => {
     try {
       await navigator.clipboard.writeText(code);
-      toast.success(`تم نسخ ${code}`);
+      toast.success(`${t("admin.toast.copied")} ${code}`);
     } catch {
-      toast.error("تعذّر النسخ — انسخ الكود يدوياً");
+      toast.error(t("admin.toast.copyFail"));
     }
   };
 
@@ -188,7 +192,7 @@ export default function Admin() {
     if (!deleteCodeId) return;
     await deleteAccessCode({ id: deleteCodeId });
     setDeleteCodeId(null);
-    toast.success("تم حذف الكود");
+    toast.success(t("admin.toast.codeDeleted"));
   };
 
   // Redirect non-admins away
@@ -213,17 +217,16 @@ export default function Admin() {
         <span className="flex size-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
           <Lock className="size-7" />
         </span>
-        <h1 className="text-xl font-bold">غير مصرح بالدخول</h1>
+        <h1 className="text-xl font-bold">{t("admin.unauthorized")}</h1>
         <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-          هذه المنطقة مخصصة للإدارة فقط. إذا كنت تملك حساب الأدمن، سجّل الدخول
-          بالبريد الإلكتروني المخصص للإدارة.
+          {t("admin.unauthorized.text")}
         </p>
         <div className="flex gap-2">
           <Button asChild variant="outline">
-            <Link to="/recipes">مكتبة الوصفات</Link>
+            <Link to="/recipes">{t("recipes.title")}</Link>
           </Button>
           <Button asChild>
-            <Link to="/">الصفحة الرئيسية</Link>
+            <Link to="/">{t("common.home")}</Link>
           </Button>
         </div>
       </div>
@@ -311,7 +314,7 @@ export default function Admin() {
                 Mounir Formule
               </span>
               <span className="block text-xs text-muted-foreground">
-                لوحة الإدارة
+                {t("admin.panel")}
               </span>
             </div>
           </div>
@@ -320,8 +323,9 @@ export default function Admin() {
           </span>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm">
-              <Link to="/recipes">الوصفات</Link>
+              <Link to="/recipes">{t("admin.recipes")}</Link>
             </Button>
+            <LangToggle />
             <Button
               variant="outline"
               size="sm"
@@ -329,7 +333,7 @@ export default function Admin() {
               className="gap-1.5"
             >
               <LogOut className="size-4" />
-              خروج
+              {t("admin.signout")}
             </Button>
           </div>
         </div>
@@ -340,22 +344,22 @@ export default function Admin() {
         <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
           <StatCard
             icon={FlaskConical}
-            label="إجمالي الوصفات"
+            label={t("admin.stat.total")}
             value={recipes?.length ?? 0}
           />
           <StatCard
             icon={Home}
-            label="منظفات منزلية"
+            label={t("admin.stat.cleaners")}
             value={recipes?.filter((r) => r.category === "cleaners").length ?? 0}
           />
           <StatCard
             icon={Car}
-            label="العناية بالسيارات"
+            label={t("admin.stat.cars")}
             value={recipes?.filter((r) => r.category === "cars").length ?? 0}
           />
           <StatCard
             icon={Users}
-            label="المشتركون"
+            label={t("admin.stat.subs")}
             value={subscribers?.length ?? 0}
           />
         </div>
@@ -366,7 +370,7 @@ export default function Admin() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center gap-2 font-bold">
                 <Plus className="size-4 text-primary" />
-                {editingId ? "تعديل وصفة" : "إضافة وصفة جديدة"}
+                {editingId ? t("admin.form.edit") : t("admin.form.add")}
               </h2>
               {editingId && (
                 <Button
@@ -376,7 +380,7 @@ export default function Admin() {
                   className="gap-1 text-muted-foreground"
                 >
                   <X className="size-4" />
-                  إلغاء التعديل
+                  {t("admin.form.cancelEdit")}
                 </Button>
               )}
             </div>
@@ -384,7 +388,7 @@ export default function Admin() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-muted-foreground">
-                    القسم
+                    {t("admin.form.category")}
                   </label>
                   <Select
                     value={form.category}
@@ -399,21 +403,25 @@ export default function Admin() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="cleaners">منظفات منزلية</SelectItem>
-                      <SelectItem value="cars">العناية بالسيارات</SelectItem>
+                      <SelectItem value="cleaners">
+                        {t("recipes.cat.cleaners")}
+                      </SelectItem>
+                      <SelectItem value="cars">
+                        {t("recipes.cat.cars")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-muted-foreground">
-                    عنوان الوصفة
+                    {t("admin.form.title")}
                   </label>
                   <Input
                     value={form.title}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, title: e.target.value }))
                     }
-                    placeholder="مثال: معطر أرضيات"
+                    placeholder={t("admin.form.titlePh")}
                     className="rounded-xl"
                     required
                   />
@@ -421,20 +429,20 @@ export default function Admin() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  النسب المئوية (سطر لكل مكوّن)
+                  {t("admin.form.pct")}
                 </label>
                 <Textarea
                   value={form.percentages}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, percentages: e.target.value }))
                   }
-                  placeholder={"ماء مقطر: 80%\nكحول إيثيلي: 19%"}
+                  placeholder={"Eau : 80%\nAlcool : 19%"}
                   className="min-h-20 rounded-xl"
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  طريقة التحضير *
+                  {t("admin.form.steps")}
                 </label>
                 <Textarea
                   value={form.steps}
@@ -448,20 +456,20 @@ export default function Admin() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  تحذيرات السلامة
+                  {t("admin.form.warnings")}
                 </label>
                 <Textarea
                   value={form.warnings}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, warnings: e.target.value }))
                   }
-                  placeholder="قابل للاشتعال..."
+                  placeholder="..."
                   className="min-h-16 rounded-xl"
                 />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  رابط فيديو يوتيوب (اختياري)
+                  {t("admin.form.video")}
                 </label>
                 <Input
                   dir="ltr"
@@ -482,9 +490,9 @@ export default function Admin() {
                   {saving ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : editingId ? (
-                    "حفظ التعديلات"
+                    t("admin.form.save")
                   ) : (
-                    "إضافة الوصفة"
+                    t("admin.form.addBtn")
                   )}
                 </Button>
                 <Button
@@ -493,7 +501,7 @@ export default function Admin() {
                   onClick={resetForm}
                   className="rounded-xl"
                 >
-                  مسح
+                  {t("admin.form.clear")}
                 </Button>
               </div>
             </form>
@@ -505,17 +513,17 @@ export default function Admin() {
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 font-bold">
                   <KeyRound className="size-4 text-primary" />
-                  أكواد الوصول
+                  {t("admin.codes.title")}
                 </h2>
                 <Badge variant="outline" className="shrink-0 text-xs">
-                  8 خانات
+                  {t("admin.codes.slots")}
                 </Badge>
               </div>
               <div className="mb-4 flex gap-2">
                 <Input
                   value={codeNote}
                   onChange={(e) => setCodeNote(e.target.value)}
-                  placeholder="ملاحظة (اختياري) — مثال: باقة أكتوبر"
+                  placeholder={t("admin.codes.notePh")}
                   className="h-10 rounded-xl text-sm"
                 />
                 <Button
@@ -529,7 +537,7 @@ export default function Admin() {
                   ) : (
                     <Sparkles className="size-4" />
                   )}
-                  توليد كود
+                  {t("admin.codes.generate")}
                 </Button>
               </div>
               {accessCodes == null ? (
@@ -540,10 +548,10 @@ export default function Admin() {
                 </div>
               ) : accessCodes.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  لا توجد أكواد بعد — ولّد أول كود وشاركه مع مشتركينك.
+                  {t("admin.codes.empty")}
                 </p>
               ) : (
-                <div className="max-h-64 space-y-2 overflow-y-auto pl-1">
+                <div className="max-h-64 space-y-2 overflow-y-auto pe-1">
                   {accessCodes
                     .slice()
                     .sort((a, b) => b._creationTime - a._creationTime)
@@ -571,14 +579,14 @@ export default function Admin() {
                               variant="outline"
                               className="shrink-0 border-amber-500/30 bg-amber-500/10 text-[10px] text-amber-600"
                             >
-                              مستخدم
+                              {t("admin.codes.used")}
                             </Badge>
                           ) : (
                             <Badge
                               variant="outline"
                               className="shrink-0 border-emerald-500/30 bg-emerald-500/10 text-[10px] text-emerald-600"
                             >
-                              متاح
+                              {t("admin.codes.available")}
                             </Badge>
                           )}
                         </div>
@@ -588,7 +596,7 @@ export default function Admin() {
                             size="icon"
                             className="size-8"
                             onClick={() => handleCopyCode(c.code)}
-                            title="نسخ"
+                            title={t("admin.codes.copy")}
                           >
                             <Copy className="size-3.5" />
                           </Button>
@@ -597,7 +605,7 @@ export default function Admin() {
                             size="icon"
                             className="size-8 text-destructive hover:text-destructive"
                             onClick={() => setDeleteCodeId(c._id)}
-                            title="حذف"
+                            title={t("admin.codes.delete")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
@@ -608,7 +616,7 @@ export default function Admin() {
               )}
             </section>
             <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-soft">
-              <h2 className="mb-4 font-bold">الوصفات الحالية</h2>
+              <h2 className="mb-4 font-bold">{t("admin.list.title")}</h2>
               {recipes == null ? (
                 <div className="space-y-2">
                   {Array.from({ length: 4 }).map((_, i) => (
@@ -617,10 +625,10 @@ export default function Admin() {
                 </div>
               ) : recipes.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  لا توجد وصفات بعد — أضف أول وصفة من النموذج.
+                  {t("admin.list.empty")}
                 </p>
               ) : (
-                <div className="max-h-96 space-y-2 overflow-y-auto pl-1">
+                <div className="max-h-96 space-y-2 overflow-y-auto pe-1">
                   {recipes
                     .slice()
                     .sort((a, b) => a.order - b.order)
@@ -643,7 +651,9 @@ export default function Admin() {
                             ) : (
                               <Car className="size-3" />
                             )}
-                            {r.category === "cleaners" ? "منزلي" : "سيارات"}
+                            {r.category === "cleaners"
+                              ? t("recipes.cat.cleaners.short")
+                              : t("recipes.cat.cars.short")}
                           </Badge>
                           <span className="truncate text-sm font-semibold">
                             {r.title}
@@ -655,7 +665,7 @@ export default function Admin() {
                             size="icon"
                             className="size-8"
                             onClick={() => startEdit(r)}
-                            title="تعديل"
+                            title={t("admin.subs.edit")}
                           >
                             <Pencil className="size-3.5" />
                           </Button>
@@ -664,7 +674,7 @@ export default function Admin() {
                             size="icon"
                             className="size-8 text-destructive hover:text-destructive"
                             onClick={() => setDeleteId(r._id)}
-                            title="حذف"
+                            title={t("admin.codes.delete")}
                           >
                             <Trash2 className="size-3.5" />
                           </Button>
@@ -679,15 +689,15 @@ export default function Admin() {
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="flex items-center gap-2 font-bold">
                   <Users className="size-4 text-primary" />
-                  إدارة الأعضاء والاشتراكات
+                  {t("admin.subs.title")}
                 </h2>
                 <div className="relative w-44">
-                  <Search className="absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute start-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     value={subSearch}
                     onChange={(e) => setSubSearch(e.target.value)}
-                    placeholder="بحث بالبريد..."
-                    className="h-9 rounded-xl pr-9 text-sm"
+                    placeholder={t("admin.subs.searchPh")}
+                    className="h-9 rounded-xl ps-9 text-sm"
                   />
                 </div>
               </div>
@@ -699,10 +709,10 @@ export default function Admin() {
                 </div>
               ) : filteredSubs.length === 0 ? (
                 <p className="py-6 text-center text-sm text-muted-foreground">
-                  لا يوجد أعضاء بعد.
+                  {t("admin.subs.empty")}
                 </p>
               ) : (
-                <div className="max-h-96 space-y-2 overflow-y-auto pl-1">
+                <div className="max-h-96 space-y-2 overflow-y-auto pe-1">
                   {(filteredSubs as Subscriber[]).map((s) => {
                     const sub = s.subscription;
                     return (
@@ -716,7 +726,8 @@ export default function Admin() {
                               {s.email}
                             </p>
                             <p className="text-xs text-muted-foreground">
-                              مسجّل {new Date(s._creationTime).toLocaleDateString("ar")}
+                              {t("admin.subs.registered")}{" "}
+                              {new Date(s._creationTime).toLocaleDateString(dateLocale)}
                             </p>
                           </div>
                           <div className="flex shrink-0 items-center gap-1.5">
@@ -731,20 +742,20 @@ export default function Admin() {
                                       : "border-cyan-600/30 bg-cyan-600/10 text-cyan-600"
                                 }`}
                               >
-                                {PKG_LABELS[sub.pkg]}
+                                {pkgLabel(sub.pkg)}
                                 {" · "}
-                                {DURATION_LABELS[sub.duration]}
+                                {durLabel(sub.duration)}
                               </Badge>
                             ) : sub && !sub.active ? (
                               <Badge
                                 variant="outline"
                                 className="border-amber-500/30 bg-amber-500/10 text-[10px] text-amber-600"
                               >
-                                منتهي
+                                {t("admin.subs.expired")}
                               </Badge>
                             ) : (
                               <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                                بدون باقة
+                                {t("admin.subs.none")}
                               </Badge>
                             )}
                             <Button
@@ -752,7 +763,7 @@ export default function Admin() {
                               size="icon"
                               className="size-8"
                               onClick={() => openSubEditor(s)}
-                              title="تعديل الاشتراك"
+                              title={t("admin.subs.edit")}
                             >
                               <Pencil className="size-3.5" />
                             </Button>
@@ -762,7 +773,7 @@ export default function Admin() {
                                 size="icon"
                                 className="size-8 text-destructive hover:text-destructive"
                                 onClick={() => handleRevoke(s.email ?? "")}
-                                title="إلغاء الاشتراك"
+                                title={t("admin.subs.revoke")}
                               >
                                 <Trash2 className="size-3.5" />
                               </Button>
@@ -771,7 +782,8 @@ export default function Admin() {
                         </div>
                         {sub && sub.active && sub.expiresAt && (
                           <p className="mt-1 text-xs text-muted-foreground">
-                            ينتهي: {new Date(sub.expiresAt).toLocaleDateString("ar")}
+                            {t("admin.subs.expires")}:{" "}
+                            {new Date(sub.expiresAt).toLocaleDateString(dateLocale)}
                           </p>
                         )}
                       </div>
@@ -787,19 +799,19 @@ export default function Admin() {
       {/* Delete confirmation */}
       <AlertDialog open={deleteId !== null} onOpenChange={(o) => !o && setDeleteId(null)}>
         <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader className="text-right">
-            <AlertDialogTitle>حذف الوصفة؟</AlertDialogTitle>
+          <AlertDialogHeader className="text-start">
+            <AlertDialogTitle>{t("admin.delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              سيتم حذف الوصفة نهائياً ولا يمكن التراجع عن ذلك.
+              {t("admin.delete.text")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t("recipes.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              حذف نهائي
+              {t("admin.delete.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -811,8 +823,8 @@ export default function Admin() {
         onOpenChange={(o) => !o && setSubEditor(null)}
       >
         <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader className="text-right">
-            <AlertDialogTitle>تعديل الاشتراك</AlertDialogTitle>
+          <AlertDialogHeader className="text-start">
+            <AlertDialogTitle>{t("admin.subs.edit")}</AlertDialogTitle>
             <AlertDialogDescription dir="ltr" className="text-left">
               {subEditor?.email}
             </AlertDialogDescription>
@@ -821,7 +833,7 @@ export default function Admin() {
             <div className="space-y-4 py-2">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  الباقة
+                  {t("admin.subs.pkg")}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {(["home", "cars", "all"] as const).map((p) => (
@@ -833,17 +845,16 @@ export default function Admin() {
                         subEditor.pkg === p
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-border bg-card hover:border-primary/40"
-                      }`
-                    }
+                      }`}
                     >
-                      {PKG_LABELS[p]}
+                      {pkgLabel(p)}
                     </button>
                   ))}
                 </div>
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">
-                  المدة
+                  {t("admin.subs.duration")}
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {(["month", "year", "lifetime"] as const).map((d) => (
@@ -857,10 +868,9 @@ export default function Admin() {
                         subEditor.duration === d
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-border bg-card hover:border-primary/40"
-                      }`
-                    }
+                      }`}
                     >
-                      {DURATION_LABELS[d]}
+                      {durLabel(d)}
                     </button>
                   ))}
                 </div>
@@ -868,7 +878,7 @@ export default function Admin() {
             </div>
           )}
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t("recipes.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={saveSubscription}
               disabled={subBusy}
@@ -877,7 +887,7 @@ export default function Admin() {
               {subBusy ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                "حفظ الاشتراك"
+                t("admin.subs.save")
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -887,19 +897,19 @@ export default function Admin() {
       {/* Code delete confirmation */}
       <AlertDialog open={deleteCodeId !== null} onOpenChange={(o) => !o && setDeleteCodeId(null)}>
         <AlertDialogContent className="rounded-2xl">
-          <AlertDialogHeader className="text-right">
-            <AlertDialogTitle>حذف كود الوصول؟</AlertDialogTitle>
+          <AlertDialogHeader className="text-start">
+            <AlertDialogTitle>{t("admin.codeDelete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              لن يتمكن من يستخدم هذا الكود من الاشتراك بعد الحذف.
+              {t("admin.codeDelete.text")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel>إلغاء</AlertDialogCancel>
+            <AlertDialogCancel>{t("recipes.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteCode}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              حذف نهائي
+              {t("admin.codeDelete.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

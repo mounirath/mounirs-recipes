@@ -298,6 +298,7 @@ const ar: Dict = {
   "admin.toast.subSaveFail": "تعذّر حفظ الاشتراك",
   "admin.toast.revoked": "تم إلغاء اشتراك",
   "admin.toast.codeGenerated": "تم توليد الكود",
+  "admin.toast.codeCopyHint": "انقر على زر النسخ لنسخه",
   "admin.toast.codeGenFail": "تعذّر توليد الكود، حاول مرة أخرى",
   "admin.toast.copied": "تم نسخ",
   "admin.toast.copyFail": "تعذّر النسخ — انسخ الكود يدوياً",
@@ -306,6 +307,7 @@ const ar: Dict = {
   /* Misc */
   "common.loading": "جارٍ التحميل...",
   "common.home": "الرئيسية",
+  "notfound.title": "الصفحة غير موجودة",
 };
 
 const fr: Dict = {
@@ -601,6 +603,7 @@ const fr: Dict = {
   "admin.toast.subSaveFail": "Impossible d'enregistrer l'abonnement",
   "admin.toast.revoked": "Abonnement révoqué",
   "admin.toast.codeGenerated": "Code généré",
+  "admin.toast.codeCopyHint": "Cliquez sur le bouton copier pour le copier",
   "admin.toast.codeGenFail": "Impossible de générer le code, réessayez",
   "admin.toast.copied": "Copié",
   "admin.toast.copyFail": "Impossible de copier — copiez manuellement",
@@ -609,6 +612,7 @@ const fr: Dict = {
   /* Misc */
   "common.loading": "Chargement...",
   "common.home": "Accueil",
+  "notfound.title": "Page introuvable",
 };
 
 const DICTS: Record<Lang, Dict> = { ar, fr };

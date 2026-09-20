@@ -121,10 +121,15 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Cairo", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-      sans-serif;
+    font-family: "Cairo", "Inter", ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+  /* Latin-script languages use Inter first for a cleaner European look */
+  html[lang="fr"] body {
+    font-family: "Inter", "Cairo", ui-sans-serif, system-ui, -apple-system,
+      "Segoe UI", sans-serif;
   }
   button:not([disabled]),
   [role="button"]:not([disabled]) {

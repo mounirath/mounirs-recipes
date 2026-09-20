@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/input-otp";
 
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/i18n";
+import { LangToggle } from "@/components/LangToggle";
 import {
   ArrowLeft,
   ArrowRight,
@@ -44,6 +46,9 @@ type Step = "signIn" | { email: string; pendingCode?: string };
 
 function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
+  const { t, dir } = useI18n();
+  const ForwardIcon = dir === "rtl" ? ArrowLeft : ArrowRight;
+  const BackIcon = dir === "rtl" ? ArrowRight : ArrowLeft;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = resolveRedirectAfterAuth(
@@ -78,7 +83,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       setError(
         error instanceof Error
           ? error.message
-          : "تعذّر إرسال رمز التحقق، حاول مرة أخرى.",
+          : t("auth.emailError"),
       );
     } finally {
       setIsLoading(false);
@@ -101,7 +106,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       }
     } catch (error) {
       console.error("OTP verification error:", error);
-      setError("رمز التحقق غير صحيح، حاول مرة أخرى.");
+      setError(t("auth.otpError"));
       setOtp("");
     } finally {
       setIsLoading(false);
@@ -125,12 +130,15 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             Mounir Formule
           </span>
         </a>
-        <Button asChild variant="ghost" size="sm" className="gap-1.5">
-          <a href="/">
-            العودة للرئيسية
-            <ArrowRight className="size-4" />
-          </a>
-        </Button>
+        <div className="flex items-center gap-2">
+          <LangToggle />
+          <Button asChild variant="ghost" size="sm" className="gap-1.5">
+            <a href="/">
+              {t("auth.back")}
+              <BackIcon className="size-4" />
+            </a>
+          </Button>
+        </div>
       </div>
 
       {/* Auth content */}
@@ -144,9 +152,9 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     <FlaskConical className="size-7" />
                   </span>
                 </div>
-                <CardTitle className="text-xl">دخول المشتركين</CardTitle>
+                <CardTitle className="text-xl">{t("auth.title")}</CardTitle>
                 <CardDescription className="leading-relaxed">
-                  أدخل بريدك الإلكتروني ورمز الاشتراك للوصول إلى مكتبة الوصفات
+                  {t("auth.subtitle")}
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleEmailSubmit}>
@@ -155,7 +163,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <div className="space-y-1.5">
                     <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                       <KeyRound className="size-3.5" />
-                      رمز الاشتراك (8 خانات)
+                      {t("auth.code")}
                     </label>
                     <Input
                       value={accessCode}
@@ -180,17 +188,17 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   <div className="space-y-1.5">
                     <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                       <Mail className="size-3.5" />
-                      البريد الإلكتروني
+                      {t("auth.email")}
                     </label>
                     <div className="relative flex items-center gap-2">
                       <div className="relative flex-1">
-                        <Mail className="absolute right-3 top-3 size-4 text-muted-foreground" />
+                        <Mail className="absolute start-3 top-3 size-4 text-muted-foreground" />
                         <Input
                           name="email"
                           placeholder="name@example.com"
                           type="email"
                           dir="ltr"
-                          className="h-11 rounded-xl pl-4 pr-9 text-left"
+                          className="h-11 rounded-xl px-9 text-left"
                           disabled={isLoading}
                           required
                         />
@@ -204,7 +212,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                         {isLoading ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : (
-                          <ArrowLeft className="size-4" />
+                          <ForwardIcon className="size-4" />
                         )}
                       </Button>
                     </div>
@@ -216,8 +224,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     </p>
                   )}
                   <p className="pt-1 text-center text-xs leading-relaxed text-muted-foreground">
-                    الدخول للمشتركين فقط: أدخل رمز الاشتراك الذي حصلت عليه ثم
-                    بريدك — ستصلك رسالة برمز التحقق لتأكيد الدخول.
+                    {t("auth.hint")}
                   </p>
                 </CardContent>
               </form>
@@ -225,9 +232,9 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
           ) : (
             <>
               <CardHeader className="mt-2 text-center">
-                <CardTitle>تحقق من بريدك</CardTitle>
+                <CardTitle>{t("auth.otpTitle")}</CardTitle>
                 <CardDescription dir="ltr" className="text-left">
-                  أرسلنا رمزاً إلى {step.email}
+                  {t("auth.otpSent")} {step.email}
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleOtpSubmit}>
@@ -269,13 +276,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     </p>
                   )}
                   <p className="mt-4 text-center text-sm text-muted-foreground">
-                    لم يصلك الرمز؟{" "}
+                    {t("auth.noCode")}{" "}
                     <Button
                       variant="link"
                       className="h-auto p-0"
                       onClick={() => setStep("signIn")}
                     >
-                      أعد المحاولة
+                      {t("auth.resend")}
                     </Button>
                   </p>
                 </CardContent>
@@ -287,13 +294,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="ml-2 size-4 animate-spin" />
-                        جارٍ التحقق...
+                        <Loader2 className="me-2 size-4 animate-spin" />
+                        {t("auth.verify")}
                       </>
                     ) : (
                       <>
-                        تأكيد الرمز
-                        <ArrowLeft className="mr-2 size-4" />
+                        {t("auth.confirm")}
+                        <ForwardIcon className="ms-2 size-4" />
                       </>
                     )}
                   </Button>
@@ -304,7 +311,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                     disabled={isLoading}
                     className="w-full"
                   >
-                    استخدام بريد آخر
+                    {t("auth.otherEmail")}
                   </Button>
                 </CardFooter>
               </form>
@@ -312,7 +319,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
           )}
 
           <div className="rounded-b-lg border-t bg-muted/60 px-6 py-4 text-center text-xs text-muted-foreground">
-            محتوى حصري للمشتركين — Mounir Formule
+            {t("auth.footer")}
           </div>
         </Card>
       </div>
