@@ -2,3 +2,11 @@
 node_modules
 dist
 src/convex/_generated
+
+# Capacitor / Android build outputs
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+android/app/src/main/assets/public/
