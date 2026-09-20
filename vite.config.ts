@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './', // <--- INDISPENSABLE POUR CAPACITOR (évite l'écran noir)
   plugins: [react(), vlyPlugin(), tailwindcss()],
   resolve: {
     alias: {
