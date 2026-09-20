@@ -555,4 +555,168 @@ export const MATERIALS_FR: Record<string, MaterialFrContent> = {
       "Sans parfum (produit neutre)",
     ],
   },
+  "decyl-glucoside": {
+    name: "Decyl glucoside",
+    role: "Tensioactif doux non ionique d'origine végétale — la base des formules naturelles",
+    description:
+      "Tensioactif non ionique dérivé du glucose végétal et de l'alcool gras de coco, le plus utilisé dans la formulation naturelle moderne. Très doux pour la peau et les yeux, il nettoie efficacement avec une mousse stable et fonctionne dans l'eau dure. Compatible avec tous les autres tensioactifs.",
+    specs: [
+      "Aspect : liquide visqueux, clair à jaunâtre",
+      "Matière active : 50–60 % selon le fournisseur",
+      "pH solution à 10 % : 11,5–12,5 (à ajuster ensuite avec un acide)",
+      "Dose typique : 1–15 % selon le produit",
+      "Entièrement biodégradable (Ecocert)",
+    ],
+    safety: [
+      "Relativement sûr — éviter le contact direct avec les yeux",
+      "Ajouter lentement sous agitation pour limiter la mousse",
+    ],
+    alternatives: [
+      "Coco-glucoside (plus doux, moins moussant)",
+      "SLES (moins cher mais non naturel)",
+    ],
+  },
+  "coco-glucoside": {
+    name: "Coco-glucoside",
+    role: "Tensioactif végétal doux qui renforce mousse et nettoyage",
+    description:
+      "Tensioactif non ionique issu du glucose et de l'huile de coco, utilisé avec le decyl glucoside pour renforcer le pouvoir nettoyant et enrichir la mousse. Très doux pour la peau, ce qui en fait un favori pour les savons liquides pour les mains et les liquides vaisselle naturels.",
+    specs: [
+      "Aspect : liquide visqueux, clair",
+      "Matière active : 50–60 % selon le fournisseur",
+      "pH solution à 10 % : 11,5–12,5",
+      "Dose typique : 2–10 %",
+      "Entièrement biodégradable",
+    ],
+    safety: ["Relativement sûr — éviter le contact direct avec les yeux"],
+    alternatives: [
+      "Decyl glucoside (remplacement direct)",
+      "Caprylyl/Capryl glucoside",
+    ],
+  },
+  "caprylyl-glucoside": {
+    name: "Caprylyl/Capryl glucoside",
+    role: "Dégraissant puissant d'origine végétale",
+    description:
+      "Tensioactif non ionique de chaîne C8–C10, il se distingue par un pouvoir dégraissant supérieur au decyl et au coco-glucoside, tout en conservant son caractère végétal et sa biodégradabilité complète. Utilisé dans les dégraissants et nettoyants cuisine naturels.",
+    specs: [
+      "Aspect : liquide clair à jaunâtre",
+      "Matière active : 50–65 % selon le fournisseur",
+      "pH solution à 10 % : 11,5–12,5",
+      "Dose typique : 2–6 % dans les nettoyants puissants",
+      "Entièrement biodégradable",
+    ],
+    safety: ["Éviter le contact direct avec les yeux"],
+    alternatives: [
+      "Coco-glucoside (plus doux)",
+      "Butyl Glycol (chimique, plus fort)",
+    ],
+  },
+  "sodium-cocoamphoacetate": {
+    name: "Sodium cocoamphoacetate",
+    role: "Tensioactif amphotère ultra-doux — pour les produits en contact avec la peau",
+    description:
+      "Tensioactif amphotère dérivé de l'huile de coco, réputé pour sa douceur exceptionnelle sur la peau et les yeux, même à des concentrations élevées, avec une mousse crémeuse et stable. Utilisé principalement dans les savons liquides pour les mains et les produits de toilette naturels.",
+    specs: [
+      "Aspect : liquide jaunâtre, clair",
+      "Matière active : 38–42 % selon le fournisseur",
+      "pH solution à 10 % : 10–11",
+      "Dose typique : 5–10 % dans le savon liquide",
+      "Surnommé parfois « tensioactif sans larmes »",
+    ],
+    safety: [
+      "Très sûr pour la peau",
+      "Conserver à l'abri de la chaleur excessive",
+    ],
+    alternatives: [
+      "Betaine (moins cher, moins doux)",
+      "Coco-glucoside",
+    ],
+  },
+  "sodium-citrate": {
+    name: "Citrate de sodium",
+    role: "Séquestrant qui adoucit l'eau dure et protège l'efficacité des détergents",
+    description:
+      "Sel de sodium de l'acide citrique, il agit comme agent complexant (chélatant) qui capture les ions calcium et magnésium responsables de la dureté de l'eau, empêchant la précipitation du savon et renforçant l'efficacité des tensioactifs naturels. Matière sûre, de qualité alimentaire et biodégradable.",
+    specs: [
+      "Aspect : poudre cristalline blanche",
+      "Composition : tricitrate de sodium (souvent dihydraté)",
+      "Solubilité : excellente dans l'eau (~720 g/L)",
+      "Dose typique : 0,3–5 % selon la dureté de l'eau",
+      "Entièrement biodégradable (qualité alimentaire disponible)",
+    ],
+    safety: [
+      "Très sûr (qualité alimentaire)",
+      "Conserver au sec",
+    ],
+    alternatives: [
+      "Acide citrique (abaisse davantage le pH)",
+      "EDTA (plus fort mais non naturel)",
+    ],
+  },
+  "lactic-acid": {
+    name: "Acide lactique",
+    role: "Acide organique végétal — détartrage et nettoyage des salles de bain",
+    description:
+      "Acide organique issu de la fermentation végétale (qualité alimentaire), plus doux que l'acide citrique avec une excellente capacité à dissoudre le tartre et les dépôts de savon dans les salles de bain et les toilettes. Utilisé dans les nettoyants salle de bain et gels WC naturels, et pour ajuster le pH.",
+    specs: [
+      "Aspect : liquide visqueux, clair",
+      "Concentration commerciale : 80–90 %",
+      "pH : ~1,75 (solution à 1 %)",
+      "Dose typique : 2–5 % dans les nettoyants salle de bain",
+      "Excellent contre le savon calcaire (soap scum)",
+    ],
+    safety: [
+      "Acide concentré — portez gants et lunettes",
+      "Ne jamais mélanger avec le chlore ou l'ammoniaque",
+      "Ne pas utiliser sur marbre ou pierre calcaire",
+    ],
+    alternatives: [
+      "Acide citrique (moins cher, solide)",
+      "Vinaigre blanc (beaucoup plus faible)",
+    ],
+  },
+  "potassium-soap": {
+    name: "Savon liquide de potassium",
+    role: "Détergent de base alcalin naturel — lessives et sols",
+    description:
+      "Savon liquide obtenu par saponification d'huiles végétales avec l'hydroxyde de potassium (savon mou végétal). Détergent naturel puissant utilisé dans les lessives liquides et les nettoyants pour sols. Excellent en milieu alcalin, mais vérifier sa compatibilité avec les ingrédients acides (il réagit et précipite).",
+    specs: [
+      "Aspect : liquide translucide à brun clair",
+      "Matière active : 20–40 % selon le fournisseur (vérifier la FDS)",
+      "pH : 9,5–11 (alcalin)",
+      "Dose typique : 3–7 % dans les lessives",
+      "Entièrement biodégradable",
+    ],
+    safety: [
+      "Éviter le contact direct avec les yeux",
+      "Ne pas mélanger avec les acides (réaction et précipitation)",
+    ],
+    alternatives: [
+      "SLES (moins cher, compatibilité plus large)",
+      "Savon noir (Marseille)",
+    ],
+  },
+  "esterquat": {
+    name: "Esterquat d'origine végétale",
+    role: "Soin du linge — l'agent adoucissant naturel standard",
+    description:
+      "Sels d'ammonium quaternaire issus d'acides gras végétaux, c'est l'agent standard moderne des adoucissants textiles. Il se lie aux fibres pendant le lavage, les rendant douces et faciles à repasser, et neutralise l'électricité statique. L'un des plus grands composants des détergents mondiaux.",
+    specs: [
+      "Aspect : matière cireuse ou dispersion crémeuse",
+      "Matière active : 85–90 %",
+      "Dose typique : 3–6 % dans l'adoucissant",
+      "Nécessite un chauffage (60–75 °C) pour la dispersion",
+      "Biodégradable (nouvelles générations)",
+    ],
+    safety: [
+      "Portez des gants pour la manipulation concentrée",
+      "Ne jamais mélanger l'adoucissant concentré avec une lessive concentrée",
+      "Vérifier les instructions de dispersion dans la FDS du fournisseur",
+    ],
+    alternatives: [
+      "Silicone adoucissant (non végétal)",
+      "Glycérine (douceur légère seulement)",
+    ],
+  },
 };

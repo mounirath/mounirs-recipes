@@ -370,6 +370,7 @@ export default function Recipes() {
   const ensureSeed = useMutation(api.recipes.ensureSeed);
   const backfillFrench = useMutation(api.recipes.backfillFrench);
   const importNaturalBatch = useMutation(api.recipes.importNaturalBatch);
+  const importNaturalFormulas = useMutation(api.recipes.importNaturalFormulas);
   const accessStatus = useQuery(api.access.status, {});
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<MainView>("recipes");
@@ -408,7 +409,8 @@ export default function Recipes() {
     void ensureSeed();
     void backfillFrench();
     void importNaturalBatch();
-  }, [recipes, ensureSeed, backfillFrench, importNaturalBatch]);
+    void importNaturalFormulas();
+  }, [recipes, ensureSeed, backfillFrench, importNaturalBatch, importNaturalFormulas]);
 
   const filtered = useMemo(() => {
     if (!recipes) return [];

@@ -217,6 +217,21 @@ const carCareBatch: {
  * One-time import of the client's complete natural-formulation collection
  * (49 unique formulas). Guarded by meta flag — no-op after the first run.
  */
+function naturalDoc(f: (typeof NATURAL_FORMULAS)[number]) {
+  return {
+    title: f.title,
+    category: "natural" as const,
+    percentages: f.percentages,
+    steps: f.steps,
+    ...(f.warnings ? { warnings: f.warnings } : {}),
+    order: f.order,
+    titleFr: f.titleFr,
+    percentagesFr: f.percentagesFr,
+    stepsFr: f.stepsFr,
+    warningsFr: f.warningsFr,
+  };
+}
+
 export const importNaturalFormulas = mutation({
   args: {},
   handler: async (ctx) => {
@@ -231,18 +246,7 @@ export const importNaturalFormulas = mutation({
     let inserted = 0;
     for (const f of NATURAL_FORMULAS) {
       if (titles.has(f.title)) continue;
-      await ctx.db.insert("recipes", {
-        title: f.title,
-        category: "natural",
-        percentages: f.percentages,
-        steps: f.steps,
-        warnings: f.warnings,
-        order: f.order,
-        titleFr: f.titleFr,
-        percentagesFr: f.percentagesFr,
-        stepsFr: f.stepsFr,
-        warningsFr: f.warningsFr,
-      });
+      await ctx.db.insert("recipes", naturalDoc(f));
       inserted++;
     }
     return { skipped: false, inserted };
@@ -734,18 +738,7 @@ export const repairCatalog = mutation({
       ...homeCareBatch,
       ...carCareBatch,
       ...naturalBatch,
-      ...NATURAL_FORMULAS.map((f) => ({
-        title: f.title,
-        category: "natural" as const,
-        percentages: f.percentages,
-        steps: f.steps,
-        warnings: f.warnings,
-        order: f.order,
-        titleFr: f.titleFr,
-        percentagesFr: f.percentagesFr,
-        stepsFr: f.stepsFr,
-        warningsFr: f.warningsFr,
-      })),
+      ...NATURAL_FORMULAS.map(naturalDoc),
       ...seedRecipes,
     ];
     let inserted = 0;
@@ -831,18 +824,7 @@ export const ensureSeed = mutation({
       ...homeCareBatch,
       ...carCareBatch,
       ...naturalBatch,
-      ...NATURAL_FORMULAS.map((f) => ({
-        title: f.title,
-        category: "natural" as const,
-        percentages: f.percentages,
-        steps: f.steps,
-        warnings: f.warnings,
-        order: f.order,
-        titleFr: f.titleFr,
-        percentagesFr: f.percentagesFr,
-        stepsFr: f.stepsFr,
-        warningsFr: f.warningsFr,
-      })),
+      ...NATURAL_FORMULAS.map(naturalDoc),
       ...seedRecipes,
     ];
     let inserted = 0;

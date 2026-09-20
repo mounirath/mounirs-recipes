@@ -87,10 +87,10 @@ const ar: Dict = {
     "للاشتراك: تواصل معنا، وستستلم كود تفعيل من 8 خانات عبر البريد أو الرسالة.",
   "pricing.packagesTitle": "الباقات",
   "pricing.pkg.home.desc":
-    "القسم الأول كاملاً + القسم الثالث الطبيعي — 31 وصفة عملية.",
+    "القسم الأول كاملاً + القسم الثالث الطبيعي — 80 وصفة عملية.",
   "pricing.pkg.cars.desc": "القسم الثاني كاملاً: العناية بالسيارات — 11 وصفة احترافية.",
   "pricing.pkg.all.desc":
-    "الأقسام الثلاثة معاً: 42 وصفة بكل المكتبة + قسم المواد الأولية — الخيار الأوفر.",
+    "الأقسام الثلاثة معاً: 91 وصفة بكل المكتبة + قسم المواد الأولية — الخيار الأوفر.",
   "pricing.mostValue": "الأوفر",
   "pricing.durationsTitle": "مدد الاشتراك",
   "pricing.dur.month.text": "ينتهي تلقائياً بعد 30 يوماً — مثالي للتجربة.",
@@ -392,11 +392,11 @@ const fr: Dict = {
     "Pour s'abonner : contactez-nous et vous recevrez un code d'activation à 8 caractères par e-mail ou SMS.",
   "pricing.packagesTitle": "Les packs",
   "pricing.pkg.home.desc":
-    "Section 1 complète + section naturelle — 31 recettes pratiques.",
+    "Section 1 complète + section naturelle — 80 recettes pratiques.",
   "pricing.pkg.cars.desc":
     "Section 2 complète : entretien automobile — 11 recettes professionnelles.",
   "pricing.pkg.all.desc":
-    "Les trois sections : 42 recettes + section matières premières — le choix le plus avantageux.",
+    "Les trois sections : 91 recettes + section matières premières — le choix le plus avantageux.",
   "pricing.mostValue": "Le plus avantageux",
   "pricing.durationsTitle": "Durées d'abonnement",
   "pricing.dur.month.text": "Expire automatiquement après 30 jours — idéal pour essayer.",
