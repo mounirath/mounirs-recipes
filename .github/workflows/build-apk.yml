@@ -48,8 +48,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p src/convex/_generated
-          printf 'export const api = {} as any;\n' > src/convex/_generated/api.js
-          printf 'export declare const api: any;\n' > src/convex/_generated/api.d.ts
+          echo 'export const api = {};' > src/convex/_generated/api.js
+          echo 'export declare const api: any;' > src/convex/_generated/api.d.ts
 
       - name: Build web app
         run: npx vite build
