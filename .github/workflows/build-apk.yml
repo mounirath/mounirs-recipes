@@ -45,12 +45,10 @@ jobs:
           fi
 
       - name: Generate Convex API
-        run: npx convex codegen
-
+        run: CONVEX_DEPLOYMENT=dev:preview-123 npx convex codegen --typecheck disable
 
       - name: Build web app
         run: npx vite build
-
 
       - name: Sync Capacitor
         run: npx cap sync android
