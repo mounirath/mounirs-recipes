@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { categoriesForPkg, effectivePkg } from "./entitlements";
 import { FRENCH_RECIPES } from "./recipeDataFr";
+import { HOMEMADE_FORMULAS } from "./recipeDataHomemade";
 import { NATURAL_FORMULAS } from "./recipeDataNatural";
 
 /**
@@ -232,6 +233,21 @@ function naturalDoc(f: (typeof NATURAL_FORMULAS)[number]) {
   };
 }
 
+function homemadeDoc(f: (typeof HOMEMADE_FORMULAS)[number]) {
+  return {
+    title: f.title,
+    category: "homemade" as const,
+    percentages: f.percentages,
+    steps: f.steps,
+    ...(f.warnings ? { warnings: f.warnings } : {}),
+    order: f.order,
+    titleFr: f.titleFr,
+    percentagesFr: f.percentagesFr,
+    stepsFr: f.stepsFr,
+    warningsFr: f.warningsFr,
+  };
+}
+
 export const importNaturalFormulas = mutation({
   args: {},
   handler: async (ctx) => {
@@ -247,6 +263,28 @@ export const importNaturalFormulas = mutation({
     for (const f of NATURAL_FORMULAS) {
       if (titles.has(f.title)) continue;
       await ctx.db.insert("recipes", naturalDoc(f));
+      inserted++;
+    }
+    return { skipped: false, inserted };
+  },
+});
+
+/** One-time import: DIY homemade detergents (guarded by meta flag, no-op after first run). */
+export const importHomemadeFormulas = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const marker = await ctx.db
+      .query("meta")
+      .withIndex("by_key", (q) => q.eq("key", "homemade_formulas_v1"))
+      .first();
+    if (marker) return { skipped: true };
+    await ctx.db.insert("meta", { key: "homemade_formulas_v1", value: "1" });
+    const all = await ctx.db.query("recipes").collect();
+    const titles = new Set(all.map((r) => r.title));
+    let inserted = 0;
+    for (const f of HOMEMADE_FORMULAS) {
+      if (titles.has(f.title)) continue;
+      await ctx.db.insert("recipes", homemadeDoc(f));
       inserted++;
     }
     return { skipped: false, inserted };
@@ -739,6 +777,7 @@ export const repairCatalog = mutation({
       ...carCareBatch,
       ...naturalBatch,
       ...NATURAL_FORMULAS.map(naturalDoc),
+      ...HOMEMADE_FORMULAS.map(homemadeDoc),
       ...seedRecipes,
     ];
     let inserted = 0;
@@ -755,6 +794,7 @@ export const repairCatalog = mutation({
       "car_care_batch_imported",
       "natural_batch_imported",
       "natural_formulas_v1",
+      "homemade_formulas_v1",
     ]) {
       const marker = await ctx.db
         .query("meta")
@@ -825,6 +865,7 @@ export const ensureSeed = mutation({
       ...carCareBatch,
       ...naturalBatch,
       ...NATURAL_FORMULAS.map(naturalDoc),
+      ...HOMEMADE_FORMULAS.map(homemadeDoc),
       ...seedRecipes,
     ];
     let inserted = 0;

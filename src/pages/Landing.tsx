@@ -13,6 +13,7 @@ import {
   FlaskConical,
   Home,
   Infinity as InfinityIcon,
+  CookingPot,
   Leaf,
   Lock,
   Scale,
@@ -60,6 +61,14 @@ export default function Landing() {
       titleKey: "sections.natural.title",
       subtitleKey: "sections.natural.subtitle",
       descKey: "sections.natural.desc",
+    },
+    {
+      id: "homemade" as const,
+      icon: CookingPot,
+      chip: "bg-rose-400/10 text-rose-300",
+      titleKey: "sections.homemade.title",
+      subtitleKey: "sections.homemade.subtitle",
+      descKey: "sections.homemade.desc",
     },
   ];
 

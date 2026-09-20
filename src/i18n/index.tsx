@@ -51,6 +51,10 @@ const ar: Dict = {
   "sections.natural.subtitle": "منظفات طبيعية",
   "sections.natural.desc":
     "صابون طبيعي، خل وبيكربونات — تركيبات بسيطة وآمنة من مكونات طبيعية 100%.",
+  "sections.homemade.title": "القسم الرابع",
+  "sections.homemade.subtitle": "وصفات منزلية بسيطة",
+  "sections.homemade.desc":
+    "جبار مبشور، خل، بيكربونات — وصفات سهلة جداً بمكونات متوفرة في كل مطبخ، بدون مواد تقنية.",
 
   /* Features */
   "features.calc.title": "حاسبة دفعات ذكية",
@@ -87,10 +91,10 @@ const ar: Dict = {
     "للاشتراك: تواصل معنا، وستستلم كود تفعيل من 8 خانات عبر البريد أو الرسالة.",
   "pricing.packagesTitle": "الباقات",
   "pricing.pkg.home.desc":
-    "القسم الأول كاملاً + القسم الثالث الطبيعي — 80 وصفة عملية.",
+    "القسم الأول كاملاً + القسمان الطبيعي والمنزلي — 90 وصفة عملية.",
   "pricing.pkg.cars.desc": "القسم الثاني كاملاً: العناية بالسيارات — 11 وصفة احترافية.",
   "pricing.pkg.all.desc":
-    "الأقسام الثلاثة معاً: 91 وصفة بكل المكتبة + قسم المواد الأولية — الخيار الأوفر.",
+    "الأقسام الأربعة معاً: 101 وصفة بكل المكتبة + قسم المواد الأولية — الخيار الأوفر.",
   "pricing.mostValue": "الأوفر",
   "pricing.durationsTitle": "مدد الاشتراك",
   "pricing.dur.month.text": "ينتهي تلقائياً بعد 30 يوماً — مثالي للتجربة.",
@@ -177,15 +181,19 @@ const ar: Dict = {
   "recipes.cat.cleaners": "منظفات منزلية",
   "recipes.cat.cars": "العناية بالسيارات",
   "recipes.cat.natural": "منظفات طبيعية",
+  "recipes.cat.homemade": "وصفات منزلية بسيطة",
   "recipes.cat.cleaners.short": "منزلي",
   "recipes.cat.cars.short": "سيارات",
   "recipes.cat.natural.short": "طبيعي",
+  "recipes.cat.homemade.short": "منزلي بسيط",
   "recipes.cat.cleaners.heading": "القسم الأول",
   "recipes.cat.cars.heading": "القسم الثاني",
   "recipes.cat.natural.heading": "القسم الثالث",
+  "recipes.cat.homemade.heading": "القسم الرابع",
   "recipes.cat.cleaners.sub": "وصفات المنظفات المنزلية",
   "recipes.cat.cars.sub": "وصفات العناية بالسيارات",
   "recipes.cat.natural.sub": "وصفات المنظفات الطبيعية",
+  "recipes.cat.homemade.sub": "وصفات بسيطة بمكونات متوفرة في كل بيت",
   "recipes.count": "وصفة",
   "recipes.steps": "خطوات",
   "recipes.empty.title": "لا توجد وصفات بعد",
@@ -252,6 +260,7 @@ const ar: Dict = {
   "admin.stat.cleaners": "منظفات منزلية",
   "admin.stat.cars": "العناية بالسيارات",
   "admin.stat.natural": "منظفات طبيعية",
+  "admin.stat.homemade": "وصفات منزلية بسيطة",
   "admin.stat.subs": "المشتركون",
   "admin.form.add": "إضافة وصفة جديدة",
   "admin.form.edit": "تعديل وصفة",
@@ -355,6 +364,10 @@ const fr: Dict = {
   "sections.natural.subtitle": "Détergents naturels",
   "sections.natural.desc":
     "Savons naturels, vinaigre et bicarbonate — des formules simples et sûres à base d'ingrédients 100 % naturels.",
+  "sections.homemade.title": "Section 4",
+  "sections.homemade.subtitle": "Recettes maison faciles",
+  "sections.homemade.desc":
+    "Savon râpé, vinaigre, bicarbonate — des recettes très simples avec des ingrédients que tout le monde a dans sa cuisine, sans matières techniques.",
 
   /* Features */
   "features.calc.title": "Calculateur de lots intelligent",
@@ -392,11 +405,11 @@ const fr: Dict = {
     "Pour s'abonner : contactez-nous et vous recevrez un code d'activation à 8 caractères par e-mail ou SMS.",
   "pricing.packagesTitle": "Les packs",
   "pricing.pkg.home.desc":
-    "Section 1 complète + section naturelle — 80 recettes pratiques.",
+    "Section 1 complète + sections naturelle et maison — 90 recettes pratiques.",
   "pricing.pkg.cars.desc":
     "Section 2 complète : entretien automobile — 11 recettes professionnelles.",
   "pricing.pkg.all.desc":
-    "Les trois sections : 91 recettes + section matières premières — le choix le plus avantageux.",
+    "Les quatre sections : 101 recettes + section matières premières — le choix le plus avantageux.",
   "pricing.mostValue": "Le plus avantageux",
   "pricing.durationsTitle": "Durées d'abonnement",
   "pricing.dur.month.text": "Expire automatiquement après 30 jours — idéal pour essayer.",
@@ -487,15 +500,19 @@ const fr: Dict = {
   "recipes.cat.cleaners": "Détergents ménagers",
   "recipes.cat.cars": "Entretien automobile",
   "recipes.cat.natural": "Détergents naturels",
+  "recipes.cat.homemade": "Recettes maison faciles",
   "recipes.cat.cleaners.short": "Maison",
   "recipes.cat.cars.short": "Auto",
   "recipes.cat.natural.short": "Naturel",
+  "recipes.cat.homemade.short": "DIY",
   "recipes.cat.cleaners.heading": "Section 1",
   "recipes.cat.cars.heading": "Section 2",
   "recipes.cat.natural.heading": "Section 3",
+  "recipes.cat.homemade.heading": "Section 4",
   "recipes.cat.cleaners.sub": "Recettes de détergents ménagers",
   "recipes.cat.cars.sub": "Recettes d'entretien automobile",
   "recipes.cat.natural.sub": "Recettes de détergents naturels",
+  "recipes.cat.homemade.sub": "Recettes simples avec des ingrédients du quotidien",
   "recipes.count": "recette(s)",
   "recipes.steps": "étapes",
   "recipes.empty.title": "Aucune recette pour le moment",
@@ -564,6 +581,7 @@ const fr: Dict = {
   "admin.stat.cleaners": "Détergents ménagers",
   "admin.stat.cars": "Entretien automobile",
   "admin.stat.natural": "Détergents naturels",
+  "admin.stat.homemade": "Recettes maison faciles",
   "admin.stat.subs": "Abonnés",
   "admin.form.add": "Ajouter une recette",
   "admin.form.edit": "Modifier la recette",

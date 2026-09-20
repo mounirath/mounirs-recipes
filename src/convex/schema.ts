@@ -20,6 +20,7 @@ export const categoryValidator = v.union(
   v.literal("cleaners"),
   v.literal("cars"),
   v.literal("natural"),
+  v.literal("homemade"),
 );
 export type RecipeCategory = Infer<typeof categoryValidator>;
 

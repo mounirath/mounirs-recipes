@@ -30,6 +30,7 @@ import {
   Beaker,
   Car,
   ChevronDown,
+  CookingPot,
   FlaskConical,
   Home,
   KeyRound,
@@ -42,18 +43,20 @@ import {
 } from "lucide-react";
 
 type Recipe = Doc<"recipes">;
-type Category = "all" | "cleaners" | "cars" | "natural";
+type Category = "all" | "cleaners" | "cars" | "natural" | "homemade";
 
 const CATEGORY_ICON = {
   cleaners: Home,
   cars: Car,
   natural: Leaf,
+  homemade: CookingPot,
 } as const;
 
 const CATEGORY_CHIP = {
   cleaners: "bg-amber-400/10 text-amber-300 border-amber-400/25",
   cars: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
   natural: "bg-emerald-400/10 text-emerald-300 border-emerald-400/25",
+  homemade: "bg-rose-400/10 text-rose-300 border-rose-400/25",
 } as const;
 type MainView = "recipes" | "materials";
 
@@ -191,7 +194,9 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         ? t("recipes.cat.cars.short")
         : cat === "natural"
           ? t("recipes.cat.natural.short")
-          : t("recipes.cat.cleaners.short"),
+          : cat === "homemade"
+            ? t("recipes.cat.homemade.short")
+            : t("recipes.cat.cleaners.short"),
   };
   const Icon = meta.icon;
   const firstMaterials = parseLines(view.percentages)
@@ -371,6 +376,7 @@ export default function Recipes() {
   const backfillFrench = useMutation(api.recipes.backfillFrench);
   const importNaturalBatch = useMutation(api.recipes.importNaturalBatch);
   const importNaturalFormulas = useMutation(api.recipes.importNaturalFormulas);
+  const importHomemadeFormulas = useMutation(api.recipes.importHomemadeFormulas);
   const accessStatus = useQuery(api.access.status, {});
   const [searchParams, setSearchParams] = useSearchParams();
   const [view, setView] = useState<MainView>("recipes");
@@ -410,7 +416,15 @@ export default function Recipes() {
     void backfillFrench();
     void importNaturalBatch();
     void importNaturalFormulas();
-  }, [recipes, ensureSeed, backfillFrench, importNaturalBatch, importNaturalFormulas]);
+    void importHomemadeFormulas();
+  }, [
+    recipes,
+    ensureSeed,
+    backfillFrench,
+    importNaturalBatch,
+    importNaturalFormulas,
+    importHomemadeFormulas,
+  ]);
 
   const filtered = useMemo(() => {
     if (!recipes) return [];
@@ -433,6 +447,7 @@ export default function Recipes() {
       cleaners: filtered.filter((r) => r.category === "cleaners"),
       cars: filtered.filter((r) => r.category === "cars"),
       natural: filtered.filter((r) => r.category === "natural"),
+      homemade: filtered.filter((r) => r.category === "homemade"),
     }),
     [filtered],
   );
@@ -440,6 +455,7 @@ export default function Recipes() {
   const cleanersCount = recipes?.filter((r) => r.category === "cleaners").length ?? 0;
   const carsCount = recipes?.filter((r) => r.category === "cars").length ?? 0;
   const naturalCount = recipes?.filter((r) => r.category === "natural").length ?? 0;
+  const homemadeCount = recipes?.filter((r) => r.category === "homemade").length ?? 0;
 
   const handleSignOut = async () => {
     await signOut();
@@ -467,6 +483,13 @@ export default function Recipes() {
       label: t("recipes.cat.natural"),
       icon: Leaf,
       chip: CATEGORY_CHIP.natural,
+    },
+    homemade: {
+      heading: t("recipes.cat.homemade.heading"),
+      sub: t("recipes.cat.homemade.sub"),
+      label: t("recipes.cat.homemade"),
+      icon: CookingPot,
+      chip: CATEGORY_CHIP.homemade,
     },
   } as const;
 
@@ -647,6 +670,12 @@ export default function Recipes() {
                 label={t("recipes.cat.natural")}
                 count={naturalCount}
               />
+              <CategoryPill
+                active={category === "homemade"}
+                onClick={() => setCategory("homemade")}
+                label={t("recipes.cat.homemade")}
+                count={homemadeCount}
+              />
             </div>
 
             {/* Loading skeleton */}
@@ -696,7 +725,7 @@ export default function Recipes() {
             {/* Grouped sections */}
             {filtered.length > 0 && (
               <div className="space-y-10">
-                {(["cleaners", "cars", "natural"] as const).map((cat) => {
+                {(["cleaners", "cars", "natural", "homemade"] as const).map((cat) => {
                   const list = grouped[cat];
                   if (list.length === 0) return null;
                   const meta = catMeta[cat];

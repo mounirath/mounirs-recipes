@@ -31,6 +31,7 @@ import { LangToggle } from "@/components/LangToggle";
 import { toast } from "sonner";
 import {
   Car,
+  CookingPot,
   Copy,
   FlaskConical,
   Home,
@@ -64,7 +65,7 @@ type Subscriber = {
 
 const emptyForm = {
   title: "",
-  category: "cleaners" as "cleaners" | "cars" | "natural",
+  category: "cleaners" as "cleaners" | "cars" | "natural" | "homemade",
   percentages: "",
   steps: "",
   warnings: "",
@@ -364,6 +365,11 @@ export default function Admin() {
             value={recipes?.filter((r) => r.category === "natural").length ?? 0}
           />
           <StatCard
+            icon={CookingPot}
+            label={t("admin.stat.homemade")}
+            value={recipes?.filter((r) => r.category === "homemade").length ?? 0}
+          />
+          <StatCard
             icon={Users}
             label={t("admin.stat.subs")}
             value={subscribers?.length ?? 0}
@@ -401,7 +407,7 @@ export default function Admin() {
                     onValueChange={(v) =>
                       setForm((f) => ({
                         ...f,
-                        category: v as "cleaners" | "cars" | "natural",
+                        category: v as "cleaners" | "cars" | "natural" | "homemade",
                       }))
                     }
                   >
@@ -417,6 +423,9 @@ export default function Admin() {
                       </SelectItem>
                       <SelectItem value="natural">
                         {t("recipes.cat.natural")}
+                      </SelectItem>
+                      <SelectItem value="homemade">
+                        {t("recipes.cat.homemade")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -654,13 +663,17 @@ export default function Admin() {
                                 ? "border-primary/20 bg-primary/10 text-primary"
                                 : r.category === "natural"
                                   ? "border-emerald-600/20 bg-emerald-600/10 text-emerald-600"
-                                  : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
+                                  : r.category === "homemade"
+                                    ? "border-rose-600/20 bg-rose-600/10 text-rose-600"
+                                    : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
                             }`}
                           >
                             {r.category === "cleaners" ? (
                               <Home className="size-3" />
                             ) : r.category === "natural" ? (
                               <Leaf className="size-3" />
+                            ) : r.category === "homemade" ? (
+                              <CookingPot className="size-3" />
                             ) : (
                               <Car className="size-3" />
                             )}
@@ -668,7 +681,9 @@ export default function Admin() {
                               ? t("recipes.cat.cleaners.short")
                               : r.category === "natural"
                                 ? t("recipes.cat.natural.short")
-                                : t("recipes.cat.cars.short")}
+                                : r.category === "homemade"
+                                  ? t("recipes.cat.homemade.short")
+                                  : t("recipes.cat.cars.short")}
                           </Badge>
                           <span className="truncate text-sm font-semibold">
                             {r.title}
