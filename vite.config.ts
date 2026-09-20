@@ -6,7 +6,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   base: './', // Charge les scripts depuis le chemin relatif
-  plugins: [
+  plugins: [vlyPlugin(), 
     react(),
     tailwindcss()
   ],
