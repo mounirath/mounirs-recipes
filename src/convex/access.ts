@@ -34,7 +34,8 @@ export const validate = mutation({
       .query("accessCodes")
       .withIndex("by_used_email", (q) => q.eq("usedByEmail", email))
       .first();
-    if (already) return { ok: true as const, message: "لديك وصول بالفعل" };
+    if (already)
+      return { ok: true as const, reason: "already", message: "لديك وصول بالفعل" };
 
     const normalized = args.code.trim().toUpperCase();
     const record = await ctx.db
@@ -42,11 +43,20 @@ export const validate = mutation({
       .withIndex("by_code", (q) => q.eq("code", normalized))
       .first();
 
-    if (!record) return { ok: false as const, message: "الكود غير صحيح" };
+    if (!record)
+      return { ok: false as const, reason: "invalid", message: "الكود غير صحيح" };
     if (record.usedByEmail && record.usedByEmail !== email) {
-      return { ok: false as const, message: "هذا الكود مستخدم من قبل حساب آخر" };
+      return {
+        ok: false as const,
+        reason: "used",
+        message: "هذا الكود مستخدم من قبل حساب آخر",
+      };
     }
-    return { ok: true as const, message: "الكود صحيح — يمكنك المتابعة" };
+    return {
+      ok: true as const,
+      reason: "ok",
+      message: "الكود صحيح — يمكنك المتابعة",
+    };
   },
 });
 
@@ -65,7 +75,8 @@ export const redeem = mutation({
       .query("accessCodes")
       .withIndex("by_used_email", (q) => q.eq("usedByEmail", email))
       .first();
-    if (already) return { ok: true as const, message: "لديك وصول بالفعل" };
+    if (already)
+      return { ok: true as const, reason: "already", message: "لديك وصول بالفعل" };
 
     const normalized = args.code.trim().toUpperCase();
     const record = await ctx.db
@@ -73,15 +84,24 @@ export const redeem = mutation({
       .withIndex("by_code", (q) => q.eq("code", normalized))
       .first();
 
-    if (!record) return { ok: false as const, message: "الكود غير صحيح" };
+    if (!record)
+      return { ok: false as const, reason: "invalid", message: "الكود غير صحيح" };
     if (record.usedByEmail && record.usedByEmail !== email) {
-      return { ok: false as const, message: "هذا الكود مستخدم من قبل حساب آخر" };
+      return {
+        ok: false as const,
+        reason: "used",
+        message: "هذا الكود مستخدم من قبل حساب آخر",
+      };
     }
 
     await ctx.db.patch(record._id, {
       usedAt: Date.now(),
       usedByEmail: email,
     });
-    return { ok: true as const, message: "تم تنشيط اشتراكك بنجاح" };
+    return {
+      ok: true as const,
+      reason: "ok",
+      message: "تم تنشيط اشتراكك بنجاح",
+    };
   },
 });

@@ -4,11 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
+import { useI18n } from "@/i18n";
 import {
   AlertTriangle,
   Check,
   Copy,
-  ListOrdered,
   Scale,
   Sigma,
 } from "lucide-react";
@@ -59,44 +59,6 @@ export function PercentageBars({ text }: { text: string }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Steps + warnings                                                    */
-/* ------------------------------------------------------------------ */
-
-export function StepsList({ steps }: { steps: string }) {
-  return (
-    <ol className="space-y-2.5">
-      {parseLines(steps).map((step, i) => (
-        <li
-          key={i}
-          className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
-        >
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-xs font-bold text-emerald-400">
-            {i + 1}
-          </span>
-          <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-export function WarningsList({ warnings }: { warnings: string }) {
-  return (
-    <div className="space-y-2 rounded-xl border border-destructive/20 bg-destructive/5 p-4">
-      {parseLines(warnings).map((w, i) => (
-        <p
-          key={i}
-          className="flex items-start gap-2 text-sm leading-relaxed text-destructive"
-        >
-          <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
-          {w}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
 /* Batch calculator (1 kg → 1000 kg)                                   */
 /* ------------------------------------------------------------------ */
 
@@ -109,6 +71,7 @@ export function BatchCalculator({
   percentages: string;
   title: string;
 }) {
+  const { t } = useI18n();
   const [batch, setBatch] = useState<number>(10);
   const [batchText, setBatchText] = useState<string>("10");
   const [copied, setCopied] = useState(false);
@@ -129,11 +92,14 @@ export function BatchCalculator({
   };
 
   const copyTable = async () => {
-    const header = `${title} — دفعة ${batch} كغ\n`;
+    const header = `${title} — ${t("calc.copyHeader", { batch })}\n`;
     const rows = lines
-      .map((l) => `${l.name}: ${formatKg((l.pct / 100) * batch)} كغ (${formatGrams((l.pct / 100) * batch)} غ)`)
+      .map(
+        (l) =>
+          `${l.name}: ${formatKg((l.pct / 100) * batch)} ${t("calc.kg")} (${formatGrams((l.pct / 100) * batch)} ${t("calc.gCol")})`,
+      )
       .join("\n");
-    const footer = `\nمجموع النسب: ${totalPct.toFixed(1)}%`;
+    const footer = `\n${t("calc.copyTotal", { total: totalPct.toFixed(1) })}`;
     try {
       await navigator.clipboard.writeText(header + rows + footer);
       setCopied(true);
@@ -152,9 +118,9 @@ export function BatchCalculator({
             <Scale className="size-4" />
           </span>
           <div>
-            <p className="text-sm font-bold">حاسبة الدفعة</p>
+            <p className="text-sm font-bold">{t("calc.title")}</p>
             <p className="text-[11px] leading-tight text-muted-foreground">
-              من 1 كغ إلى 1000 كغ
+              {t("calc.range")}
             </p>
           </div>
         </div>
@@ -167,18 +133,20 @@ export function BatchCalculator({
             inputMode="decimal"
             dir="ltr"
             className="h-10 w-24 rounded-lg text-center font-mono font-bold"
-            aria-label="حجم الدفعة بالكيلوغرام"
+            aria-label={t("calc.batchSize")}
           />
-          <span className="text-sm font-semibold text-muted-foreground">كغ</span>
+          <span className="text-sm font-semibold text-muted-foreground">
+            {t("calc.kg")}
+          </span>
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={copyTable}
-            className="mr-auto gap-1.5"
+            className="ms-auto gap-1.5"
           >
             {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-            {copied ? "تم النسخ" : "نسخ الجدول"}
+            {copied ? t("calc.copied") : t("calc.copy")}
           </Button>
         </div>
       </div>
@@ -189,7 +157,7 @@ export function BatchCalculator({
         max={1000}
         step={1}
         onValueChange={(v) => setBatchSafe(v[0] ?? 1)}
-        aria-label="حجم الدفعة"
+        aria-label={t("calc.batchSize")}
       />
 
       {/* Presets */}
@@ -215,10 +183,18 @@ export function BatchCalculator({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border/60 bg-muted/50 text-xs text-muted-foreground">
-              <th className="px-3 py-2 text-right font-semibold">المادة</th>
-              <th className="px-3 py-2 text-center font-semibold">النسبة</th>
-              <th className="px-3 py-2 text-center font-semibold">كغ</th>
-              <th className="px-3 py-2 text-left font-semibold">غرام</th>
+              <th className="px-3 py-2 text-start font-semibold">
+                {t("calc.material")}
+              </th>
+              <th className="px-3 py-2 text-center font-semibold">
+                {t("calc.pct")}
+              </th>
+              <th className="px-3 py-2 text-center font-semibold">
+                {t("calc.kgCol")}
+              </th>
+              <th className="px-3 py-2 text-end font-semibold">
+                {t("calc.gCol")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -236,7 +212,7 @@ export function BatchCalculator({
                   <td className="px-3 py-2 text-center font-mono font-bold text-primary" dir="ltr">
                     {formatKg(qty)}
                   </td>
-                  <td className="px-3 py-2 text-left font-mono text-muted-foreground" dir="ltr">
+                  <td className="px-3 py-2 text-end font-mono text-muted-foreground" dir="ltr">
                     {formatGrams(qty)}
                   </td>
                 </tr>
@@ -248,7 +224,7 @@ export function BatchCalculator({
               <td className="px-3 py-2 font-bold" colSpan={1}>
                 <span className="inline-flex items-center gap-1">
                   <Sigma className="size-3.5" />
-                  المجموع
+                  {t("calc.total")}
                 </span>
               </td>
               <td className="px-3 py-2 text-center font-mono" dir="ltr">
@@ -257,7 +233,7 @@ export function BatchCalculator({
               <td className="px-3 py-2 text-center font-mono font-bold" dir="ltr">
                 {formatKg((totalPct / 100) * batch)}
               </td>
-              <td className="px-3 py-2 text-left font-mono" dir="ltr">
+              <td className="px-3 py-2 text-end font-mono" dir="ltr">
                 {formatGrams((totalPct / 100) * batch)}
               </td>
             </tr>
@@ -267,15 +243,14 @@ export function BatchCalculator({
 
       {Math.abs(totalPct - 100) > 0.5 && (
         <p className="text-xs leading-relaxed text-amber-300">
-          <AlertTriangle className="mb-0.5 inline size-3.5" /> مجموع النسب في
-          هذه الوصفة {totalPct.toFixed(1)}% — المتبقي يُكمَّل ماءً حسب خطوات
-          التحضير.
+          <AlertTriangle className="mb-0.5 inline size-3.5" />{" "}
+          {t("calc.sumWarning", { total: totalPct.toFixed(1) })}
         </p>
       )}
 
       {lines.length === 0 && (
         <Badge variant="outline" className="text-xs">
-          لا توجد نسب قابلة للحساب في هذه الوصفة
+          {t("calc.noLines")}
         </Badge>
       )}
     </div>

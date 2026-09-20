@@ -1,6 +1,8 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { categoriesForPkg, effectivePkg } from "./entitlements";
+import { FRENCH_RECIPES } from "./recipeDataFr";
 
 /**
  * Recipes scoped to the caller's subscription package. Returns null when
@@ -49,6 +51,32 @@ const seedRecipes: {
     order: 34,
   },
 ];
+
+/**
+ * Backfill French localization onto every recipe that matches the canonical
+ * catalog and is still missing its `titleFr`. Idempotent: after the first run
+ * it only scans (no writes). Safe to call on every load.
+ */
+export const backfillFrench = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const all = await ctx.db.query("recipes").collect();
+    let patched = 0;
+    for (const r of all) {
+      if (r.titleFr) continue;
+      const fr = FRENCH_RECIPES[r.title];
+      if (!fr) continue;
+      await ctx.db.patch(r._id, {
+        titleFr: fr.titleFr,
+        percentagesFr: fr.percentagesFr,
+        stepsFr: fr.stepsFr,
+        warningsFr: fr.warningsFr,
+      });
+      patched++;
+    }
+    return { patched, total: all.length };
+  },
+});
 
 /** One-time import: car-care recipes 23–32 (guarded by meta flag, no-op after first run). */
 export const importCarCareBatch = mutation({

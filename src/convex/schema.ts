@@ -63,6 +63,11 @@ const schema = defineSchema(
       warnings: v.optional(v.string()),
       videoUrl: v.optional(v.string()),
       order: v.number(),
+      // French localization (optional; backfilled by recipes.backfillFrench)
+      titleFr: v.optional(v.string()),
+      percentagesFr: v.optional(v.string()),
+      stepsFr: v.optional(v.string()),
+      warningsFr: v.optional(v.string()),
     }).index("by_category", ["category"]),
 
     // simple key-value store for one-time flags (e.g. seed marker)

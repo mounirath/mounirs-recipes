@@ -1,8 +1,11 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { LangToggle } from "@/components/LangToggle";
 import {
   ArrowLeft,
+  ArrowRight,
   Beaker,
   CalendarClock,
   Car,
@@ -19,136 +22,128 @@ import {
 import { motion } from "framer-motion";
 import { Link } from "react-router";
 
-const featureItems = [
-  {
-    icon: Scale,
-    title: "حاسبة دفعات ذكية",
-    text: "احسب كميات كل مادة من 1 كغ إلى 1000 كغ بضغطة زر — بدون حساب يدوي.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "أمان في الاستخدام",
-    text: "تحذيرات سلامة واضحة مع كل تركيبة وكل مادة أولية لاستخدام مسؤول.",
-  },
-  {
-    icon: FlaskConical,
-    title: "قسم المواد الأولية",
-    text: "مواصفات كل مادة، وظيفتها، وبدائلها المتاحة عند عدم توفرها.",
-  },
-];
-
-const sections = [
-  {
-    id: "cleaners",
-    icon: Home,
-    title: "القسم الأول",
-    subtitle: "منظفات منزلية",
-    description:
-      "مطهرات أسطح، معطرات أرضيات، سوائل جلي — تركيبات يومية لبيت أكثر نظافة.",
-    chip: "bg-amber-400/10 text-amber-300",
-  },
-  {
-    id: "cars",
-    icon: Car,
-    title: "القسم الثاني",
-    subtitle: "العناية بالسيارات",
-    description:
-      "ملمعات، شامبو، منظف داخلي — كل ما يحتاجه طلاء سيارتك ومقصورتها.",
-    chip: "bg-cyan-400/10 text-cyan-300",
-  },
-] as const;
-
-/* Pricing offers — package / duration / price */
-const pricingOffers = [
-  {
-    icon: Home,
-    pkg: "مواد تنظيف منزلية",
-    duration: "شهر",
-    price: "2,000 دج",
-    note: "ينتهي بعد 30 يوماً",
-    chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
-  },
-  {
-    icon: Car,
-    pkg: "مواد عناية بالسيارات",
-    duration: "شهر",
-    price: "1,500 دج",
-    note: "ينتهي بعد 30 يوماً",
-    chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
-  },
-  {
-    icon: Home,
-    pkg: "مواد تنظيف منزلية",
-    duration: "سنة",
-    price: "5,000 دج",
-    note: "ينتهي بعد 365 يوماً — وفّر 58%",
-    chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
-    highlight: true,
-  },
-  {
-    icon: Car,
-    pkg: "مواد عناية بالسيارات",
-    duration: "سنة",
-    price: "4,000 دج",
-    note: "ينتهي بعد 365 يوماً — وفّر 56%",
-    chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
-    highlight: true,
-  },
-  {
-    icon: Sparkles,
-    pkg: "جميع الوصفات",
-    duration: "مدى الحياة",
-    price: "15,000 دج",
-    note: "لا ينتهي أبداً — كل الأقسام + حاسبة الدفعات",
-    chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
-    featured: true,
-  },
-];
-
-const packages = [
-  {
-    icon: Home,
-    title: "باقة وصفات منزلية",
-    desc: "القسم الأول كاملاً: المنظفات المنزلية — 23 وصفة عملية.",
-    chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
-  },
-  {
-    icon: Car,
-    title: "باقة عناية بالسيارات",
-    desc: "القسم الثاني كاملاً: العناية بالسيارات — 11 وصفة احترافية.",
-    chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
-  },
-  {
-    icon: Sparkles,
-    title: "كل الباقات",
-    desc: "القسمان معاً: 34 وصفة بكل المكتبة + قسم المواد الأولية — الخيار الأوفر.",
-    chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
-    featured: true,
-  },
-];
-
-const durations = [
-  {
-    icon: CalendarClock,
-    title: "شهر",
-    text: "ينتهي تلقائياً بعد 30 يوماً — مثالي للتجربة.",
-  },
-  {
-    icon: CalendarClock,
-    title: "سنة",
-    text: "ينتهي بعد 365 يوماً — أفضل للاستمرار.",
-  },
-  {
-    icon: InfinityIcon,
-    title: "مدى الحياة",
-    text: "لا ينتهي أبداً — وصول دائم بلا تجديد.",
-  },
-] as const;
-
 export default function Landing() {
   const { isLoading, isAuthenticated } = useAuth();
+  const { t, lang, dir } = useI18n();
+  const ForwardIcon = dir === "rtl" ? ArrowLeft : ArrowRight;
 
   const ctaHref = isAuthenticated ? "/recipes" : "/auth?returnTo=%2Frecipes";
+
+  const featureItems = [
+    { icon: Scale, titleKey: "features.calc.title", textKey: "features.calc.text" },
+    { icon: ShieldCheck, titleKey: "features.safety.title", textKey: "features.safety.text" },
+    { icon: FlaskConical, titleKey: "features.materials.title", textKey: "features.materials.text" },
+  ] as const;
+
+  const sections = [
+    {
+      id: "cleaners" as const,
+      icon: Home,
+      chip: "bg-amber-400/10 text-amber-300",
+      titleKey: "sections.cleaners.title",
+      subtitleKey: "sections.cleaners.subtitle",
+      descKey: "sections.cleaners.desc",
+    },
+    {
+      id: "cars" as const,
+      icon: Car,
+      chip: "bg-cyan-400/10 text-cyan-300",
+      titleKey: "sections.cars.title",
+      subtitleKey: "sections.cars.subtitle",
+      descKey: "sections.cars.desc",
+    },
+  ];
+
+  /* Pricing offers — package / duration / price */
+  const pricingOffers = [
+    {
+      icon: Home,
+      pkgKey: "pricing.pkg.home",
+      durationKey: "pricing.dur.month",
+      price: lang === "fr" ? "2 000 DA" : "2,000 دج",
+      noteKey: "pricing.note.month",
+      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+    },
+    {
+      icon: Car,
+      pkgKey: "pricing.pkg.cars",
+      durationKey: "pricing.dur.month",
+      price: lang === "fr" ? "1 500 DA" : "1,500 دج",
+      noteKey: "pricing.note.month",
+      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+    },
+    {
+      icon: Home,
+      pkgKey: "pricing.pkg.home",
+      durationKey: "pricing.dur.year",
+      price: lang === "fr" ? "5 000 DA" : "5,000 دج",
+      noteKey: "pricing.note.year",
+      saveKey: "pricing.save58",
+      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+      highlight: true,
+    },
+    {
+      icon: Car,
+      pkgKey: "pricing.pkg.cars",
+      durationKey: "pricing.dur.year",
+      price: lang === "fr" ? "4 000 DA" : "4,000 دج",
+      noteKey: "pricing.note.year",
+      saveKey: "pricing.save56",
+      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+      highlight: true,
+    },
+    {
+      icon: Sparkles,
+      pkgKey: "pricing.pkg.all",
+      durationKey: "pricing.dur.lifetime",
+      price: lang === "fr" ? "15 000 DA" : "15,000 دج",
+      noteKey: "pricing.note.lifetime",
+      chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
+      featured: true,
+    },
+  ];
+
+  const packages = [
+    {
+      icon: Home,
+      titleKey: "pricing.pkg.home",
+      descKey: "pricing.pkg.home.desc",
+      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+    },
+    {
+      icon: Car,
+      titleKey: "pricing.pkg.cars",
+      descKey: "pricing.pkg.cars.desc",
+      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+    },
+    {
+      icon: Sparkles,
+      titleKey: "pricing.pkg.all",
+      descKey: "pricing.pkg.all.desc",
+      chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
+      featured: true,
+    },
+  ];
+
+  const durations = [
+    {
+      icon: CalendarClock,
+      titleKey: "pricing.dur.month",
+      textKey: "pricing.dur.month.text",
+    },
+    {
+      icon: CalendarClock,
+      titleKey: "pricing.dur.year",
+      textKey: "pricing.dur.year.text",
+    },
+    {
+      icon: InfinityIcon,
+      titleKey: "pricing.dur.lifetime",
+      textKey: "pricing.dur.lifetime.text",
+    },
+  ];
+
+  const notes = ["inside.n1", "inside.n2", "inside.n3", "inside.n4", "inside.n5", "inside.n6"];
 
   return (
     <div className="min-h-screen bg-background">
@@ -165,21 +160,24 @@ export default function Landing() {
           </a>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-muted-foreground md:flex">
             <a href="#sections" className="transition-colors hover:text-foreground">
-              الأقسام
+              {t("nav.sections")}
             </a>
             <a href="#features" className="transition-colors hover:text-foreground">
-              لماذا نحن
+              {t("nav.why")}
             </a>
             <a href="#pricing" className="transition-colors hover:text-primary">
-              العروض
+              {t("nav.offers")}
             </a>
           </nav>
-          <Button asChild className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
-            <Link to={ctaHref}>
-              {isAuthenticated ? "الوصفات" : "دخول المشتركين"}
-              <ArrowLeft className="size-4" />
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <LangToggle />
+            <Button asChild className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
+              <Link to={ctaHref}>
+                {isAuthenticated ? t("nav.recipes") : t("nav.login")}
+                <ForwardIcon className="size-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -202,15 +200,14 @@ export default function Landing() {
               className="mb-6 gap-1.5 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-amber-300"
             >
               <Sparkles className="size-3.5" />
-              منصة وصفات حصرية للمشتركين
+              {t("hero.badge")}
             </Badge>
             <h1 className="text-balance text-4xl font-extrabold leading-[1.2] tracking-tight sm:text-6xl sm:leading-[1.15]">
-              وصفات احترافية مع حاسبة
-              <span className="text-primary"> ومواد أولية موثوقة</span>
+              {t("hero.title1")}
+              <span className="text-primary"> {t("hero.title2")}</span>
             </h1>
             <p className="text-balance mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              مكتبة وصفات المنظفات والعناية بالسيارات، مع حاسبة دفعات من 1 إلى
-              1000 كغ، ومواصفات كاملة لكل مادة أولية.
+              {t("hero.subtitle")}
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button
@@ -220,7 +217,7 @@ export default function Landing() {
               >
                 <Link to={ctaHref}>
                   <Beaker className="size-5" />
-                  استكشف الوصفات
+                  {t("hero.explore")}
                 </Link>
               </Button>
               <Button
@@ -231,13 +228,12 @@ export default function Landing() {
               >
                 <a href="#pricing">
                   <Wallet className="size-4" />
-                  شاهد العروض والأسعار
+                  {t("hero.viewOffers")}
                 </a>
               </Button>
             </div>
             <p className="mt-4 text-xs text-muted-foreground">
-              <Lock className="mb-0.5 inline size-3" /> الوصول للمحتوى يتطلب
-              اشتراكاً فعّالاً
+              <Lock className="mb-0.5 inline size-3" /> {t("hero.lockNote")}
             </p>
           </motion.div>
 
@@ -251,7 +247,7 @@ export default function Landing() {
             {sections.map((s) => (
               <div
                 key={s.id}
-                className="rounded-2xl border border-border/70 bg-card p-6 text-right shadow-soft transition-transform duration-300 hover:-translate-y-1"
+                className="rounded-2xl border border-border/70 bg-card p-6 text-start shadow-soft transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -261,13 +257,13 @@ export default function Landing() {
                   </span>
                   <div>
                     <p className="text-xs font-semibold text-muted-foreground">
-                      {s.title}
+                      {t(s.titleKey)}
                     </p>
-                    <h3 className="font-bold">{s.subtitle}</h3>
+                    <h3 className="font-bold">{t(s.subtitleKey)}</h3>
                   </div>
                 </div>
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  {s.description}
+                  {t(s.descKey)}
                 </p>
               </div>
             ))}
@@ -280,13 +276,13 @@ export default function Landing() {
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
           <div className="grid gap-10 md:grid-cols-3">
             {featureItems.map((f) => (
-              <div key={f.title} className="text-center sm:text-right">
+              <div key={f.titleKey} className="text-center sm:text-start">
                 <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 sm:mx-0">
                   <f.icon className="size-5" />
                 </div>
-                <h3 className="mb-2 text-lg font-bold">{f.title}</h3>
+                <h3 className="mb-2 text-lg font-bold">{t(f.titleKey)}</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  {f.text}
+                  {t(f.textKey)}
                 </p>
               </div>
             ))}
@@ -305,14 +301,13 @@ export default function Landing() {
             className="mb-4 gap-1.5 border border-amber-400/25 bg-amber-400/10 text-amber-300"
           >
             <Wallet className="size-3.5" />
-            عروض الاشتراك
+            {t("pricing.badge")}
           </Badge>
           <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
-            اختر عرضك المناسب
+            {t("pricing.title")}
           </h2>
           <p className="mt-3 leading-relaxed text-muted-foreground">
-            أسعار واضحة بلا مفاجآت — اختر الباقة والمدة التي تناسبك، ثم فعّل
-            اشتراكك بالكود الذي يصلك بعد التسديد.
+            {t("pricing.subtitle")}
           </p>
         </div>
 
@@ -322,14 +317,14 @@ export default function Landing() {
             <table className="w-full min-w-[560px] text-sm">
               <thead>
                 <tr className="border-b border-border/60 bg-muted/50 text-xs text-muted-foreground">
-                  <th className="px-4 py-3.5 text-right font-bold sm:px-6">
-                    الباقة
+                  <th className="px-4 py-3.5 text-start font-bold sm:px-6">
+                    {t("pricing.table.pkg")}
                   </th>
                   <th className="px-4 py-3.5 text-center font-bold sm:px-6">
-                    المدة
+                    {t("pricing.table.duration")}
                   </th>
-                  <th className="px-4 py-3.5 text-left font-bold sm:px-6">
-                    السعر
+                  <th className="px-4 py-3.5 text-end font-bold sm:px-6">
+                    {t("pricing.table.price")}
                   </th>
                 </tr>
               </thead>
@@ -353,10 +348,10 @@ export default function Landing() {
                           <row.icon className="size-4" />
                         </span>
                         <div>
-                          <p className="font-bold">{row.pkg}</p>
+                          <p className="font-bold">{t(row.pkgKey)}</p>
                           {row.featured && (
                             <Badge className="mt-1 border-none bg-amber-400 text-[10px] text-amber-950">
-                              العرض الأكمل
+                              {t("pricing.best")}
                             </Badge>
                           )}
                         </div>
@@ -364,13 +359,19 @@ export default function Landing() {
                     </td>
                     <td className="px-4 py-4 text-center sm:px-6">
                       <span className="rounded-full border border-border/70 bg-muted/50 px-3 py-1 text-xs font-bold">
-                        {row.duration}
+                        {t(row.durationKey)}
                       </span>
                       <p className="mt-1 text-[11px] text-muted-foreground">
-                        {row.note}
+                        {t(row.noteKey)}
+                        {row.saveKey && (
+                          <span className="font-bold text-emerald-400">
+                            {" — "}
+                            {t(row.saveKey)}
+                          </span>
+                        )}
                       </p>
                     </td>
-                    <td className="px-4 py-4 text-left sm:px-6">
+                    <td className="px-4 py-4 text-end sm:px-6">
                       <span
                         className={`font-mono text-lg font-extrabold ${
                           row.featured ? "text-amber-300" : "text-foreground"
@@ -386,8 +387,7 @@ export default function Landing() {
             </table>
           </div>
           <div className="border-t border-border/60 bg-muted/30 px-4 py-3 text-center text-xs text-muted-foreground sm:px-6">
-            للاشتراك: تواصل معنا، وستستلم كود تفعيل من 8 خانات عبر البريد أو
-            الرسالة.
+            {t("pricing.howto")}
           </div>
         </div>
 
@@ -395,7 +395,7 @@ export default function Landing() {
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {packages.map((p) => (
             <div
-              key={p.title}
+              key={p.titleKey}
               className={`relative rounded-2xl border bg-card p-6 shadow-soft transition-transform duration-300 hover:-translate-y-1 ${
                 p.featured
                   ? "border-amber-400/30 shadow-soft-lg"
@@ -403,8 +403,8 @@ export default function Landing() {
               }`}
             >
               {p.featured && (
-                <Badge className="absolute -top-2.5 right-6 border-none bg-amber-400 text-[10px] text-amber-950">
-                  الأوفر
+                <Badge className="absolute -top-2.5 start-6 border-none bg-amber-400 text-[10px] text-amber-950">
+                  {t("pricing.mostValue")}
                 </Badge>
               )}
               <span
@@ -412,9 +412,9 @@ export default function Landing() {
               >
                 <p.icon className="size-5" />
               </span>
-              <h3 className="mb-1.5 text-lg font-bold">{p.title}</h3>
+              <h3 className="mb-1.5 text-lg font-bold">{t(p.titleKey)}</h3>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {p.desc}
+                {t(p.descKey)}
               </p>
             </div>
           ))}
@@ -422,27 +422,27 @@ export default function Landing() {
 
         {/* Durations */}
         <div className="mt-10 rounded-2xl border border-border/70 bg-card p-6 shadow-soft sm:p-8">
-          <h3 className="mb-5 text-center font-bold">مدد الاشتراك</h3>
+          <h3 className="mb-5 text-center font-bold">{t("pricing.durationsTitle")}</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             {durations.map((d) => (
               <div
-                key={d.title}
+                key={d.titleKey}
                 className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-4"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 text-amber-300">
                   <d.icon className="size-4" />
                 </span>
                 <div>
-                  <p className="font-bold">{d.title}</p>
+                  <p className="font-bold">{t(d.titleKey)}</p>
                   <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
-                    {d.text}
+                    {t(d.textKey)}
                   </p>
                 </div>
               </div>
             ))}
           </div>
           <p className="mt-5 text-center text-xs text-muted-foreground">
-            انتهت مدتك؟ تواصل مع الإدارة لتجديد اشتراكك بنفس الباقة أو ترقيتها.
+            {t("pricing.renew")}
           </p>
         </div>
 
@@ -454,7 +454,7 @@ export default function Landing() {
           >
             <Link to={ctaHref}>
               <Beaker className="size-5" />
-              فعّل اشتراكك الآن
+              {t("pricing.activate")}
             </Link>
           </Button>
         </div>
@@ -471,29 +471,22 @@ export default function Landing() {
               variant="secondary"
               className="mb-4 border border-amber-400/25 bg-amber-400/10 text-amber-300"
             >
-              داخل المنصة
+              {t("inside.badge")}
             </Badge>
             <h2 className="text-balance text-3xl font-extrabold tracking-tight sm:text-4xl">
-              قسمان، عشرات الوصفات، تجربة واحدة
+              {t("inside.title")}
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              بعد دخولك برمز الاشتراك ستجد جميع الوصفات مصنفة في قسمين واضحين،
-              مع بحث فوري وحاسبة دفعات مدمجة وعرض تفصيلي لكل وصفة: النسب،
-              خطوات التحضير، تحذيرات السلامة وقسم كامل للمواد الأولية.
+              {t("inside.text")}
             </p>
             <ul className="mt-6 space-y-3">
-              {[
-                "بحث فوري في كل الوصفات والمواد الأولية",
-                "حاسبة دفعات مدمجة: من 1 كغ إلى 1000 كغ لكل وصفة",
-                "قسم المواد الأولية: المواصفات والسلامة والبدائل",
-                "تصنيف واضح بين المنظفات المنزلية والعناية بالسيارات",
-              ].map((t) => (
+              {["inside.li1", "inside.li2", "inside.li3", "inside.li4"].map((k) => (
                 <li
-                  key={t}
+                  key={k}
                   className="flex items-center gap-2.5 text-sm font-medium"
                 >
                   <CheckCircle2 className="size-4 shrink-0 text-amber-300" />
-                  {t}
+                  {t(k)}
                 </li>
               ))}
             </ul>
@@ -503,32 +496,25 @@ export default function Landing() {
               className="mt-8 bg-primary text-primary-foreground shadow-soft hover:bg-primary/90"
             >
               <Link to={ctaHref}>
-                ابدأ الآن
-                <ArrowLeft className="size-4" />
+                {t("inside.cta")}
+                <ForwardIcon className="size-4" />
               </Link>
             </Button>
           </div>
           <div className="rounded-2xl border border-border/70 bg-card p-6 shadow-soft-lg sm:p-8">
-            <div className="mb-5 flex items-center justify-between">
-              <h3 className="font-bold">ملاحظات هامة لجميع الوصفات</h3>
-              <Badge variant="outline" className="text-xs">
-                تأكد قبل البدء
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <h3 className="font-bold">{t("inside.notesTitle")}</h3>
+              <Badge variant="outline" className="shrink-0 text-xs">
+                {t("inside.notesBadge")}
               </Badge>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                "النسب المئوية: احرص على دقة القياس بميزان حساس.",
-                "الترتيب: أضف المكونات بالترتيب المذكور لضمان التجانس.",
-                "التحريك: استخدم خلاطاً كهربائياً أو حرك يدوياً باستمرار.",
-                "السلامة: ارتدِ قفازات ونظارات وكمامات عند التعامل مع المواد الكيميائية.",
-                "التخزين: خزن المنتجات في مكان بارد وجاف بعيداً عن الشمس.",
-                "الصلاحية: معظم المنتجات تبقى صالحة من 12 إلى 18 شهراً.",
-              ].map((t) => (
+              {notes.map((k) => (
                 <p
-                  key={t}
+                  key={k}
                   className="rounded-xl border border-border/60 bg-muted/50 p-3 text-xs leading-relaxed text-muted-foreground"
                 >
-                  {t}
+                  {t(k)}
                 </p>
               ))}
             </div>
@@ -544,16 +530,16 @@ export default function Landing() {
             <span className="text-lg font-bold">Mounir Formule</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            وصفات التنظيف والعناية — صُممت بعناية فائقة.
+            {t("brand.tagline")}
           </p>
           <p className="text-xs text-muted-foreground/70">
-            &copy; {new Date().getFullYear()} جميع الحقوق محفوظة
+            &copy; {new Date().getFullYear()} {t("footer.rights")}
           </p>
           <Link
             to="/admin"
             className="text-xs text-muted-foreground/50 underline decoration-dotted underline-offset-4 transition-colors hover:text-muted-foreground"
           >
-            دخول الإدارة
+            {t("footer.admin")}
           </Link>
         </div>
       </footer>

@@ -7,7 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { RAW_MATERIALS } from "@/lib/materials";
+import { RAW_MATERIALS, localizeMaterial, type LocalizedMaterial } from "@/lib/materials";
+import { useI18n } from "@/i18n";
 import {
   AlertTriangle,
   ArrowLeftRight,
@@ -23,18 +24,19 @@ function MaterialDialog({
   material,
   onClose,
 }: {
-  material: (typeof RAW_MATERIALS)[number] | null;
+  material: LocalizedMaterial | null;
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   if (!material) return null;
   return (
     <Dialog open={!!material} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto rounded-2xl p-0 sm:max-w-xl">
-        <DialogHeader className="border-b border-border/60 bg-muted/40 px-6 py-5 text-right">
+        <DialogHeader className="border-b border-border/60 bg-muted/40 px-6 py-5 text-start">
           <div className="mb-2 flex items-center gap-2">
             <Badge variant="outline" className={`gap-1.5 ${material.tone.chip}`}>
               <FlaskConical className="size-3.5" />
-              مادة أولية
+              {t("materials.badge")}
             </Badge>
           </div>
           <DialogTitle className="text-xl font-bold leading-snug">
@@ -49,7 +51,7 @@ function MaterialDialog({
           <section>
             <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-primary">
               <Info className="size-4" />
-              الوظيفة والوصف
+              {t("materials.roleTitle")}
             </h4>
             <div className="rounded-xl border border-primary/15 bg-primary/5 p-4">
               <Badge variant="outline" className={`mb-2 text-xs ${material.tone.chip}`}>
@@ -62,7 +64,7 @@ function MaterialDialog({
           <section>
             <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-blue-300">
               <CheckCircle2 className="size-4" />
-              المواصفات الفنية
+              {t("materials.specsTitle")}
             </h4>
             <ul className="space-y-2">
               {material.specs.map((s) => (
@@ -80,7 +82,7 @@ function MaterialDialog({
           <section>
             <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-destructive">
               <AlertTriangle className="size-4" />
-              السلامة والتخزين
+              {t("materials.safetyTitle")}
             </h4>
             <div className="space-y-2 rounded-xl border border-destructive/20 bg-destructive/5 p-4">
               {material.safety.map((s) => (
@@ -95,7 +97,7 @@ function MaterialDialog({
           <section>
             <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-300">
               <ArrowLeftRight className="size-4" />
-              البدائل المتاحة
+              {t("materials.altTitle")}
             </h4>
             <div className="flex flex-wrap gap-2">
               {material.alternatives.map((a) => (
@@ -121,19 +123,25 @@ export function MaterialsSection({
   searchQuery: string;
   onSearchChange: (q: string) => void;
 }) {
-  const [selected, setSelected] = useState<(typeof RAW_MATERIALS)[number] | null>(null);
+  const { t, lang } = useI18n();
+  const [selected, setSelected] = useState<LocalizedMaterial | null>(null);
+
+  const localized = useMemo(
+    () => RAW_MATERIALS.map((m) => localizeMaterial(m, lang)),
+    [lang],
+  );
 
   const filtered = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return RAW_MATERIALS;
-    return RAW_MATERIALS.filter(
+    if (!q) return localized;
+    return localized.filter(
       (m) =>
         m.name.toLowerCase().includes(q) ||
         m.latin.toLowerCase().includes(q) ||
-        m.role.includes(q) ||
-        m.description.includes(q),
+        m.role.toLowerCase().includes(q) ||
+        m.description.toLowerCase().includes(q),
     );
-  }, [searchQuery]);
+  }, [localized, searchQuery]);
 
   return (
     <div className="space-y-6">
@@ -145,18 +153,16 @@ export function MaterialsSection({
           </span>
           <div>
             <h2 className="text-lg font-extrabold tracking-tight">
-              قسم المواد الأولية
+              {t("materials.intro.title")}
             </h2>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              تعرّف على كل مادة أولية تُستخدم في الوصفات: وظيفتها، مواصفاتها
-              الفنية، إرشادات السلامة، والبدائل المتاحة عند عدم توفرها — اضغط
-              على أي مادة لعرض التفاصيل.
+              {t("materials.intro.text")}
             </p>
           </div>
         </div>
         <p className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
           <Search className="size-3.5" />
-          استخدم خانة البحث أعلى الصفحة لتصفية المواد بالاسم أو الوظيفة.
+          {t("materials.intro.searchHint")}
         </p>
       </div>
 
@@ -166,9 +172,9 @@ export function MaterialsSection({
           <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-muted text-muted-foreground">
             <Search className="size-6" />
           </div>
-          <h3 className="mb-1 font-bold">لا نتائج مطابقة</h3>
+          <h3 className="mb-1 font-bold">{t("materials.noResults.title")}</h3>
           <p className="text-sm text-muted-foreground">
-            جرّب اسماً مختلفاً للمادة أو ابحث بوظيفتها.
+            {t("materials.noResults.text")}
           </p>
         </div>
       ) : (
@@ -178,7 +184,7 @@ export function MaterialsSection({
               key={m.key}
               type="button"
               onClick={() => setSelected(m)}
-              className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 text-right shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-soft-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="group flex h-full flex-col rounded-2xl border border-border/70 bg-card p-5 text-start shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-soft-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <div className="mb-3 flex items-start justify-between gap-2">
                 <div>
@@ -202,9 +208,9 @@ export function MaterialsSection({
                 {m.description}
               </p>
               <span className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-primary">
-                عرض المواصفات
+                {t("materials.viewSpecs")}
                 <svg
-                  className="size-3.5 transition-transform duration-300 group-hover:-translate-x-0.5"
+                  className={`size-3.5 transition-transform duration-300 group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5`}
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -225,9 +231,7 @@ export function MaterialsSection({
       <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
         <p className="flex items-start gap-2 text-sm leading-relaxed text-amber-300">
           <ShieldCheck className="mt-0.5 size-4 shrink-0" />
-          نصيحة عامة: قبل استخدام أي مادة جديدة، اطلب ورقة بيانات السلامة (FDS)
-          من المورد، وارتدِ دائماً قفازات ونظارات عند التعامل مع المواد
-          الكيميائية المركزة.
+          {t("materials.safetyNote")}
         </p>
       </div>
 

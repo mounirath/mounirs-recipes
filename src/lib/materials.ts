@@ -5,6 +5,8 @@
  * spelling/accent differences in recipe data.
  */
 
+import { MATERIALS_FR } from "./materials-fr";
+
 export interface RawMaterialInfo {
   key: string;
   /** Material name as shown in recipes (Arabic or Latin). */
@@ -27,6 +29,59 @@ export interface RawMaterialInfo {
   tone: {
     chip: string;
     iconBg: string;
+  };
+}
+
+/** Localized view of a material for the active language. */
+export interface LocalizedMaterial {
+  key: string;
+  name: string;
+  latin: string;
+  role: string;
+  description: string;
+  specs: string[];
+  safety: string[];
+  alternatives: string[];
+  usedIn: ("cleaners" | "cars")[];
+  tone: {
+    chip: string;
+    iconBg: string;
+  };
+}
+
+/** Pick the localized fields of a material by language (French from MATERIALS_FR, Arabic fallback). */
+export function localizeMaterial(
+  m: RawMaterialInfo,
+  lang: "ar" | "fr",
+): LocalizedMaterial {
+  const base = {
+    key: m.key,
+    latin: m.latin,
+    usedIn: m.usedIn,
+    tone: m.tone,
+  };
+  if (lang === "fr") {
+    const fr = MATERIALS_FR[m.key];
+    if (fr) {
+      return {
+        ...base,
+        name: fr.name ?? m.name,
+        role: fr.role,
+        description: fr.description,
+        specs: fr.specs,
+        safety: fr.safety,
+        alternatives: fr.alternatives,
+      };
+    }
+  }
+  return {
+    ...base,
+    name: m.name,
+    role: m.role,
+    description: m.description,
+    specs: m.specs,
+    safety: m.safety,
+    alternatives: m.alternatives,
   };
 }
 
@@ -576,7 +631,7 @@ export const RAW_MATERIALS: RawMaterialInfo[] = [
   },
 ];
 
-/** Tolerant lookup: matches on name/latin/key substrings. */
+/** Tolerant lookup: matches on name/latin/key/nameFr substrings. */
 export function findMaterial(query: string): RawMaterialInfo | null {
   const q = query.trim().toLowerCase();
   if (!q) return null;
