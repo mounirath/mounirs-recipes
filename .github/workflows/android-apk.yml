@@ -20,6 +20,11 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Regenerate Convex bindings in CI. Harmless if it fails (no deployment
+      # auth in CI): the committed src/convex/_generated files are the fallback.
+      - name: Generate Convex types
+        run: bunx convex codegen --typecheck=disable || echo "codegen skipped, using committed generated files"
+
       - name: Build web app (Vite)
         env:
           # Define this secret in GitHub: Settings > Secrets and variables > Actions
