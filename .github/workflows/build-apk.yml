@@ -45,10 +45,11 @@ jobs:
           fi
 
       - name: Create Convex Stub
+        shell: bash
         run: |
           mkdir -p src/convex/_generated
-          echo "export const api = {} as any;" > src/convex/_generated/api.js
-          echo "export declare const api: any;" > src/convex/_generated/api.d.ts
+          printf 'export const api = {} as any;\n' > src/convex/_generated/api.js
+          printf 'export declare const api: any;\n' > src/convex/_generated/api.d.ts
 
       - name: Build web app
         run: npx vite build
