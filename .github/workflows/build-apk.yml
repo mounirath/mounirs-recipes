@@ -45,7 +45,8 @@ jobs:
           fi
 
       - name: Build web app
-        run: npm run build
+        run: npx vite build
+
 
       - name: Sync Capacitor
         run: npx cap sync android
