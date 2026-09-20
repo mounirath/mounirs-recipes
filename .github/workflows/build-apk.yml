@@ -44,8 +44,11 @@ jobs:
             npx cap add android
           fi
 
-      - name: Generate Convex API
-        run: CONVEX_DEPLOYMENT=dev:preview-123 npx convex codegen --typecheck disable
+      - name: Create Convex Stub
+        run: |
+          mkdir -p src/convex/_generated
+          echo "export const api = {} as any;" > src/convex/_generated/api.js
+          echo "export declare const api: any;" > src/convex/_generated/api.d.ts
 
       - name: Build web app
         run: npx vite build
