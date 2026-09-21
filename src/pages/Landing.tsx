@@ -264,8 +264,9 @@ export default function Landing() {
             className="mx-auto mt-16 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3"
           >
             {sections.map((s) => (
-              <div
+              <Link
                 key={s.id}
+                to={s.id === "homemade" ? "/home-recipes" : "/auth?returnTo=/recipes"}
                 className="rounded-2xl border border-border/70 bg-card p-6 text-start shadow-soft transition-transform duration-300 hover:-translate-y-1"
               >
                 <div className="flex items-center gap-3">
@@ -284,7 +285,14 @@ export default function Landing() {
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                   {t(s.descKey)}
                 </p>
-              </div>
+                {s.id === "homemade" && (
+                  <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
+                    {t("free.badge")}
+                    <ArrowRight className="size-4 rtl:rotate-180 rtl:hidden" />
+                    <ArrowLeft className="size-4 ltr:hidden rtl:rotate-0 rtl:inline" />
+                  </p>
+                )}
+              </Link>
             ))}
           </motion.div>
         </div>

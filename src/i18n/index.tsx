@@ -52,7 +52,16 @@ const ar: Dict = {
   "sections.natural.desc":
     "صابون طبيعي، خل وبيكربونات — تركيبات بسيطة وآمنة من مكونات طبيعية 100%.",
   "sections.homemade.title": "القسم الرابع",
-  "sections.homemade.subtitle": "وصفات منزلية بسيطة",
+  "sections.homemade.subtitle": "وصفات منزلية بسيطة — مجاناً",
+  "free.title": "وصفات منزلية بسيطة",
+  "free.subtitle":
+    "10 وصفات كاملة مجاناً وبدون حساب — بمكونات متوفرة في كل بيت. جربها اليوم!",
+  "free.badge": "مجاناً — بدون حساب",
+  "free.cta.signIn": "دخول المشتركين",
+  "free.upsell.title": "تريد المزيد؟",
+  "free.upsell.text":
+    "أكثر من 90 وصفة احترافية إضافية: منظفات منزلية، مواد عناية بالسيارات، دترجنتات طبيعية بمواد أولية مهنية — مع حاسبة الكميات من 1 إلى 1000 كغ.",
+  "free.upsell.cta": "اكتشف العروض",
   "sections.homemade.desc":
     "جبار مبشور، خل، بيكربونات — وصفات سهلة جداً بمكونات متوفرة في كل مطبخ، بدون مواد تقنية.",
 
@@ -369,7 +378,16 @@ const fr: Dict = {
   "sections.natural.desc":
     "Savons naturels, vinaigre et bicarbonate — des formules simples et sûres à base d'ingrédients 100 % naturels.",
   "sections.homemade.title": "Section 4",
-  "sections.homemade.subtitle": "Recettes maison faciles",
+  "sections.homemade.subtitle": "Recettes maison faciles — gratuites",
+  "free.title": "Recettes maison faciles",
+  "free.subtitle":
+    "10 recettes complètes gratuitement, sans compte — avec des ingrédients du quotidien. Essayez dès aujourd'hui !",
+  "free.badge": "Gratuit — sans compte",
+  "free.cta.signIn": "Espace abonnés",
+  "free.upsell.title": "Vous voulez plus ?",
+  "free.upsell.text":
+    "Plus de 90 recettes professionnelles supplémentaires : détergents ménagers, soins auto, détergents naturels à base de matières premières pro — avec calculateur de lots 1 à 1000 kg.",
+  "free.upsell.cta": "Découvrir les offres",
   "sections.homemade.desc":
     "Savon râpé, vinaigre, bicarbonate — des recettes très simples avec des ingrédients que tout le monde a dans sa cuisine, sans matières techniques.",
 
@@ -697,7 +715,16 @@ const en: Dict = {
   "sections.natural.desc":
     "Natural soaps, vinegar and bicarbonate — simple, safe formulations from 100% natural ingredients.",
   "sections.homemade.title": "Section 4",
-  "sections.homemade.subtitle": "Easy homemade recipes",
+  "sections.homemade.subtitle": "Easy homemade recipes — free",
+  "free.title": "Easy homemade recipes",
+  "free.subtitle":
+    "10 complete recipes for free, no account needed — made with everyday ingredients. Try them today!",
+  "free.badge": "Free — no account",
+  "free.cta.signIn": "Subscribers area",
+  "free.upsell.title": "Want more?",
+  "free.upsell.text":
+    "90+ additional professional recipes: home detergents, car care, natural detergents with pro-grade raw materials — with a 1 to 1000 kg batch calculator.",
+  "free.upsell.cta": "See the offers",
   "sections.homemade.desc":
     "Grated soap, vinegar, bicarbonate — very easy recipes with ingredients everyone has at home, no technical materials.",
 
