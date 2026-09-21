@@ -36,14 +36,19 @@ jobs:
       - name: Sync Capacitor Android
         run: bunx cap sync android
 
-      - name: Setup Java 17
+      # Capacitor 8 requires Java 21 (compileOptions VERSION_21)
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      # ubuntu-latest runners ship with the Android SDK preinstalled
+      # (ANDROID_HOME=/usr/local/lib/android/sdk) — no setup-android action
+      # needed. Gradle auto-installs missing platform/build-tools once the
+      # licenses are accepted.
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - name: Grant execute permission to gradlew
         run: chmod +x android/gradlew
