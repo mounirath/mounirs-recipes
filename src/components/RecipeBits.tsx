@@ -242,7 +242,7 @@ export function BatchCalculator({
       </div>
 
       {Math.abs(totalPct - 100) > 0.5 && (
-        <p className="text-xs leading-relaxed text-amber-300">
+        <p className="text-xs leading-relaxed text-amber-700 dark:text-amber-300">
           <AlertTriangle className="mb-0.5 inline size-3.5" />{" "}
           {t("calc.sumWarning", { total: totalPct.toFixed(1) })}
         </p>

@@ -3,6 +3,7 @@ import { useI18n } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LangToggle } from "@/components/LangToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   ArrowLeft,
   ArrowRight,
@@ -41,7 +42,7 @@ export default function Landing() {
     {
       id: "cleaners" as const,
       icon: Home,
-      chip: "bg-amber-400/10 text-amber-300",
+      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300",
       titleKey: "sections.cleaners.title",
       subtitleKey: "sections.cleaners.subtitle",
       descKey: "sections.cleaners.desc",
@@ -49,7 +50,7 @@ export default function Landing() {
     {
       id: "cars" as const,
       icon: Car,
-      chip: "bg-cyan-400/10 text-cyan-300",
+      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300",
       titleKey: "sections.cars.title",
       subtitleKey: "sections.cars.subtitle",
       descKey: "sections.cars.desc",
@@ -57,7 +58,7 @@ export default function Landing() {
     {
       id: "natural" as const,
       icon: Leaf,
-      chip: "bg-emerald-400/10 text-emerald-300",
+      chip: "bg-emerald-400/10 text-emerald-700 dark:text-emerald-300",
       titleKey: "sections.natural.title",
       subtitleKey: "sections.natural.subtitle",
       descKey: "sections.natural.desc",
@@ -65,7 +66,7 @@ export default function Landing() {
     {
       id: "homemade" as const,
       icon: CookingPot,
-      chip: "bg-rose-400/10 text-rose-300",
+      chip: "bg-rose-400/10 text-rose-700 dark:text-rose-300",
       titleKey: "sections.homemade.title",
       subtitleKey: "sections.homemade.subtitle",
       descKey: "sections.homemade.desc",
@@ -80,7 +81,7 @@ export default function Landing() {
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "2 000 DA" : "2,000 دج",
       noteKey: "pricing.note.month",
-      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
     },
     {
       icon: Car,
@@ -88,7 +89,7 @@ export default function Landing() {
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "1 500 DA" : "1,500 دج",
       noteKey: "pricing.note.month",
-      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
     },
     {
       icon: Home,
@@ -97,7 +98,7 @@ export default function Landing() {
       price: lang === "fr" ? "5 000 DA" : "5,000 دج",
       noteKey: "pricing.note.year",
       saveKey: "pricing.save58",
-      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
       highlight: true,
     },
     {
@@ -107,7 +108,7 @@ export default function Landing() {
       price: lang === "fr" ? "4 000 DA" : "4,000 دج",
       noteKey: "pricing.note.year",
       saveKey: "pricing.save56",
-      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
       highlight: true,
     },
     {
@@ -116,7 +117,7 @@ export default function Landing() {
       durationKey: "pricing.dur.lifetime",
       price: lang === "fr" ? "15 000 DA" : "15,000 دج",
       noteKey: "pricing.note.lifetime",
-      chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
+      chip: "bg-amber-400/15 text-amber-700 dark:text-amber-300 border-amber-400/40",
       featured: true,
     },
   ];
@@ -126,19 +127,19 @@ export default function Landing() {
       icon: Home,
       titleKey: "pricing.pkg.home",
       descKey: "pricing.pkg.home.desc",
-      chip: "bg-amber-400/10 text-amber-300 border-amber-400/25",
+      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
     },
     {
       icon: Car,
       titleKey: "pricing.pkg.cars",
       descKey: "pricing.pkg.cars.desc",
-      chip: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
+      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
     },
     {
       icon: Sparkles,
       titleKey: "pricing.pkg.all",
       descKey: "pricing.pkg.all.desc",
-      chip: "bg-amber-400/15 text-amber-300 border-amber-400/40",
+      chip: "bg-amber-400/15 text-amber-700 dark:text-amber-300 border-amber-400/40",
       featured: true,
     },
   ];
@@ -188,6 +189,7 @@ export default function Landing() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <LangToggle />
             <Button asChild className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
               <Link to={ctaHref}>
@@ -215,7 +217,7 @@ export default function Landing() {
           >
             <Badge
               variant="secondary"
-              className="mb-6 gap-1.5 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-amber-300"
+              className="mb-6 gap-1.5 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-amber-700 dark:text-amber-300"
             >
               <Sparkles className="size-3.5" />
               {t("hero.badge")}
@@ -295,7 +297,7 @@ export default function Landing() {
           <div className="grid gap-10 md:grid-cols-3">
             {featureItems.map((f) => (
               <div key={f.titleKey} className="text-center sm:text-start">
-                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300 sm:mx-0">
+                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-700 dark:text-amber-300 sm:mx-0">
                   <f.icon className="size-5" />
                 </div>
                 <h3 className="mb-2 text-lg font-bold">{t(f.titleKey)}</h3>
@@ -316,7 +318,7 @@ export default function Landing() {
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <Badge
             variant="secondary"
-            className="mb-4 gap-1.5 border border-amber-400/25 bg-amber-400/10 text-amber-300"
+            className="mb-4 gap-1.5 border border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-300"
           >
             <Wallet className="size-3.5" />
             {t("pricing.badge")}
@@ -382,7 +384,7 @@ export default function Landing() {
                       <p className="mt-1 text-[11px] text-muted-foreground">
                         {t(row.noteKey)}
                         {row.saveKey && (
-                          <span className="font-bold text-emerald-400">
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
                             {" — "}
                             {t(row.saveKey)}
                           </span>
@@ -392,7 +394,7 @@ export default function Landing() {
                     <td className="px-4 py-4 text-end sm:px-6">
                       <span
                         className={`font-mono text-lg font-extrabold ${
-                          row.featured ? "text-amber-300" : "text-foreground"
+                          row.featured ? "text-amber-700 dark:text-amber-300" : "text-foreground"
                         }`}
                         dir="ltr"
                       >
@@ -447,7 +449,7 @@ export default function Landing() {
                 key={d.titleKey}
                 className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-4"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 text-amber-300">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 text-amber-700 dark:text-amber-300">
                   <d.icon className="size-4" />
                 </span>
                 <div>
@@ -487,7 +489,7 @@ export default function Landing() {
           <div>
             <Badge
               variant="secondary"
-              className="mb-4 border border-amber-400/25 bg-amber-400/10 text-amber-300"
+              className="mb-4 border border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-300"
             >
               {t("inside.badge")}
             </Badge>
@@ -509,7 +511,7 @@ export default function Landing() {
                   key={k}
                   className="flex items-center gap-2.5 text-sm font-medium"
                 >
-                  <CheckCircle2 className="size-4 shrink-0 text-amber-300" />
+                  <CheckCircle2 className="size-4 shrink-0 text-amber-700 dark:text-amber-300" />
                   {t(k)}
                 </li>
               ))}
@@ -549,7 +551,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-border/60 bg-card/40">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
-          <div className="flex items-center gap-2 text-amber-300">
+          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
             <FlaskConical className="size-5" />
             <span className="text-lg font-bold">Mounir Formule</span>
           </div>

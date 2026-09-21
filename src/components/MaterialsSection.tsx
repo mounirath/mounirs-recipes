@@ -95,7 +95,7 @@ function MaterialDialog({
           </section>
 
           <section>
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-300">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-700 dark:text-emerald-300">
               <ArrowLeftRight className="size-4" />
               {t("materials.altTitle")}
             </h4>
@@ -104,7 +104,7 @@ function MaterialDialog({
                 <Badge
                   key={a}
                   variant="outline"
-                  className="border-emerald-400/20 bg-emerald-400/5 text-xs text-emerald-300"
+                  className="border-emerald-400/20 bg-emerald-400/5 text-xs text-emerald-700 dark:text-emerald-300"
                 >
                   {a}
                 </Badge>
@@ -229,7 +229,7 @@ export function MaterialsSection({
 
       {/* Safety note */}
       <div className="rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 sm:p-5">
-        <p className="flex items-start gap-2 text-sm leading-relaxed text-amber-300">
+        <p className="flex items-start gap-2 text-sm leading-relaxed text-amber-700 dark:text-amber-300">
           <ShieldCheck className="mt-0.5 size-4 shrink-0" />
           {t("materials.safetyNote")}
         </p>

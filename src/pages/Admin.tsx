@@ -28,6 +28,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/i18n";
 import { LangToggle } from "@/components/LangToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { toast } from "sonner";
 import {
   Car,
@@ -327,6 +328,7 @@ export default function Admin() {
             <Button asChild variant="ghost" size="sm">
               <Link to="/recipes">{t("admin.recipes")}</Link>
             </Button>
+            <ThemeToggle />
             <LangToggle />
             <Button
               variant="outline"
@@ -662,10 +664,10 @@ export default function Admin() {
                               r.category === "cleaners"
                                 ? "border-primary/20 bg-primary/10 text-primary"
                                 : r.category === "natural"
-                                  ? "border-emerald-600/20 bg-emerald-600/10 text-emerald-600"
+                                  ? "border-emerald-600/20 bg-emerald-600/10 text-emerald-700 dark:text-emerald-400"
                                   : r.category === "homemade"
-                                    ? "border-rose-600/20 bg-rose-600/10 text-rose-600"
-                                    : "border-cyan-600/20 bg-cyan-600/10 text-cyan-600"
+                                    ? "border-rose-600/20 bg-rose-600/10 text-rose-700 dark:text-rose-400"
+                                    : "border-cyan-600/20 bg-cyan-600/10 text-cyan-700 dark:text-cyan-400"
                             }`}
                           >
                             {r.category === "cleaners" ? (
@@ -769,7 +771,7 @@ export default function Admin() {
                                     ? "border-primary/30 bg-primary/10 text-primary"
                                     : sub.pkg === "home"
                                       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600"
-                                      : "border-cyan-600/30 bg-cyan-600/10 text-cyan-600"
+                                      : "border-cyan-600/30 bg-cyan-600/10 text-cyan-700 dark:text-cyan-400"
                                 }`}
                               >
                                 {pkgLabel(sub.pkg)}

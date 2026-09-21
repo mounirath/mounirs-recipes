@@ -42,9 +42,46 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* CHANGE VALUES FOR THEME — dark navy + gold identity */
+/* CHANGE VALUES FOR THEME — light « ivory + navy + gold » (default), dark navy + gold */
 :root {
   --radius: 0.75rem;
+  --background: oklch(0.975 0.008 90);
+  --foreground: oklch(0.25 0.045 264);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.25 0.045 264);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.25 0.045 264);
+  --primary: oklch(0.35 0.06 264);
+  --primary-foreground: oklch(0.98 0.01 90);
+  --secondary: oklch(0.93 0.015 264);
+  --secondary-foreground: oklch(0.3 0.05 264);
+  --muted: oklch(0.94 0.01 264);
+  --muted-foreground: oklch(0.5 0.03 264);
+  --accent: oklch(0.93 0.05 90);
+  --accent-foreground: oklch(0.42 0.1 75);
+  --destructive: oklch(0.55 0.21 25);
+  --border: oklch(0.25 0.045 264 / 12%);
+  --input: oklch(0.25 0.045 264 / 16%);
+  --ring: oklch(0.6 0.13 80);
+  --chart-1: oklch(0.6 0.13 80);
+  --chart-2: oklch(0.65 0.12 200);
+  --chart-3: oklch(0.6 0.14 150);
+  --chart-4: oklch(0.62 0.14 300);
+  --chart-5: oklch(0.6 0.18 25);
+  --sidebar: oklch(0.96 0.01 90);
+  --sidebar-foreground: oklch(0.25 0.045 264);
+  --sidebar-primary: oklch(0.35 0.06 264);
+  --sidebar-primary-foreground: oklch(0.98 0.01 90);
+  --sidebar-accent: oklch(0.93 0.015 264);
+  --sidebar-accent-foreground: oklch(0.3 0.05 264);
+  --sidebar-border: oklch(0.25 0.045 264 / 10%);
+  --sidebar-ring: oklch(0.6 0.13 80);
+  /* Elevation tints: light theme uses soft navy shadows */
+  --shadow-1: oklch(0.25 0.045 264 / 0.08);
+  --shadow-2: oklch(0.25 0.045 264 / 0.12);
+}
+
+.dark {
   --background: oklch(0.17 0.038 264);
   --foreground: oklch(0.95 0.012 250);
   --card: oklch(0.215 0.042 264);
@@ -76,40 +113,9 @@
   --sidebar-accent-foreground: oklch(0.95 0.012 250);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.84 0.145 85);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Elevation tints: dark theme uses deep black shadows */
+  --shadow-1: oklch(0 0 0 / 0.25);
+  --shadow-2: oklch(0 0 0 / 0.35);
 }
 
 @layer base {
@@ -146,28 +152,32 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.45 0.05 264);
+    background: oklch(0.55 0.05 264);
     border-radius: 999px;
     border: 3px solid transparent;
     background-clip: content-box;
   }
+  .dark ::-webkit-scrollbar-thumb {
+    background: oklch(0.45 0.05 264);
+    background-clip: content-box;
+  }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.6 0.09 264);
+    background: oklch(0.45 0.09 264);
     background-clip: content-box;
   }
 }
 
 @layer utilities {
-  /* Soft layered card elevation for the dark navy theme */
+  /* Soft layered card elevation, theme-aware via --shadow-1/--shadow-2 */
   .shadow-soft {
     box-shadow:
-      0 1px 2px 0 oklch(0 0 0 / 0.25),
-      0 4px 12px -2px oklch(0 0 0 / 0.35);
+      0 1px 2px 0 var(--shadow-1),
+      0 4px 12px -2px var(--shadow-2);
   }
   .shadow-soft-lg {
     box-shadow:
-      0 1px 2px 0 oklch(0 0 0 / 0.3),
-      0 12px 32px -8px oklch(0 0 0 / 0.5);
+      0 1px 2px 0 var(--shadow-1),
+      0 12px 32px -8px var(--shadow-2);
   }
   .text-balance {
     text-wrap: balance;

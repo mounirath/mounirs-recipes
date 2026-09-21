@@ -17,6 +17,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/i18n";
 import { LangToggle } from "@/components/LangToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   ArrowLeft,
   ArrowRight,
@@ -131,6 +132,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
           </span>
         </a>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <LangToggle />
           <Button asChild variant="ghost" size="sm" className="gap-1.5">
             <a href="/">

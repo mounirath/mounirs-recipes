@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { BatchCalculator } from "@/components/RecipeBits";
 import { MaterialsSection } from "@/components/MaterialsSection";
 import { LangToggle } from "@/components/LangToggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
@@ -53,10 +54,10 @@ const CATEGORY_ICON = {
 } as const;
 
 const CATEGORY_CHIP = {
-  cleaners: "bg-amber-400/10 text-amber-300 border-amber-400/25",
-  cars: "bg-cyan-400/10 text-cyan-300 border-cyan-400/25",
-  natural: "bg-emerald-400/10 text-emerald-300 border-emerald-400/25",
-  homemade: "bg-rose-400/10 text-rose-300 border-rose-400/25",
+  cleaners: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
+  cars: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
+  natural: "bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border-emerald-400/25",
+  homemade: "bg-rose-400/10 text-rose-700 dark:text-rose-300 border-rose-400/25",
 } as const;
 type MainView = "recipes" | "materials";
 
@@ -317,7 +318,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
 
               {/* Steps */}
               <section dir={contentRtl ? "rtl" : undefined}>
-                <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-emerald-400">
+                <h4 className="mb-2.5 flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400">
                   <Beaker className="size-4" />
                   {t("recipes.stepsTitle")}
                 </h4>
@@ -327,7 +328,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
                       key={i}
                       className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-3 text-sm leading-relaxed"
                     >
-                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-xs font-bold text-emerald-400">
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                         {i + 1}
                       </span>
                       <span>{step.replace(/^\d+[.)-]\s*/, "")}</span>
@@ -508,6 +509,7 @@ export default function Recipes() {
               </span>
             </a>
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <LangToggle />
               <Button
                 variant="outline"
@@ -562,6 +564,7 @@ export default function Recipes() {
             )}
           </span>
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <LangToggle />
             <Button
               variant="outline"
