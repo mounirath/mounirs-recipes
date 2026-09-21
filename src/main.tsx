@@ -116,8 +116,13 @@ class RootErrorBoundary extends React.Component<
   }
 }
 
-// Fallback pour éviter le crash en cas de variable d'environnement absente sur Android
-const convexUrl = (import.meta.env.VITE_CONVEX_URL as string) || "https://placeholder.convex.cloud";
+// Fallback: the real deployment URL. It is public in every client bundle anyway
+// (not a secret), so a missing VITE_CONVEX_URL (e.g. APK built without the
+// GitHub secret) must NOT fall back to a fake host — the Convex client would
+// crash with "Couldn't parse deployment name placeholder" on startup.
+const convexUrl =
+  (import.meta.env.VITE_CONVEX_URL as string) ||
+  "https://jovial-kookabura-236.convex.cloud";
 const convex = new ConvexReactClient(convexUrl);
 
 function RouteSyncer() {
