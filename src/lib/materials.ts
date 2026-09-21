@@ -49,10 +49,13 @@ export interface LocalizedMaterial {
   };
 }
 
-/** Pick the localized fields of a material by language (French from MATERIALS_FR, Arabic fallback). */
+/**
+ * Pick the localized fields of a material by language.
+ * English falls back to the French translation (MATERIALS_FR), then Arabic.
+ */
 export function localizeMaterial(
   m: RawMaterialInfo,
-  lang: "ar" | "fr",
+  lang: "ar" | "fr" | "en",
 ): LocalizedMaterial {
   const base = {
     key: m.key,
@@ -60,7 +63,7 @@ export function localizeMaterial(
     usedIn: m.usedIn,
     tone: m.tone,
   };
-  if (lang === "fr") {
+  if (lang === "fr" || lang === "en") {
     const fr = MATERIALS_FR[m.key];
     if (fr) {
       return {

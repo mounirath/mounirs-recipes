@@ -12,7 +12,7 @@ import {
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
-export type Lang = "ar" | "fr";
+export type Lang = "ar" | "fr" | "en";
 
 /** Flat dot-key dictionary so both languages stay in sync. */
 export type Dict = Record<string, string>;
@@ -656,7 +656,325 @@ const fr: Dict = {
   "notfound.title": "Page introuvable",
 };
 
-const DICTS: Record<Lang, Dict> = { ar, fr };
+const en: Dict = {
+  /* Brand */
+  "brand.tagline": "Cleaning & care recipes",
+
+  /* Landing nav */
+  "nav.sections": "Sections",
+  "nav.why": "Why us",
+  "nav.offers": "Offers",
+  "nav.login": "Subscribers area",
+  "nav.recipes": "Recipes",
+
+  /* Hero */
+  "hero.badge": "Exclusive recipes platform for subscribers",
+  "hero.title1": "Professional recipes with calculator",
+  "hero.title2": "and reliable raw materials",
+  "hero.subtitle":
+    "A library of detergent and car-care recipes, with a batch calculator from 1 to 1000 kg and complete specs for every raw material.",
+  "hero.explore": "Explore the recipes",
+  "hero.viewOffers": "See offers and pricing",
+  "hero.lockNote": "Content access requires an active subscription",
+
+  /* Sections cards */
+  "sections.cleaners.title": "Section 1",
+  "sections.cleaners.subtitle": "Household detergents",
+  "sections.cleaners.desc":
+    "Surface disinfectants, floor fresheners, dish liquids — everyday formulations for a cleaner home.",
+  "sections.cars.title": "Section 2",
+  "sections.cars.subtitle": "Car care",
+  "sections.cars.desc":
+    "Polishes, shampoos, interior cleaners — everything your car's paint and cabin need.",
+  "sections.natural.title": "Section 3",
+  "sections.natural.subtitle": "Natural detergents",
+  "sections.natural.desc":
+    "Natural soaps, vinegar and bicarbonate — simple, safe formulations from 100% natural ingredients.",
+  "sections.homemade.title": "Section 4",
+  "sections.homemade.subtitle": "Easy homemade recipes",
+  "sections.homemade.desc":
+    "Grated soap, vinegar, bicarbonate — very easy recipes with ingredients everyone has at home, no technical materials.",
+
+  /* Features */
+  "features.calc.title": "Smart batch calculator",
+  "features.calc.text":
+    "Compute every ingredient's quantity from 1 kg to 1000 kg in one click — no manual math.",
+  "features.safety.title": "Safe usage",
+  "features.safety.text":
+    "Clear safety warnings with every formula and every raw material for responsible use.",
+  "features.materials.title": "Raw materials section",
+  "features.materials.text":
+    "Each material's specs, its role, and available alternatives when out of stock.",
+
+  /* Pricing */
+  "pricing.badge": "Subscription offers",
+  "pricing.title": "Choose your offer",
+  "pricing.subtitle":
+    "Clear pricing with no surprises — pick the pack and duration that suit you, then activate your subscription with the code you receive after payment.",
+  "pricing.table.pkg": "Pack",
+  "pricing.table.duration": "Duration",
+  "pricing.table.price": "Price",
+  "pricing.pkg.home": "Household products",
+  "pricing.pkg.cars": "Car care products",
+  "pricing.pkg.all": "All recipes",
+  "pricing.dur.month": "Month",
+  "pricing.dur.year": "Year",
+  "pricing.dur.lifetime": "Lifetime",
+  "pricing.note.month": "Expires after 30 days",
+  "pricing.note.year": "Expires after 365 days",
+  "pricing.save58": "Save 58%",
+  "pricing.save56": "Save 56%",
+  "pricing.note.lifetime":
+    "Never expires — all sections + the batch calculator",
+  "pricing.best": "Complete offer",
+  "pricing.howto":
+    "To subscribe: contact us and you will receive an 8-character activation code by email or text message.",
+  "pricing.packagesTitle": "Packs",
+  "pricing.pkg.home.desc":
+    "Full Section 1 + natural and homemade sections — 90 practical recipes.",
+  "pricing.pkg.cars.desc":
+    "Full Section 2: car care — 11 professional recipes.",
+  "pricing.pkg.all.desc":
+    "All four sections together: 101 recipes + raw materials section — the best value.",
+  "pricing.mostValue": "Best value",
+  "pricing.durationsTitle": "Subscription durations",
+  "pricing.dur.month.text": "Expires automatically after 30 days — ideal to try.",
+  "pricing.dur.year.text": "Expires after 365 days — best for continuity.",
+  "pricing.dur.lifetime.text": "Never expires — permanent access, no renewal.",
+  "pricing.renew":
+    "Subscription expired? Contact the administration to renew or upgrade your pack.",
+  "pricing.activate": "Activate my subscription",
+
+  /* Inside section */
+  "inside.badge": "Inside the platform",
+  "inside.title": "Three sections, dozens of recipes, one experience",
+  "inside.text":
+    "After signing in with your subscription code, find all recipes organized in three clear sections, with instant search, a built-in batch calculator and a detailed view for each recipe: percentages, preparation steps, safety warnings and a full raw-materials section.",
+  "inside.li1": "Instant search across all recipes and materials",
+  "inside.li2": "Built-in calculator: from 1 kg to 1000 kg for every recipe",
+  "inside.li3": "Raw materials section: specs, safety and alternatives",
+  "inside.li4": "Clear split between household, car-care and natural products",
+  "inside.li5": "New section: natural detergents from simple, safe ingredients",
+  "inside.cta": "Get started",
+  "inside.notesTitle": "Important notes for all recipes",
+  "inside.notesBadge": "Check before starting",
+  "inside.n1": "Percentages: measure precisely with a sensitive scale.",
+  "inside.n2": "Order: add ingredients in the given order for homogeneity.",
+  "inside.n3": "Mixing: use an electric mixer or stir continuously by hand.",
+  "inside.n4": "Safety: wear gloves, goggles and a mask when handling chemicals.",
+  "inside.n5": "Storage: keep products in a cool, dry place away from sunlight.",
+  "inside.n6": "Shelf life: most products keep for 12 to 18 months.",
+
+  /* Footer */
+  "footer.rights": "All rights reserved",
+  "footer.admin": "Administration",
+
+  /* Language */
+  "lang.switch": "العربية",
+
+  /* Auth page */
+  "auth.title": "Subscribers area",
+  "auth.subtitle":
+    "Enter your email and subscription code to access the recipe library",
+  "auth.code": "Subscription code (8 characters)",
+  "auth.email": "Email address",
+  "auth.send": "Send",
+  "auth.sending": "Sending...",
+  "auth.emailError": "Could not send the verification code, please try again.",
+  "auth.otpTitle": "Check your email",
+  "auth.otpSent": "We sent a code to",
+  "auth.otpError": "Incorrect code, please try again.",
+  "auth.resend": "Retry",
+  "auth.noCode": "Didn't receive the code?",
+  "auth.verify": "Verifying...",
+  "auth.confirm": "Confirm code",
+  "auth.otherEmail": "Use another email",
+  "auth.footer": "Subscribers-only content — Formule DZ",
+  "auth.back": "Back to home",
+  "auth.hint":
+    "Subscribers only: enter your subscription code then your email — you will receive a verification code to confirm the sign-in.",
+
+  /* Recipes page */
+  "recipes.title": "Recipe library",
+  "recipes.subtitle":
+    "Tap any recipe to view percentages, the batch calculator and preparation steps",
+  "recipes.materialsTitle": "Raw materials section",
+  "recipes.materialsSubtitle":
+    "Specs for every raw material, safety guidance and available alternatives",
+  "recipes.searchRecipes": "Search recipes...",
+  "recipes.searchMaterials": "Search materials...",
+  "recipes.tabRecipes": "Recipes",
+  "recipes.tabMaterials": "Raw materials",
+  "recipes.clearSearch": "Clear search",
+  "recipes.gate.title": "Activate subscription",
+  "recipes.gate.text":
+    "Enter your 8-character subscription code to access the recipe library",
+  "recipes.gate.activate": "Activate code",
+  "recipes.gate.badLength": "Enter an 8-character code",
+  "recipes.gate.error": "Something went wrong, please try again",
+  "recipes.gate.durations":
+    "Available durations: Month (expires after 30 days) · Year (expires after 365 days) · Lifetime (never expires).",
+  "recipes.gate.noCode": "No code? Contact us to get a subscription.",
+  "recipes.signout": "Sign out",
+  "recipes.subscriber": "Subscriber",
+  "recipes.pkg.all": "All packs",
+  "recipes.pkg.home": "Home pack",
+  "recipes.pkg.cars": "Car pack",
+  "recipes.cat.all": "All",
+  "recipes.cat.cleaners": "Household detergents",
+  "recipes.cat.cars": "Car care",
+  "theme.toggle": "Toggle light/dark mode",
+  "recipes.cat.natural": "Natural detergents",
+  "recipes.cat.homemade": "Easy homemade recipes",
+  "recipes.cat.cleaners.short": "Home",
+  "recipes.cat.cars.short": "Cars",
+  "recipes.cat.natural.short": "Natural",
+  "recipes.cat.homemade.short": "DIY",
+  "recipes.cat.cleaners.heading": "Section 1",
+  "recipes.cat.cars.heading": "Section 2",
+  "recipes.cat.natural.heading": "Section 3",
+  "recipes.cat.homemade.heading": "Section 4",
+  "recipes.cat.cleaners.sub": "Household detergent recipes",
+  "recipes.cat.cars.sub": "Car care recipes",
+  "recipes.cat.natural.sub": "Natural detergent recipes",
+  "recipes.cat.homemade.sub": "Simple recipes with everyday ingredients",
+  "recipes.count": "recipe(s)",
+  "recipes.steps": "steps",
+  "recipes.empty.title": "No recipes yet",
+  "recipes.empty.text": "Recipes are coming soon — stay tuned for more formulas.",
+  "recipes.noResults.title": "No matching results",
+  "recipes.noResults.text": "Try different keywords or change the category.",
+  "recipes.pct.title": "Percentages",
+  "recipes.stepsTitle": "Preparation method",
+  "recipes.warningsTitle": "Safety warnings",
+  "recipes.signoutTitle": "Sign out?",
+  "recipes.signoutText": "You will need to sign in again to access the recipes.",
+  "recipes.cancel": "Cancel",
+  "recipes.signoutConfirm": "Sign out",
+
+  /* RecipeBits */
+  "calc.title": "Batch calculator",
+  "calc.range": "from 1 kg to 1000 kg",
+  "calc.kg": "kg",
+  "calc.batchSize": "Batch size in kilograms",
+  "calc.copy": "Copy table",
+  "calc.copied": "Copied",
+  "calc.material": "Material",
+  "calc.pct": "Percentage",
+  "calc.kgCol": "kg",
+  "calc.gCol": "grams",
+  "calc.total": "Total",
+  "calc.sumWarning":
+    "The total of this recipe's percentages is {total}% — the remainder is topped up with water per the preparation steps.",
+  "calc.noLines": "No calculable percentages in this recipe",
+  "calc.copyHeader": "{batch} kg batch",
+  "calc.copyTotal": "Total percentages: {total}%",
+
+  /* Materials */
+  "materials.intro.title": "Raw materials section",
+  "materials.intro.text":
+    "Learn about every raw material used in the recipes: its role, technical specs, safety guidance and available alternatives — tap any material for details.",
+  "materials.intro.searchHint":
+    "Use the search box at the top of the page to filter materials by name or role.",
+  "materials.badge": "Raw material",
+  "materials.roleTitle": "Role and description",
+  "materials.specsTitle": "Technical specs",
+  "materials.safetyTitle": "Safety and storage",
+  "materials.altTitle": "Available alternatives",
+  "materials.viewSpecs": "View specs",
+  "materials.noResults.title": "No matching results",
+  "materials.noResults.text": "Try a different material name or search by role.",
+  "materials.safetyNote":
+    "General advice: before using any new material, request its safety data sheet (SDS) from the supplier, and always wear gloves and goggles when handling concentrated chemicals.",
+
+  /* Access errors (server messages keyed by code) */
+  "access.signinFirst": "Sign in first",
+  "access.verifyFailed": "Could not verify your account",
+  "access.already": "You already have access",
+  "access.badCode": "Incorrect code",
+  "access.usedByOther": "This code is already used by another account",
+  "access.ok": "Your subscription was activated successfully",
+  "access.canContinue": "Code correct — you can continue",
+
+  /* Admin */
+  "admin.panel": "Admin panel",
+  "admin.recipes": "Recipes",
+  "admin.signout": "Sign out",
+  "admin.stat.total": "Total recipes",
+  "admin.stat.cleaners": "Household detergents",
+  "admin.stat.cars": "Car care",
+  "admin.stat.natural": "Natural detergents",
+  "admin.stat.homemade": "Easy homemade recipes",
+  "admin.stat.subs": "Subscribers",
+  "admin.form.add": "Add a new recipe",
+  "admin.form.edit": "Edit recipe",
+  "admin.form.cancelEdit": "Cancel editing",
+  "admin.form.category": "Section",
+  "admin.form.title": "Recipe title",
+  "admin.form.titlePh": "e.g. Floor freshener",
+  "admin.form.pct": "Percentages (one line per ingredient)",
+  "admin.form.steps": "Preparation method *",
+  "admin.form.warnings": "Safety warnings",
+  "admin.form.video": "YouTube video link (optional)",
+  "admin.form.save": "Save changes",
+  "admin.form.addBtn": "Add recipe",
+  "admin.form.clear": "Clear",
+  "admin.codes.title": "Access codes",
+  "admin.codes.slots": "8 characters",
+  "admin.codes.notePh": "Note (optional) — e.g. October pack",
+  "admin.codes.generate": "Generate code",
+  "admin.codes.empty": "No codes yet — generate the first one and share it.",
+  "admin.codes.used": "Used",
+  "admin.codes.available": "Available",
+  "admin.codes.copy": "Copy",
+  "admin.codes.delete": "Delete",
+  "admin.list.title": "Current recipes",
+  "admin.list.empty": "No recipes yet — add the first one via the form.",
+  "admin.subs.title": "Members and subscriptions management",
+  "admin.subs.searchPh": "Search by email...",
+  "admin.subs.empty": "No members yet.",
+  "admin.subs.registered": "Registered",
+  "admin.subs.expired": "Expired",
+  "admin.subs.none": "No pack",
+  "admin.subs.edit": "Edit subscription",
+  "admin.subs.revoke": "Revoke subscription",
+  "admin.subs.expires": "Expires",
+  "admin.subs.pkg": "Pack",
+  "admin.subs.duration": "Duration",
+  "admin.subs.save": "Save subscription",
+  "admin.pkg.home": "Home pack",
+  "admin.pkg.cars": "Car pack",
+  "admin.pkg.all": "All packs",
+  "admin.pkg.none": "No pack",
+  "admin.dur.month": "Month",
+  "admin.dur.year": "Year",
+  "admin.dur.lifetime": "Lifetime",
+  "admin.delete.title": "Delete recipe?",
+  "admin.delete.text": "The recipe will be permanently deleted and cannot be restored.",
+  "admin.delete.confirm": "Delete permanently",
+  "admin.codeDelete.title": "Delete access code?",
+  "admin.codeDelete.text": "This code can no longer be used to subscribe after deletion.",
+  "admin.codeDelete.confirm": "Delete permanently",
+  "admin.unauthorized": "Unauthorized access",
+  "admin.unauthorized.text":
+    "This area is for administrators only. If you own the admin account, sign in with the dedicated admin email.",
+  "admin.toast.subSaved": "Subscription updated",
+  "admin.toast.subSaveFail": "Could not save the subscription",
+  "admin.toast.revoked": "Subscription revoked",
+  "admin.toast.codeGenerated": "Code generated",
+  "admin.toast.codeCopyHint": "Click the copy button to copy it",
+  "admin.toast.codeGenFail": "Could not generate the code, please try again",
+  "admin.toast.copied": "Copied",
+  "admin.toast.copyFail": "Could not copy — copy it manually",
+  "admin.toast.codeDeleted": "Code deleted",
+
+  /* Misc */
+  "common.loading": "Loading...",
+  "common.home": "Home",
+  "notfound.title": "Page not found",
+};
+
+const DICTS: Record<Lang, Dict> = { ar, fr, en };
 
 /* ------------------------------------------------------------------ */
 /* Context                                                             */
@@ -677,7 +995,7 @@ const STORAGE_KEY = "mf-lang";
 function detectInitialLang(): Lang {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "ar" || saved === "fr") return saved;
+    if (saved === "ar" || saved === "fr" || saved === "en") return saved;
   } catch {
     // localStorage unavailable — fall through to default
   }

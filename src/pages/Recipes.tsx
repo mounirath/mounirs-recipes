@@ -62,17 +62,21 @@ const CATEGORY_CHIP = {
 } as const;
 type MainView = "recipes" | "materials";
 
-/** Localized recipe content for the active language. */
-function recipeView(r: Recipe, lang: "ar" | "fr") {
-  const useFr = lang === "fr" && !!r.titleFr;
+/**
+ * Localized recipe content for the active language.
+ * English falls back to the French translation, then to Arabic.
+ */
+function recipeView(r: Recipe, lang: "ar" | "fr" | "en") {
+  const wantEn = lang === "en";
+  const useFr = (wantEn || lang === "fr") && !!r.titleFr;
   return {
     title: useFr ? r.titleFr! : r.title,
     percentages:
       useFr && r.percentagesFr ? r.percentagesFr : r.percentages ?? "",
     steps: useFr && r.stepsFr ? r.stepsFr : r.steps ?? "",
     warnings: useFr && r.warningsFr ? r.warningsFr : r.warnings ?? "",
-    /** French UI showing untranslated (Arabic) recipe content. */
-    isArabicContent: lang === "fr" && !r.titleFr,
+    /** UI language showing untranslated (Arabic) recipe content. */
+    isArabicContent: lang !== "ar" && !r.titleFr,
   };
 }
 
