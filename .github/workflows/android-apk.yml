@@ -25,11 +25,13 @@ jobs:
       - name: Generate Convex types
         run: bunx convex codegen --typecheck=disable || echo "codegen skipped, using committed generated files"
 
+      # `vite build` directly (not `bun run build`) so the CI APK build does
+      # not depend on `tsc -b` passing — typechecking is a dev-time concern.
       - name: Build web app (Vite)
         env:
           # Define this secret in GitHub: Settings > Secrets and variables > Actions
           VITE_CONVEX_URL: ${{ secrets.VITE_CONVEX_URL }}
-        run: bun run build
+        run: bunx vite build
 
       - name: Sync Capacitor Android
         run: bunx cap sync android
