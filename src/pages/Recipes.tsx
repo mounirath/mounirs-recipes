@@ -30,6 +30,7 @@ import { parseLines } from "@/lib/recipe-utils";
 import {
   AlertTriangle,
   Beaker,
+  Star,
   Car,
   ChevronDown,
   CookingPot,
@@ -45,7 +46,13 @@ import {
 } from "lucide-react";
 
 type Recipe = Doc<"recipes">;
-type Category = "all" | "cleaners" | "cars" | "natural" | "homemade";
+type Category =
+  | "all"
+  | "cleaners"
+  | "cars"
+  | "natural"
+  | "homemade"
+  | "favorites";
 
 const CATEGORY_ICON = {
   cleaners: Home,
@@ -187,9 +194,10 @@ function MaterialChip({ name }: { name: string }) {
   );
 }
 
-function RecipeCard({ recipe }: { recipe: Recipe }) {
+function RecipeCard({ recipe, fav }: { recipe: Recipe; fav?: boolean }) {
   const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
+  const toggleFavorite = useMutation(api.recipes.toggleFavorite);
   const view = recipeView(recipe, lang);
   const cat = recipe.category;
   const meta = {
@@ -257,6 +265,33 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
               </span>
             )}
           </span>
+        </span>
+        <span
+          role="button"
+          tabIndex={0}
+          aria-pressed={fav === undefined ? false : fav}
+          aria-label={
+            fav ? t("recipes.fav.remove") : t("recipes.fav.add")
+          }
+          onClick={(e) => {
+            e.stopPropagation();
+            void toggleFavorite({ recipeId: recipe._id });
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.stopPropagation();
+              void toggleFavorite({ recipeId: recipe._id });
+            }
+          }}
+          className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/70 ${
+            fav
+              ? "bg-yellow-400/15 text-yellow-500"
+              : "text-muted-foreground/60 hover:bg-muted hover:text-yellow-500"
+          }`}
+        >
+          <Star
+            className={`size-5 ${fav ? "fill-yellow-400" : ""}`}
+          />
         </span>
         <ChevronDown
           className={`size-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
@@ -378,6 +413,7 @@ export default function Recipes() {
   const { user, signOut } = useAuth();
   const { t, lang } = useI18n();
   const recipes = useQuery(api.recipes.list, {});
+  const favoriteIds = useQuery(api.recipes.favoriteIds, {});
   const ensureSeed = useMutation(api.recipes.ensureSeed);
   const backfillFrench = useMutation(api.recipes.backfillFrench);
   const importNaturalBatch = useMutation(api.recipes.importNaturalBatch);
@@ -435,8 +471,10 @@ export default function Recipes() {
   const filtered = useMemo(() => {
     if (!recipes) return [];
     const q = query.trim().toLowerCase();
+    const favSet = favoriteIds ? new Set<string>(favoriteIds) : null;
     return recipes
       .filter((r) => (category === "all" ? true : r.category === category))
+      .filter((r) => (category === "favorites" ? favSet?.has(r._id) : true))
       .filter(
         (r) =>
           q === "" ||
@@ -462,6 +500,7 @@ export default function Recipes() {
   const carsCount = recipes?.filter((r) => r.category === "cars").length ?? 0;
   const naturalCount = recipes?.filter((r) => r.category === "natural").length ?? 0;
   const homemadeCount = recipes?.filter((r) => r.category === "homemade").length ?? 0;
+  const favoritesCount = favoriteIds?.length ?? 0;
 
   const handleSignOut = async () => {
     await signOut();
@@ -682,6 +721,12 @@ export default function Recipes() {
                 label={t("recipes.cat.homemade")}
                 count={homemadeCount}
               />
+              <CategoryPill
+                active={category === "favorites"}
+                onClick={() => setCategory("favorites")}
+                label={t("recipes.cat.favorites")}
+                count={favoritesCount}
+              />
             </div>
 
             {/* Loading skeleton */}
@@ -765,7 +810,10 @@ export default function Recipes() {
                             >
                               {String(r.order || i + 1).padStart(2, "0")}
                             </span>
-                            <RecipeCard recipe={r} />
+                            <RecipeCard
+                              recipe={r}
+                              fav={favoriteIds?.includes(r._id)}
+                            />
                           </div>
                         ))}
                       </div>

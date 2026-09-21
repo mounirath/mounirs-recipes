@@ -97,6 +97,15 @@ const schema = defineSchema(
       updatedAt: v.number(),
       updatedBy: v.optional(v.string()),
     }).index("by_email", ["email"]),
+
+    // per-user favorite recipes (one row per user+recipe pair)
+    favorites: defineTable({
+      userId: v.id("users"),
+      recipeId: v.id("recipes"),
+      createdAt: v.number(),
+    })
+      .index("by_user", ["userId"])
+      .index("by_user_recipe", ["userId", "recipeId"]),
   },
   {
     schemaValidation: false,

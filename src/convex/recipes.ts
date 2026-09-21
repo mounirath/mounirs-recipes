@@ -26,6 +26,57 @@ export const list = query({
   },
 });
 
+// ---------------------------------------------------------------- favorites
+
+/** Ids of the signed-in user's favorite recipes. Returns null when signed out. */
+export const favoriteIds = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) return null;
+    const rows = await ctx.db
+      .query("favorites")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+    return rows.map((f) => f.recipeId);
+  },
+});
+
+/** Toggle a recipe in the user's favorites. Returns the new favorited state. */
+export const toggleFavorite = mutation({
+  args: { recipeId: v.id("recipes") },
+  handler: async (ctx, { recipeId }) => {
+    const userId = await getAuthUserId(ctx);
+    if (userId === null) throw new Error("Not signed in");
+
+    // The recipe must exist and be within the user's entitlement — reusing
+    // the same filtering as `list` prevents favoriting locked content.
+    const recipe = await ctx.db.get(recipeId);
+    if (recipe === null) throw new Error("Recipe not found");
+    const pkg = await effectivePkg(ctx);
+    if (pkg === null || !categoriesForPkg(pkg).includes(recipe.category)) {
+      throw new Error("Recipe not in your subscription");
+    }
+
+    const existing = await ctx.db
+      .query("favorites")
+      .withIndex("by_user_recipe", (q) =>
+        q.eq("userId", userId).eq("recipeId", recipeId),
+      )
+      .first();
+    if (existing) {
+      await ctx.db.delete(existing._id);
+      return false;
+    }
+    await ctx.db.insert("favorites", {
+      userId,
+      recipeId,
+      createdAt: Date.now(),
+    });
+    return true;
+  },
+});
+
 const seedRecipes: {
   title: string;
   category: "cleaners" | "cars";
