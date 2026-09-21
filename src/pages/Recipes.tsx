@@ -55,7 +55,7 @@ const CATEGORY_ICON = {
 
 const CATEGORY_CHIP = {
   cleaners: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
-  cars: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
+  cars: "bg-sky-400/12 text-sky-700 dark:text-sky-300 border-sky-400/25",
   natural: "bg-emerald-400/10 text-emerald-700 dark:text-emerald-300 border-emerald-400/25",
   homemade: "bg-rose-400/10 text-rose-700 dark:text-rose-300 border-rose-400/25",
 } as const;

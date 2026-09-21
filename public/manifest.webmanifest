@@ -4,8 +4,8 @@
   "description": "وصفات التنظيف والعناية — Recettes de nettoyage et d'entretien",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#101728",
-  "theme_color": "#101728",
+  "background_color": "#eef7f5",
+  "theme_color": "#1e8f8b",
   "icons": [
     {
       "src": "/logo.png",

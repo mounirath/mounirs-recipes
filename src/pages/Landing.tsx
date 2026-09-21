@@ -42,7 +42,7 @@ export default function Landing() {
     {
       id: "cleaners" as const,
       icon: Home,
-      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300",
+      chip: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-300",
       titleKey: "sections.cleaners.title",
       subtitleKey: "sections.cleaners.subtitle",
       descKey: "sections.cleaners.desc",
@@ -50,7 +50,7 @@ export default function Landing() {
     {
       id: "cars" as const,
       icon: Car,
-      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300",
+      chip: "bg-sky-400/12 text-sky-700 dark:text-sky-300",
       titleKey: "sections.cars.title",
       subtitleKey: "sections.cars.subtitle",
       descKey: "sections.cars.desc",
@@ -81,7 +81,7 @@ export default function Landing() {
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "2 000 DA" : "2,000 دج",
       noteKey: "pricing.note.month",
-      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
+      chip: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 border-yellow-400/30",
     },
     {
       icon: Car,
@@ -89,7 +89,7 @@ export default function Landing() {
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "1 500 DA" : "1,500 دج",
       noteKey: "pricing.note.month",
-      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
+      chip: "bg-sky-400/12 text-sky-700 dark:text-sky-300 border-sky-400/25",
     },
     {
       icon: Home,
@@ -98,7 +98,7 @@ export default function Landing() {
       price: lang === "fr" ? "5 000 DA" : "5,000 دج",
       noteKey: "pricing.note.year",
       saveKey: "pricing.save58",
-      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
+      chip: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 border-yellow-400/30",
       highlight: true,
     },
     {
@@ -108,7 +108,7 @@ export default function Landing() {
       price: lang === "fr" ? "4 000 DA" : "4,000 دج",
       noteKey: "pricing.note.year",
       saveKey: "pricing.save56",
-      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
+      chip: "bg-sky-400/12 text-sky-700 dark:text-sky-300 border-sky-400/25",
       highlight: true,
     },
     {
@@ -117,7 +117,7 @@ export default function Landing() {
       durationKey: "pricing.dur.lifetime",
       price: lang === "fr" ? "15 000 DA" : "15,000 دج",
       noteKey: "pricing.note.lifetime",
-      chip: "bg-amber-400/15 text-amber-700 dark:text-amber-300 border-amber-400/40",
+      chip: "bg-yellow-400/20 text-yellow-700 dark:text-yellow-300 border-yellow-400/45",
       featured: true,
     },
   ];
@@ -127,19 +127,19 @@ export default function Landing() {
       icon: Home,
       titleKey: "pricing.pkg.home",
       descKey: "pricing.pkg.home.desc",
-      chip: "bg-amber-400/10 text-amber-700 dark:text-amber-300 border-amber-400/25",
+      chip: "bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 border-yellow-400/30",
     },
     {
       icon: Car,
       titleKey: "pricing.pkg.cars",
       descKey: "pricing.pkg.cars.desc",
-      chip: "bg-cyan-400/10 text-cyan-700 dark:text-cyan-300 border-cyan-400/25",
+      chip: "bg-sky-400/12 text-sky-700 dark:text-sky-300 border-sky-400/25",
     },
     {
       icon: Sparkles,
       titleKey: "pricing.pkg.all",
       descKey: "pricing.pkg.all.desc",
-      chip: "bg-amber-400/15 text-amber-700 dark:text-amber-300 border-amber-400/40",
+      chip: "bg-yellow-400/20 text-yellow-700 dark:text-yellow-300 border-yellow-400/45",
       featured: true,
     },
   ];
@@ -205,8 +205,8 @@ export default function Landing() {
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.07] via-transparent to-transparent" />
-          <div className="absolute -top-32 right-1/2 h-[480px] w-[720px] translate-x-1/2 rounded-full bg-amber-400/10 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+          <div className="absolute -top-32 right-1/2 h-[480px] w-[720px] translate-x-1/2 rounded-full bg-yellow-400/15 blur-3xl" />
+          <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-sky-400/12 blur-3xl" />
         </div>
         <div className="mx-auto w-full max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
           <motion.div
@@ -217,7 +217,7 @@ export default function Landing() {
           >
             <Badge
               variant="secondary"
-              className="mb-6 gap-1.5 border border-amber-400/25 bg-amber-400/10 px-3 py-1.5 text-amber-700 dark:text-amber-300"
+              className="mb-6 gap-1.5 border border-yellow-400/30 bg-yellow-400/15 px-3 py-1.5 text-yellow-700 dark:text-yellow-300"
             >
               <Sparkles className="size-3.5" />
               {t("hero.badge")}
@@ -297,7 +297,7 @@ export default function Landing() {
           <div className="grid gap-10 md:grid-cols-3">
             {featureItems.map((f) => (
               <div key={f.titleKey} className="text-center sm:text-start">
-                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-700 dark:text-amber-300 sm:mx-0">
+                <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-yellow-400/15 text-yellow-700 dark:text-yellow-300 sm:mx-0">
                   <f.icon className="size-5" />
                 </div>
                 <h3 className="mb-2 text-lg font-bold">{t(f.titleKey)}</h3>
@@ -318,7 +318,7 @@ export default function Landing() {
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <Badge
             variant="secondary"
-            className="mb-4 gap-1.5 border border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-300"
+            className="mb-4 gap-1.5 border border-yellow-400/30 bg-yellow-400/15 text-yellow-700 dark:text-yellow-300"
           >
             <Wallet className="size-3.5" />
             {t("pricing.badge")}
@@ -354,7 +354,7 @@ export default function Landing() {
                     key={i}
                     className={`border-b border-border/40 transition-colors last:border-0 ${
                       row.featured
-                        ? "bg-amber-400/[0.07]"
+                        ? "bg-yellow-400/10"
                         : row.highlight
                           ? "bg-muted/30"
                           : ""
@@ -370,7 +370,7 @@ export default function Landing() {
                         <div>
                           <p className="font-bold">{t(row.pkgKey)}</p>
                           {row.featured && (
-                            <Badge className="mt-1 border-none bg-amber-400 text-[10px] text-amber-950">
+                            <Badge className="mt-1 border-none bg-yellow-400 text-[10px] text-yellow-950">
                               {t("pricing.best")}
                             </Badge>
                           )}
@@ -394,7 +394,7 @@ export default function Landing() {
                     <td className="px-4 py-4 text-end sm:px-6">
                       <span
                         className={`font-mono text-lg font-extrabold ${
-                          row.featured ? "text-amber-700 dark:text-amber-300" : "text-foreground"
+                          row.featured ? "text-yellow-700 dark:text-yellow-300" : "text-foreground"
                         }`}
                         dir="ltr"
                       >
@@ -418,12 +418,12 @@ export default function Landing() {
               key={p.titleKey}
               className={`relative rounded-2xl border bg-card p-6 shadow-soft transition-transform duration-300 hover:-translate-y-1 ${
                 p.featured
-                  ? "border-amber-400/30 shadow-soft-lg"
+                  ? "border-yellow-400/35 shadow-soft-lg"
                   : "border-border/70"
               }`}
             >
               {p.featured && (
-                <Badge className="absolute -top-2.5 start-6 border-none bg-amber-400 text-[10px] text-amber-950">
+                <Badge className="absolute -top-2.5 start-6 border-none bg-yellow-400 text-[10px] text-yellow-950">
                   {t("pricing.mostValue")}
                 </Badge>
               )}
@@ -449,7 +449,7 @@ export default function Landing() {
                 key={d.titleKey}
                 className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-4"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-amber-400/10 text-amber-700 dark:text-amber-300">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-yellow-400/15 text-yellow-700 dark:text-yellow-300">
                   <d.icon className="size-4" />
                 </span>
                 <div>
@@ -489,7 +489,7 @@ export default function Landing() {
           <div>
             <Badge
               variant="secondary"
-              className="mb-4 border border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-300"
+              className="mb-4 border border-yellow-400/30 bg-yellow-400/15 text-yellow-700 dark:text-yellow-300"
             >
               {t("inside.badge")}
             </Badge>
@@ -511,7 +511,7 @@ export default function Landing() {
                   key={k}
                   className="flex items-center gap-2.5 text-sm font-medium"
                 >
-                  <CheckCircle2 className="size-4 shrink-0 text-amber-700 dark:text-amber-300" />
+                  <CheckCircle2 className="size-4 shrink-0 text-yellow-700 dark:text-yellow-300" />
                   {t(k)}
                 </li>
               ))}
@@ -551,7 +551,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-border/60 bg-card/40">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
-          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
+          <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
             <FlaskConical className="size-5" />
             <span className="text-lg font-bold">Formule DZ</span>
           </div>
