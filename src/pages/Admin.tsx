@@ -314,7 +314,7 @@ export default function Admin() {
             </span>
             <div className="leading-tight">
               <span className="block text-sm font-bold tracking-tight">
-                Mounir Formule
+                Formule DZ
               </span>
               <span className="block text-xs text-muted-foreground">
                 {t("admin.panel")}

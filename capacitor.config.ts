@@ -2,7 +2,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.mounirath.recipes',
-  appName: "Mounir's Recipes",
+  appName: "Formule DZ",
   webDir: 'dist',
   server: {
     androidScheme: 'https'

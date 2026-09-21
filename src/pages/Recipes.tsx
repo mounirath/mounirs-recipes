@@ -505,7 +505,7 @@ export default function Recipes() {
                 <FlaskConical className="size-5" />
               </span>
               <span className="text-lg font-bold tracking-tight">
-                Mounir Formule
+                Formule DZ
               </span>
             </a>
             <div className="flex items-center gap-2">
@@ -543,7 +543,7 @@ export default function Recipes() {
               <FlaskConical className="size-5" />
             </span>
             <span className="hidden text-lg font-bold tracking-tight sm:block">
-              Mounir Formule
+              Formule DZ
             </span>
           </a>
           <span className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">

@@ -174,7 +174,7 @@ export default function Landing() {
               <FlaskConical className="size-5" />
             </span>
             <span className="text-lg font-bold tracking-tight">
-              Mounir Formule
+              Formule DZ
             </span>
           </a>
           <nav className="hidden items-center gap-8 text-sm font-semibold text-muted-foreground md:flex">
@@ -553,7 +553,7 @@ export default function Landing() {
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
           <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300">
             <FlaskConical className="size-5" />
-            <span className="text-lg font-bold">Mounir Formule</span>
+            <span className="text-lg font-bold">Formule DZ</span>
           </div>
           <p className="text-sm text-muted-foreground">
             {t("brand.tagline")}

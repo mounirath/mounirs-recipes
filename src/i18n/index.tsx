@@ -149,7 +149,7 @@ const ar: Dict = {
   "auth.verify": "جارٍ التحقق...",
   "auth.confirm": "تأكيد الرمز",
   "auth.otherEmail": "استخدام بريد آخر",
-  "auth.footer": "محتوى حصري للمشتركين — Mounir Formule",
+  "auth.footer": "محتوى حصري للمشتركين — Formule DZ",
   "auth.back": "العودة للرئيسية",
   "auth.hint":
     "الدخول للمشتركين فقط: أدخل رمز الاشتراك الذي حصلت عليه ثم بريدك — ستصلك رسالة برمز التحقق لتأكيد الدخول.",
@@ -465,7 +465,7 @@ const fr: Dict = {
   "auth.verify": "Vérification...",
   "auth.confirm": "Confirmer le code",
   "auth.otherEmail": "Utiliser un autre e-mail",
-  "auth.footer": "Contenu exclusif aux abonnés — Mounir Formule",
+  "auth.footer": "Contenu exclusif aux abonnés — Formule DZ",
   "auth.back": "Retour à l'accueil",
   "auth.hint":
     "Accès réservé aux abonnés : saisissez votre code d'abonnement puis votre e-mail — vous recevrez un code de vérification pour confirmer la connexion.",

@@ -128,7 +128,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             <FlaskConical className="size-5" />
           </span>
           <span className="text-lg font-bold tracking-tight">
-            Mounir Formule
+            Formule DZ
           </span>
         </a>
         <div className="flex items-center gap-2">
