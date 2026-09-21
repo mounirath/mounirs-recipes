@@ -106,6 +106,22 @@ const schema = defineSchema(
     })
       .index("by_user", ["userId"])
       .index("by_user_recipe", ["userId", "recipeId"]),
+
+    // payment journal for Chargily checkouts (audit trail)
+    payments: defineTable({
+      email: v.string(),
+      pkg: pkgValidator,
+      duration: durationValidator,
+      amount: v.number(), // centimes DZD as sent to Chargily
+      currency: v.string(),
+      checkoutId: v.string(),
+      status: v.union(
+        v.literal("pending"),
+        v.literal("paid"),
+        v.literal("failed"),
+      ),
+      paidAt: v.number(),
+    }).index("by_email", ["email"]),
   },
   {
     schemaValidation: false,

@@ -1,5 +1,8 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/i18n";
+import { useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { BrandMark } from "@/components/BrandMark";
@@ -25,11 +28,36 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import { useState } from "react";
 
 export default function Landing() {
   const { isLoading, isAuthenticated } = useAuth();
   const { t, lang, dir } = useI18n();
   const ForwardIcon = dir === "rtl" ? ArrowLeft : ArrowRight;
+  const createCheckout = useAction(api.payments.createCheckout);
+  const [paying, setPaying] = useState<string | null>(null);
+
+  /** Kick off a Chargily checkout; requires sign-in (redirects to auth). */
+  const startPayment = async (
+    pkg: "home" | "cars" | "all",
+    duration: "month" | "year" | "lifetime",
+  ) => {
+    if (!isAuthenticated) {
+      toast.error(t("pay.signinFirst"));
+      window.location.href = "/auth?returnTo=%2F%23pricing";
+      return;
+    }
+    const key = `${pkg}-${duration}`;
+    setPaying(key);
+    try {
+      const url = await createCheckout({ pkg, duration });
+      window.location.href = url; // go to Chargily hosted checkout
+    } catch (e) {
+      setPaying(null);
+      const msg = e instanceof Error ? e.message : String(e);
+      toast.error(msg.includes("Paiement non configur") ? t("pay.notConfigured") : t("pay.failed"));
+    }
+  };
 
   const ctaHref = isAuthenticated ? "/recipes" : "/auth?returnTo=%2Frecipes";
 
@@ -74,11 +102,13 @@ export default function Landing() {
     },
   ];
 
-  /* Pricing offers — package / duration / price */
+  /* Pricing offers — package / duration / price (pkg + duration keys match payments.pricing) */
   const pricingOffers = [
     {
       icon: Home,
+      pkg: "home" as const,
       pkgKey: "pricing.pkg.home",
+      duration: "month" as const,
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "2 000 DA" : "2,000 دج",
       noteKey: "pricing.note.month",
@@ -86,7 +116,9 @@ export default function Landing() {
     },
     {
       icon: Car,
+      pkg: "cars" as const,
       pkgKey: "pricing.pkg.cars",
+      duration: "month" as const,
       durationKey: "pricing.dur.month",
       price: lang === "fr" ? "1 500 DA" : "1,500 دج",
       noteKey: "pricing.note.month",
@@ -94,7 +126,9 @@ export default function Landing() {
     },
     {
       icon: Home,
+      pkg: "home" as const,
       pkgKey: "pricing.pkg.home",
+      duration: "year" as const,
       durationKey: "pricing.dur.year",
       price: lang === "fr" ? "5 000 DA" : "5,000 دج",
       noteKey: "pricing.note.year",
@@ -104,7 +138,9 @@ export default function Landing() {
     },
     {
       icon: Car,
+      pkg: "cars" as const,
       pkgKey: "pricing.pkg.cars",
+      duration: "year" as const,
       durationKey: "pricing.dur.year",
       price: lang === "fr" ? "4 000 DA" : "4,000 دج",
       noteKey: "pricing.note.year",
@@ -114,7 +150,9 @@ export default function Landing() {
     },
     {
       icon: Sparkles,
+      pkg: "all" as const,
       pkgKey: "pricing.pkg.all",
+      duration: "lifetime" as const,
       durationKey: "pricing.dur.lifetime",
       price: lang === "fr" ? "15 000 DA" : "15,000 دج",
       noteKey: "pricing.note.lifetime",
@@ -399,14 +437,31 @@ export default function Landing() {
                       </p>
                     </td>
                     <td className="px-4 py-4 text-end sm:px-6">
-                      <span
-                        className={`font-mono text-lg font-extrabold ${
-                          row.featured ? "text-yellow-700 dark:text-yellow-300" : "text-foreground"
+                      <button
+                        type="button"
+                        onClick={() => startPayment(row.pkg, row.duration)}
+                        disabled={paying !== null}
+                        className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition-all duration-200 disabled:opacity-50 ${
+                          row.featured
+                            ? "bg-primary text-primary-foreground shadow-soft hover:opacity-90"
+                            : "border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
                         }`}
-                        dir="ltr"
                       >
-                        {row.price}
-                      </span>
+                        <Wallet className="size-4" />
+                        {paying === `${row.pkg}-${row.duration}`
+                          ? t("pay.redirecting")
+                          : t("pay.button")}
+                      </button>
+                      <div className="mt-1.5">
+                        <span
+                          className={`font-mono text-base font-extrabold ${
+                            row.featured ? "text-yellow-700 dark:text-yellow-300" : "text-foreground"
+                          }`}
+                          dir="ltr"
+                        >
+                          {row.price}
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -414,7 +469,7 @@ export default function Landing() {
             </table>
           </div>
           <div className="border-t border-border/60 bg-muted/30 px-4 py-3 text-center text-xs text-muted-foreground sm:px-6">
-            {t("pricing.howto")}
+            {t("pricing.howtoOnline")}
           </div>
         </div>
 

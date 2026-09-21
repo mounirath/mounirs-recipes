@@ -50,6 +50,7 @@ const AuthPage = lazy(() => import("./pages/Auth.tsx"));
 const Recipes = lazy(() => import("./pages/Recipes.tsx"));
 const Admin = lazy(() => import("./pages/Admin.tsx"));
 const FreeHomemadeRecipes = lazy(() => import("./pages/FreeHomemadeRecipes.tsx"));
+const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
 
 // Simple loading fallback for route transitions
@@ -166,6 +167,7 @@ createRoot(document.getElementById("root")!).render(
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/home-recipes" element={<FreeHomemadeRecipes />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
                 <Route
                   path="/auth"
                   element={<AuthPage redirectAfterAuth="/recipes" />}
