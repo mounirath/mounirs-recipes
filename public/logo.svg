@@ -1,45 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2aa7a0"/>
-      <stop offset="0.55" stop-color="#1e8f8b"/>
-      <stop offset="1" stop-color="#15706f"/>
-    </linearGradient>
-    <linearGradient id="flask" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#dff3f0"/>
-    </linearGradient>
-    <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffe066"/>
-      <stop offset="1" stop-color="#f2b705"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.6">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.22"/>
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+  <!-- Teal circle on transparent background -->
+  <circle cx="256" cy="256" r="236" fill="#26A69A"/>
 
-  <!-- Background -->
-  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
-  <circle cx="256" cy="215" r="190" fill="url(#glow)"/>
-
-  <!-- Flask -->
-  <g>
-    <path d="M224 122 L224 196 C224 204 222 212 218 220 L168 366 Q158 386 180 386 L332 386 Q354 386 344 366 L294 220 C290 212 288 204 288 196 L288 122 Z"
-          fill="url(#flask)" fill-opacity="0.18" stroke="url(#flask)" stroke-width="20" stroke-linejoin="round"/>
-    <!-- Liquid -->
-    <path d="M180.3 330 C 212 344 300 344 331.7 330 L 344 366 Q354 386 332 386 L180 386 Q158 386 168 366 Z"
-          fill="url(#liquid)"/>
-    <!-- Bubbles -->
-    <circle cx="240" cy="298" r="11" fill="url(#liquid)" opacity="0.95"/>
-    <circle cx="274" cy="264" r="7.5" fill="url(#liquid)" opacity="0.75"/>
-    <circle cx="251" cy="238" r="5" fill="url(#liquid)" opacity="0.55"/>
+  <!-- White Erlenmeyer flask (line style, like the provided logo) -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
     <!-- Neck lip -->
-    <rect x="206" y="98" width="100" height="26" rx="13" fill="url(#flask)"/>
+    <line x1="205" y1="130" x2="307" y2="130"/>
+    <!-- Neck + body outline -->
+    <path d="M226 130 L226 216 C226 228 222 236 216 248 L166 340 C154 362 168 386 194 386 L318 386 C344 386 358 362 346 340 L296 248 C290 236 286 228 286 216 L286 130"/>
+    <!-- Liquid surface line -->
+    <line x1="186" y1="292" x2="326" y2="292"/>
   </g>
-
-  <!-- Sparkles -->
-  <path d="M386 92 C390 116 401 127 425 131 C401 135 390 146 386 170 C382 146 371 135 347 131 C371 127 382 116 386 92 Z" fill="#ffe066"/>
-  <path d="M140 132 C142.5 146 149 152.5 163 155 C149 157.5 142.5 164 140 178 C137.5 164 131 157.5 117 155 C131 152.5 137.5 146 140 132 Z" fill="#ffffff" opacity="0.7"/>
 </svg>

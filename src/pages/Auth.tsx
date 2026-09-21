@@ -16,6 +16,7 @@ import {
 
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/i18n";
+import { BrandMark } from "@/components/BrandMark";
 import { LangToggle } from "@/components/LangToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -124,9 +125,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       {/* Top bar */}
       <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between px-4 sm:px-6">
         <a href="/" className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-            <FlaskConical className="size-5" />
-          </span>
+          <BrandMark className="size-9 shadow-soft" />
           <span className="text-lg font-bold tracking-tight">
             Formule DZ
           </span>

@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { BrandMark } from "@/components/BrandMark";
 import { LangToggle } from "@/components/LangToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import {
@@ -170,9 +171,7 @@ export default function Landing() {
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between px-4 sm:px-6">
           <a href="#" className="flex items-center gap-2.5">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
-              <FlaskConical className="size-5" />
-            </span>
+            <BrandMark className="size-9 shadow-soft" />
             <span className="text-lg font-bold tracking-tight">
               Formule DZ
             </span>
@@ -552,7 +551,7 @@ export default function Landing() {
       <footer className="border-t border-border/60 bg-card/40">
         <div className="mx-auto flex w-full max-w-6xl 2xl:max-w-[110rem] flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
           <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
-            <FlaskConical className="size-5" />
+            <BrandMark className="size-6" />
             <span className="text-lg font-bold">Formule DZ</span>
           </div>
           <p className="text-sm text-muted-foreground">
