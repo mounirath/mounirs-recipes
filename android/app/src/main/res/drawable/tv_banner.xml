@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android TV banner (320x180dp) for the Leanback launcher -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+
+    <!-- Background -->
+    <path android:fillColor="#1E8F8B" android:pathData="M0,0h320v180h-320z" />
+
+    <!-- Subtle glow -->
+    <path android:fillColor="#33FFFFFF" android:pathData="M60,20a70,70 0,1 1,-0.1 0z" />
+
+    <!-- Flask (white outline) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineJoin="round"
+        android:fillColor="#33FFFFFF"
+        android:pathData="M88,44 L88,64 C88,68 87,72 85.5,75.5 L65.5,128 A7,7 0,0 0,72 137 L120,137 A7,7 0,0 0,126.5 128 L106.5,75.5 C105,72 104,68 104,64 L104,44 Z" />
+    <!-- Liquid (yellow) -->
+    <path
+        android:fillColor="#F2B705"
+        android:pathData="M67.5,116 C77,120 111,120 120.5,116 L126.5,128 A7,7 0,0 1,120 137 L72,137 A7,7 0,0 1,65.5 128 Z" />
+    <!-- Bubbles -->
+    <path android:fillColor="#F2B705" android:pathData="M85,103a4.5,4.5 0,1 1,-9 0a4.5,4.5 0,1 1,9 0" />
+    <path android:fillColor="#F2B705" android:fillAlpha="0.8" android:pathData="M96,90a3,3 0,1 1,-6 0a3,3 0,1 1,6 0" />
+    <!-- Neck lip -->
+    <path android:fillColor="#FFFFFF" android:pathData="M82,36h28a5,5 0,0 1,0 10h-28a5,5 0,0 1,0 -10z" />
+
+    <!-- Sparkle -->
+    <path
+        android:fillColor="#FFE066"
+        android:pathData="M146,32 C148.5,46 155,52.5 169,55 C155,57.5 148.5,64 146,78 C143.5,64 137,57.5 123,55 C137,52.5 143.5,46 146,32 Z" />
+
+    <!-- Wordmark: FORMULE DZ -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M170,74 L196,74 L196,82 L178,82 L178,90 L193,90 L193,98 L178,98 L178,114 L170,114 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M222,74 C232,74 239,80 239,94 C239,108 232,114 222,114 L210,114 L210,74 Z M218,82 L218,106 L221,106 C226.5,106 230.5,103 230.5,94 C230.5,85 226.5,82 221,82 Z" />
+    <path
+        android:fillColor="#FFE066"
+        android:pathData="M247,74 L272,74 L272,82 L255.5,82 L255.5,89.5 L269,89.5 L269,97.5 L255.5,97.5 L255.5,106 L273,106 L273,114 L247,114 Z" />
+</vector>

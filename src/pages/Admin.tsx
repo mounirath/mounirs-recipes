@@ -307,7 +307,7 @@ export default function Admin() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between gap-3 px-4 sm:px-6">
           <div className="flex items-center gap-2.5">
             <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
               <FlaskConical className="size-5" />
@@ -343,7 +343,7 @@ export default function Admin() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] px-4 py-8 sm:px-6">
         {/* Stats */}
         <div className="mb-8 grid grid-cols-2 gap-3 lg:grid-cols-5">
           <StatCard

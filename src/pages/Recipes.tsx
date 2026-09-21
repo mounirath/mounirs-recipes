@@ -225,7 +225,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center gap-4 p-4 text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:p-5"
+        className="flex w-full items-center gap-4 rounded-2xl p-4 text-start focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/70 sm:p-5"
       >
         <span
           className={`flex size-11 shrink-0 items-center justify-center rounded-xl border ${meta.chip}`}
@@ -499,7 +499,7 @@ export default function Recipes() {
     return (
       <div className="min-h-screen bg-background">
         <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-          <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+          <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between px-4 sm:px-6">
             <a href="/" className="flex items-center gap-2.5">
               <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
                 <FlaskConical className="size-5" />
@@ -537,7 +537,7 @@ export default function Recipes() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between gap-3 px-4 sm:px-6">
           <a href="/" className="flex shrink-0 items-center gap-2.5">
             <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
               <FlaskConical className="size-5" />
@@ -579,7 +579,7 @@ export default function Recipes() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+      <main className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] px-4 py-8 sm:px-6 sm:py-10">
         {/* Title + search */}
         <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>

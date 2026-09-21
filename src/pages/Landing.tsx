@@ -168,7 +168,7 @@ export default function Landing() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
+        <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between px-4 sm:px-6">
           <a href="#" className="flex items-center gap-2.5">
             <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-soft">
               <FlaskConical className="size-5" />
@@ -208,7 +208,7 @@ export default function Landing() {
           <div className="absolute -top-32 right-1/2 h-[480px] w-[720px] translate-x-1/2 rounded-full bg-yellow-400/15 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-sky-400/12 blur-3xl" />
         </div>
-        <div className="mx-auto w-full max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
+        <div className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -293,7 +293,7 @@ export default function Landing() {
 
       {/* Features */}
       <section id="features" className="border-y border-border/60 bg-card/40">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
+        <div className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] px-4 py-16 sm:px-6 sm:py-20">
           <div className="grid gap-10 md:grid-cols-3">
             {featureItems.map((f) => (
               <div key={f.titleKey} className="text-center sm:text-start">
@@ -313,7 +313,7 @@ export default function Landing() {
       {/* Pricing offers table */}
       <section
         id="pricing"
-        className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20"
+        className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] scroll-mt-20 px-4 py-16 sm:px-6 sm:py-20"
       >
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <Badge
@@ -483,7 +483,7 @@ export default function Landing() {
       {/* Sections teaser + access note */}
       <section
         id="sections"
-        className="mx-auto w-full max-w-6xl border-t border-border/60 px-4 py-16 sm:px-6 sm:py-20"
+        className="mx-auto w-full max-w-6xl 2xl:max-w-[110rem] border-t border-border/60 px-4 py-16 sm:px-6 sm:py-20"
       >
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div>
@@ -550,7 +550,7 @@ export default function Landing() {
 
       {/* Footer */}
       <footer className="border-t border-border/60 bg-card/40">
-        <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
+        <div className="mx-auto flex w-full max-w-6xl 2xl:max-w-[110rem] flex-col items-center gap-4 px-4 py-10 text-center sm:px-6">
           <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-300">
             <FlaskConical className="size-5" />
             <span className="text-lg font-bold">Formule DZ</span>
