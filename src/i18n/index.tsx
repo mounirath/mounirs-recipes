@@ -27,6 +27,7 @@ const ar: Dict = {
   "nav.offers": "العروض",
   "nav.login": "دخول المشتركين",
   "nav.recipes": "الوصفات",
+  "nav.menu": "القائمة",
 
   /* Hero */
   "hero.badge": "منصة وصفات حصرية للمشتركين",
@@ -367,6 +368,7 @@ const fr: Dict = {
   "nav.offers": "Offres",
   "nav.login": "Espace abonnés",
   "nav.recipes": "Recettes",
+  "nav.menu": "Menu",
 
   /* Hero */
   "hero.badge": "Plateforme de recettes exclusive aux abonnés",
@@ -718,6 +720,7 @@ const en: Dict = {
   "nav.offers": "Offers",
   "nav.login": "Subscribers area",
   "nav.recipes": "Recipes",
+  "nav.menu": "Menu",
 
   /* Hero */
   "hero.badge": "Exclusive recipes platform for subscribers",

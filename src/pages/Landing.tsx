@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { BrandMark } from "@/components/BrandMark";
 import { LangToggle } from "@/components/LangToggle";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileMenu } from "@/components/MobileMenu";
 import {
   ArrowLeft,
   ArrowRight,
@@ -226,6 +227,7 @@ export default function Landing() {
             </a>
           </nav>
           <div className="flex items-center gap-2">
+            <MobileMenu />
             <ThemeToggle />
             <LangToggle />
             <Button
