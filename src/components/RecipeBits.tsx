@@ -179,7 +179,7 @@ export function BatchCalculator({
       </div>
 
       {/* Computed table */}
-      <div className="overflow-hidden rounded-lg border border-border/60 bg-card">
+      <div className="overflow-x-auto rounded-lg border border-border/60 bg-card">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border/60 bg-muted/50 text-xs text-muted-foreground">
@@ -205,7 +205,7 @@ export function BatchCalculator({
                   key={i}
                   className="border-b border-border/40 last:border-0"
                 >
-                  <td className="px-3 py-2 font-medium">{l.name}</td>
+                  <td className="break-words px-3 py-2 font-medium">{l.name}</td>
                   <td className="px-3 py-2 text-center font-mono text-xs text-muted-foreground" dir="ltr">
                     {l.pct}%
                   </td>

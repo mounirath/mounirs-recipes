@@ -560,7 +560,7 @@ export default function Recipes() {
                 className="gap-1.5"
               >
                 <LogOut className="size-4" />
-                {t("recipes.signout")}
+                <span className="hidden sm:inline">{t("recipes.signout")}</span>
               </Button>
             </div>
           </div>
@@ -615,7 +615,7 @@ export default function Recipes() {
               className="gap-2"
             >
               <LogOut className="size-4" />
-              {t("recipes.signout")}
+              <span className="hidden sm:inline">{t("recipes.signout")}</span>
             </Button>
           </div>
         </div>

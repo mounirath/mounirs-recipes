@@ -43,7 +43,7 @@ export default function FreeHomemadeRecipes() {
         <div className="mx-auto flex h-16 w-full max-w-6xl 2xl:max-w-[110rem] items-center justify-between px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-2.5">
             <BrandMark className="size-9 shadow-soft" />
-            <span className="text-lg font-extrabold tracking-tight">
+            <span className="hidden text-lg font-extrabold tracking-tight sm:block">
               Formule DZ
             </span>
           </Link>

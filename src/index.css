@@ -157,11 +157,14 @@
   [role="button"]:not([disabled]) {
     cursor: pointer;
   }
-  /* Comfortable touch targets on coarse-pointer (mobile/TV remote) devices */
+  /* Comfortable touch targets on coarse-pointer (mobile/TV remote) devices.
+     Scoped to buttons only — bare inline links (in paragraphs/footers) must
+     keep their natural line height so text flow is not broken. */
   @media (pointer: coarse) {
     button:not([disabled]),
     [role="button"]:not([disabled]),
-    a[href]:not([disabled]) {
+    a[class*="rounded-"],
+    a[class*="shadow"] {
       min-height: 44px;
       min-width: 44px;
     }

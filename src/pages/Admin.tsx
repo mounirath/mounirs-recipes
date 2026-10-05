@@ -320,12 +320,15 @@ export default function Admin() {
               </span>
             </div>
           </div>
-          <span className="truncate text-sm text-muted-foreground">
+          <span className="hidden min-w-0 truncate text-sm text-muted-foreground md:inline">
             {user?.email}
           </span>
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm">
-              <Link to="/recipes">{t("admin.recipes")}</Link>
+            <Button asChild variant="ghost" size="sm" className="gap-1.5">
+              <Link to="/recipes">
+                <FlaskConical className="size-4 md:hidden" />
+                <span className="hidden md:inline">{t("admin.recipes")}</span>
+              </Link>
             </Button>
             <ThemeToggle />
             <LangToggle />
@@ -336,7 +339,7 @@ export default function Admin() {
               className="gap-1.5"
             >
               <LogOut className="size-4" />
-              {t("admin.signout")}
+              <span className="hidden sm:inline">{t("admin.signout")}</span>
             </Button>
           </div>
         </div>

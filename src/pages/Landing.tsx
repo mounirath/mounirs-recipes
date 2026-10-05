@@ -228,10 +228,16 @@ export default function Landing() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <LangToggle />
-            <Button asChild className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
+            <Button
+              asChild
+              className="bg-primary px-3 text-primary-foreground shadow-soft hover:bg-primary/90 sm:px-4"
+            >
               <Link to={ctaHref}>
-                {isAuthenticated ? t("nav.recipes") : t("nav.login")}
-                <ForwardIcon className="size-4" />
+                <ForwardIcon className="size-4 sm:hidden" />
+                <span className="hidden sm:inline">
+                  {isAuthenticated ? t("nav.recipes") : t("nav.login")}
+                </span>
+                <ForwardIcon className="hidden size-4 sm:inline" />
               </Link>
             </Button>
           </div>
@@ -376,8 +382,80 @@ export default function Landing() {
           </p>
         </div>
 
-        {/* Offers table */}
-        <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft-lg">
+        {/* Offers — stacked cards on mobile, table on larger screens */}
+        <div className="space-y-3 sm:hidden">
+          {pricingOffers.map((row, i) => (
+            <div
+              key={i}
+              className={`rounded-2xl border bg-card p-4 shadow-soft ${
+                row.featured
+                  ? "border-yellow-400/45 bg-yellow-400/5"
+                  : row.highlight
+                    ? "border-border/70 bg-muted/20"
+                    : "border-border/70"
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span
+                  className={`flex size-9 shrink-0 items-center justify-center rounded-lg border ${row.chip}`}
+                >
+                  <row.icon className="size-4" />
+                </span>
+                <p className="flex min-w-0 flex-wrap items-center gap-2 font-bold">
+                  {t(row.pkgKey)}
+                  {row.featured && (
+                    <Badge className="border-none bg-yellow-400 text-[10px] text-yellow-950">
+                      {t("pricing.best")}
+                    </Badge>
+                  )}
+                </p>
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="rounded-full border border-border/70 bg-muted/50 px-3 py-1 text-xs font-bold">
+                    {t(row.durationKey)}
+                  </span>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {t(row.noteKey)}
+                    {row.saveKey && (
+                      <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                        {" — "}
+                        {t(row.saveKey)}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <span
+                  className={`shrink-0 font-mono text-lg font-extrabold ${
+                    row.featured ? "text-yellow-700 dark:text-yellow-300" : "text-foreground"
+                  }`}
+                  dir="ltr"
+                >
+                  {row.price}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => startPayment(row.pkg, row.duration)}
+                disabled={paying !== null}
+                className={`mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-bold transition-all duration-200 disabled:opacity-50 ${
+                  row.featured
+                    ? "bg-primary text-primary-foreground shadow-soft hover:opacity-90"
+                    : "border border-primary/40 bg-primary/10 text-primary hover:bg-primary/20"
+                }`}
+              >
+                <Wallet className="size-4" />
+                {paying === `${row.pkg}-${row.duration}`
+                  ? t("pay.redirecting")
+                  : t("pay.button")}
+              </button>
+            </div>
+          ))}
+          <p className="pt-2 text-center text-xs text-muted-foreground">
+            {t("pricing.howtoOnline")}
+          </p>
+        </div>
+        <div className="hidden overflow-hidden rounded-2xl border border-border/70 bg-card shadow-soft-lg sm:block">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-sm">
               <thead>
