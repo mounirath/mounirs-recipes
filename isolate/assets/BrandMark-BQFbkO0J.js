@@ -1,0 +1,1 @@
+import{j as s}from"./index-fzaNXgXz.js";import{c as a}from"./button-hSSYHzsu.js";function o({className:r="size-9"}){return s.jsx("img",{src:"/logo.svg",alt:"","aria-hidden":!0,className:a("shrink-0 select-none rounded-full",r),draggable:!1})}export{o as B};
